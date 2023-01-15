@@ -1,5 +1,3 @@
-# simple-demo
-
 ## 抖音项目服务端简单示例
 
 具体功能内容参考飞书说明文档
@@ -7,7 +5,8 @@
 工程无其他依赖，直接编译运行即可
 
 ```shell
-go build && ./simple-demo
+go build
+然后 ./Douyin
 ```
 
 ### 功能说明

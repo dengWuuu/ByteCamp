@@ -1,9 +1,9 @@
 package service
 
 import (
+	"Douyin/controller"
 	"encoding/json"
 	"fmt"
-	"github.com/RaymondCode/simple-demo/controller"
 	"io"
 	"net"
 	"sync"
