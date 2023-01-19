@@ -1,0 +1,8 @@
+mysql:
+  dsn: "root:Aa1076766987@tcp(81.70.207.243:3306)/tiktok?charset=utf8mb4&parseTime=True&loc=Local"
+
+redis:
+  addr: "81.70.207.243:6379"
+  password: "Aa1076766987"
+  poolSize: 30
+  minConns: 30
