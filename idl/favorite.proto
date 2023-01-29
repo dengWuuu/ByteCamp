@@ -2,7 +2,7 @@ syntax = "proto3";
 package favorite;
 option go_package = "favorite";
 
-import "video.proto";
+import "idl/video.proto";
 
 message douyin_favorite_action_request {
     int64 user_id = 1; // 用户id

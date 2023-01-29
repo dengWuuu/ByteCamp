@@ -2,7 +2,7 @@ syntax = "proto3";
 package video;
 option go_package = "video";
 
-import "user.proto";
+import "idl/user.proto";
 
 message douyin_feed_request {
   optional int64 latest_time = 1; // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间

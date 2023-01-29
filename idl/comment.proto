@@ -2,7 +2,7 @@ syntax = "proto3";
 package comment;
 option go_package = "comment";
 
-import "user.proto";
+import "idl/user.proto";
 
 message douyin_comment_action_request {
     int64 user_id = 1; // 用户id
