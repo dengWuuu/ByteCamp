@@ -14,7 +14,7 @@ import (
 
 var DB *gorm.DB
 var Redis *redis.Client
-var dberr error
+var dbErr error
 
 func Init() {
 	viper.SetConfigName("app")
@@ -40,8 +40,8 @@ func InitMysql() {
 	)
 
 	dsn := viper.GetString("mysql.dsn")
-	DB, dberr = gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: newLogger})
-	if dberr != nil {
+	DB, dbErr = gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: newLogger})
+	if dbErr != nil {
 		log.Fatal("mysql连接失败")
 	}
 }
