@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-29 21:58:00
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-01-31 00:58:15
+ * @LastEditTime: 2023-01-31 01:21:45
  * @FilePath: /ByteCamp/cmd/relation/handler.go
  * @Description: relation微服务handler
  *
@@ -13,6 +13,7 @@ package main
 import (
 	"context"
 	"douyin/cmd/relation/service"
+	"douyin/dal/db"
 	"douyin/dal/pack"
 	relation "douyin/kitex_gen/relation"
 )
@@ -27,6 +28,7 @@ var (
 // 登录用户对其他用户进行关注或取消关注。
 func (s *RelationSrvImpl) RelationAction(ctx context.Context, req *relation.DouyinRelationActionRequest) (resp *relation.DouyinRelationActionResponse, err error) {
 	// TODO: Your code here...
+	db.Init("../../config")
 	//1、鉴权
 	//2、入参校验
 	//3、调用service层，完成关注或取消关注
