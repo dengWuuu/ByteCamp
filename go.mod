@@ -13,6 +13,7 @@ require (
 	google.golang.org/protobuf v1.28.1
 	gorm.io/driver/mysql v1.4.4
 	gorm.io/gorm v1.24.2
+	gorm.io/plugin/optimisticlock v1.1.0
 )
 
 require (

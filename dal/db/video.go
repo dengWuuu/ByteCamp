@@ -12,6 +12,7 @@
 package db
 
 import (
+	"gorm.io/plugin/optimisticlock"
 	"time"
 
 	"gorm.io/gorm"
@@ -24,5 +25,5 @@ type Video struct {
 	CoverUrl   string
 	UploadTime time.Time
 	Title      string
-	Version    int
+	Version    optimisticlock.Version
 }

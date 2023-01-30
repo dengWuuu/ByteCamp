@@ -11,12 +11,15 @@
 
 package db
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"gorm.io/plugin/optimisticlock"
+)
 
 type Follow struct {
 	gorm.Model
 	UserId   int
 	FollowId int
-	Version  int
+	Version  optimisticlock.Version
 	Cancel   bool
 }

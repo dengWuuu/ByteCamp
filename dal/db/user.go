@@ -11,11 +11,14 @@
 
 package db
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"gorm.io/plugin/optimisticlock"
+)
 
 type User struct {
 	gorm.Model
 	Name     string
 	Password string
-	Version  int
+	Version  optimisticlock.Version
 }
