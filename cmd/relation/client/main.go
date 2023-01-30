@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-31 01:04:01
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-01-31 01:11:11
+ * @LastEditTime: 2023-01-31 01:26:09
  * @FilePath: /ByteCamp/cmd/relation/client/main.go
  * @Description: 用于测试relation微服务
  *
@@ -24,7 +24,7 @@ func main() {
 	request := relation.DouyinRelationActionRequest{
 		UserId:     1,
 		ToUserId:   2,
-		ActionType: 1,
+		ActionType: 2,
 	}
 	resp, err := c.RelationAction(context.Background(), &request)
 	if err != nil {

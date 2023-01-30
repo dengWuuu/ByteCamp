@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-29 21:58:00
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-01-31 01:21:45
+ * @LastEditTime: 2023-01-31 01:28:18
  * @FilePath: /ByteCamp/cmd/relation/handler.go
  * @Description: relation微服务handler
  *
@@ -39,7 +39,7 @@ func (s *RelationSrvImpl) RelationAction(ctx context.Context, req *relation.Douy
 
 // 登录用户关注的所有用户列表。
 func (s *RelationSrvImpl) RelationFollowList(ctx context.Context, req *relation.DouyinRelationFollowListRequest) (resp *relation.DouyinRelationFollowListResponse, err error) {
-	// TODO: Your code here...
+	//1、鉴权
 	return
 }
 
