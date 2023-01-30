@@ -1,0 +1,19 @@
+Global:
+  Source: "config(local)"
+
+Server:
+  Name: "DouYinAPIServer"
+  Address: "0.0.0.0"
+  Port: 8088
+
+Hertz:
+  UseNetpoll: true
+  Http2: 
+    Enable: false
+    DisableKeepalive: false
+    ReadTimeout: "1m0s"
+  Tls: 
+    Enable: false
+    CertFile: ""
+    KeyFile: ""
+    ALPN: true
