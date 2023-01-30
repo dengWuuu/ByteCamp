@@ -9,6 +9,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/hertz-contrib/logger/zap v0.0.0-20221227100845-46a8693d7847
 	github.com/hertz-contrib/pprof v0.1.0
+	github.com/kitex-contrib/obs-opentelemetry/logging/zap v0.0.0-20221109071748-a433b0b57972
 	github.com/spf13/viper v1.14.0
 	google.golang.org/protobuf v1.28.1
 	gorm.io/driver/mysql v1.4.4
@@ -17,7 +18,12 @@ require (
 )
 
 require (
-	github.com/apache/thrift v0.15.0 // indirect
+	go.opentelemetry.io/otel v1.9.0 // indirect
+	go.opentelemetry.io/otel/trace v1.9.0 // indirect
+)
+
+require (
+	github.com/apache/thrift v0.13.0 // indirect
 	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/bytedance/go-tagexpr/v2 v2.9.2 // indirect
 	github.com/bytedance/gopkg v0.0.0-20220623074550-9d6d3df70991 // indirect

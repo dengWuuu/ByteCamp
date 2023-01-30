@@ -9,6 +9,7 @@ package main
 
 import (
 	"crypto/tls"
+	"douyin/cmd/api/rpc"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -20,7 +21,7 @@ import (
 
 // Init 初始化 API 配置
 func Init() {
-
+	rpc.InitRpc()
 }
 
 // InitHertz 初始化 Hertz

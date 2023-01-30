@@ -11,7 +11,7 @@ type UserSrvImpl struct{}
 // Register implements the UserSrvImpl interface.
 func (s *UserSrvImpl) Register(ctx context.Context, req *user.DouyinUserRegisterRequest) (resp *user.DouyinUserRegisterResponse, err error) {
 	// TODO: Your code here...
-	return
+	return &user.DouyinUserRegisterResponse{UserId: 1}, nil
 }
 
 // Login implements the UserSrvImpl interface.
