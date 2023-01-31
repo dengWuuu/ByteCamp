@@ -18,7 +18,7 @@ func (s *UserSrvImpl) Register(ctx context.Context, req *user.DouyinUserRegister
 		resp = pack.BuildUserRegisterResp(errno.ErrBind)
 		return resp, nil
 	}
-	err = service.NewRegisterService(ctx).Register(req)
+	insertUser, err := service.NewRegisterService(ctx).Register(req)
 	if err != nil {
 		resp = pack.BuildUserRegisterResp(err)
 		return resp, nil
@@ -26,6 +26,7 @@ func (s *UserSrvImpl) Register(ctx context.Context, req *user.DouyinUserRegister
 
 	//包装成功响应
 	resp = pack.BuildUserRegisterResp(errno.Success)
+	resp.UserId = int64(insertUser.ID)
 	return resp, nil
 }
 

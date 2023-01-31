@@ -15,8 +15,8 @@ func TestRpcRegistry(t *testing.T) {
 		log.Fatal(err)
 	}
 	req := &user.DouyinUserRegisterRequest{
-		Username: "",
-		Password: "",
+		Username: "sdhsghf",
+		Password: "afgafg",
 	}
 
 	resp, _ := c.Register(context.Background(), req)
