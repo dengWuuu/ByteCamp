@@ -77,7 +77,7 @@ func registerGroup(h *server.Hertz) {
 
 	user := douyin.Group("/user")
 	user.POST("/register/", userHandler.Register)
-	//user.GET("/",userHandler.)
+	user.GET("/", userHandler.GetUserById)
 }
 
 // 初始化 Hertz服务器和路由组（Router）
