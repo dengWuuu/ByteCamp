@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-29 21:58:00
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-01-31 23:11:12
+ * @LastEditTime: 2023-02-01 02:18:06
  * @FilePath: /ByteCamp/cmd/relation/handler.go
  * @Description: relation微服务handler
  *
@@ -33,8 +33,12 @@ func (s *RelationSrvImpl) RelationAction(ctx context.Context, req *relation.Douy
 	//2、入参校验
 	//3、调用service层，完成关注或取消关注
 	err = relationService.RelationAction(req)
+	if err != nil {
+		resp = pack.BuildRelationActionResponse(err)
+		return resp, nil
+	}
 	//4、返回结果
-	return pack.BuildRelationActionResponse(err), err
+	return pack.BuildRelationActionResponse(err), nil
 }
 
 // 登录用户关注的所有用户列表。

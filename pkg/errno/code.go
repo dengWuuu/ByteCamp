@@ -52,7 +52,7 @@ var (
 	ErrHttpIncompatibleVersion   = NewHttpErr(code.ErrIncompatibleVersion, 500, "Encoded hash is not in the correct format")
 )
 
-// Server Error
+// Server Error,用于RPC handler出错时传递给responseBuilder
 var (
 	Success         = NewErrNo(code.ErrSuccess, "OK")
 	ErrUnknown      = NewErrNo(code.ErrUnknown, "Internal server error")
