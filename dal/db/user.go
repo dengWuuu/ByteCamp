@@ -14,6 +14,7 @@ package db
 import (
 	"douyin/pkg/bcrypt"
 	"douyin/pkg/errno"
+
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
 	"gorm.io/plugin/optimisticlock"
@@ -64,4 +65,13 @@ func CheckUser(username string, password string) ([]*User, error) {
 		return nil, errno.ErrPasswordIncorrect
 	}
 	return users, nil
+}
+
+// 根据用户ID返回用户信息
+func GetUserById(userId int) (*User, error) {
+	var user *User
+	if err := DB.First(&user, userId).Error; err != nil {
+		return user, err
+	}
+	return user, nil
 }
