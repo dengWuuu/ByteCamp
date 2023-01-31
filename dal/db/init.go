@@ -1,6 +1,7 @@
 package db
 
 import (
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"log"
 	"os"
 	"time"
@@ -10,6 +11,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"gorm.io/plugin/dbresolver"
 )
 
 var DB *gorm.DB
@@ -43,6 +45,16 @@ func InitMysql() {
 	DB, dbErr = gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: newLogger})
 	if dbErr != nil {
 		log.Fatal("mysql连接失败")
+	}
+	err := DB.Use(
+		dbresolver.Register(dbresolver.Config{ /* xxx */ }).
+			SetConnMaxIdleTime(time.Hour).
+			SetConnMaxLifetime(24 * time.Hour).
+			SetMaxIdleConns(100).
+			SetMaxOpenConns(200))
+	if err != nil {
+		hlog.Fatalf("数据库连接池失败")
+		return
 	}
 }
 

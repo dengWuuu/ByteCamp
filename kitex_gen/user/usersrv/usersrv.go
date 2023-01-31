@@ -27,7 +27,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"GetUserById": kitex.NewMethodInfo(getUserByIdHandler, newGetUserByIdArgs, newGetUserByIdResult, false),
 	}
 	extra := map[string]interface{}{
-		"PackageName": "user",
+		"PackageName": "userHandler",
 	}
 	svcInfo := &kitex.ServiceInfo{
 		ServiceName:     serviceName,

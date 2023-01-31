@@ -1,6 +1,7 @@
 package main
 
 import (
+	"douyin/dal"
 	user "douyin/kitex_gen/user/usersrv"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -14,7 +15,12 @@ import (
 	"os"
 )
 
+// Init User RPC Server 端配置初始化
+func Init() {
+	dal.Init()
+}
 func main() {
+	Init()
 	//读取配置
 	path, err1 := os.Getwd()
 	if err1 != nil {

@@ -296,7 +296,7 @@ type Comment struct {
 	unknownFields protoimpl.UnknownFields
 
 	Id         int64      `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 视频评论id
-	User       *user.User `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`                               // 评论用户信息
+	User       *user.User `protobuf:"bytes,2,opt,name=userHandler,proto3" json:"userHandler,omitempty"`                 // 评论用户信息
 	Content    string     `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`                         // 评论内容
 	CreateDate string     `protobuf:"bytes,4,opt,name=create_date,json=createDate,proto3" json:"create_date,omitempty"` // 评论发布日期，格式 mm-dd
 }
@@ -453,12 +453,12 @@ var file_idl_comment_proto_goTypes = []interface{}{
 	(*DouyinCommentListRequest)(nil),    // 2: comment.douyin_comment_list_request
 	(*DouyinCommentListResponse)(nil),   // 3: comment.douyin_comment_list_response
 	(*Comment)(nil),                     // 4: comment.Comment
-	(*user.User)(nil),                   // 5: user.User
+	(*user.User)(nil),                   // 5: userHandler.User
 }
 var file_idl_comment_proto_depIdxs = []int32{
 	4, // 0: comment.douyin_comment_action_response.comment:type_name -> comment.Comment
 	4, // 1: comment.douyin_comment_list_response.comment_list:type_name -> comment.Comment
-	5, // 2: comment.Comment.user:type_name -> user.User
+	5, // 2: comment.Comment.userHandler:type_name -> userHandler.User
 	0, // 3: comment.CommentSrv.CommentAction:input_type -> comment.douyin_comment_action_request
 	2, // 4: comment.CommentSrv.CommentList:input_type -> comment.douyin_comment_list_request
 	1, // 5: comment.CommentSrv.CommentAction:output_type -> comment.douyin_comment_action_response
