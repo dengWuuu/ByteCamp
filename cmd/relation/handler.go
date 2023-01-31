@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-29 21:58:00
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-01-31 01:28:18
+ * @LastEditTime: 2023-01-31 14:46:47
  * @FilePath: /ByteCamp/cmd/relation/handler.go
  * @Description: relation微服务handler
  *
@@ -14,8 +14,8 @@ import (
 	"context"
 	"douyin/cmd/relation/service"
 	"douyin/dal/db"
-	"douyin/dal/pack"
 	relation "douyin/kitex_gen/relation"
+	"douyin/pack"
 )
 
 // RelationSrvImpl implements the last service interface defined in the IDL.
