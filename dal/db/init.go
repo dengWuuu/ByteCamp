@@ -16,10 +16,10 @@ var DB *gorm.DB
 var Redis *redis.Client
 var dbErr error
 
-func Init() {
+func Init(configPath string) {
 	viper.SetConfigName("app")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("../config")
+	viper.AddConfigPath(configPath)
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatal("读取配置文件失败")
