@@ -37,6 +37,15 @@ func GetUsersByUserName(userName string) ([]*User, error) {
 	return userList, nil
 }
 
+func GetUserById(userId int64) (*User, error) {
+	user := new(User)
+	err := DB.First(&user, userId).Error
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
 func CreateUser(user *User) error {
 	return DB.Create(user).Error
 }

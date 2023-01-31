@@ -24,3 +24,21 @@ func BuildUserRegisterResp(err error) *user.DouyinUserRegisterResponse {
 func getUserRegisterResp(err errno.ErrNo) *user.DouyinUserRegisterResponse {
 	return &user.DouyinUserRegisterResponse{StatusCode: int32(err.ErrCode), StatusMsg: &err.ErrMsg}
 }
+
+func BuildGetUserResp(err error) *user.DouyinUserResponse {
+	if err == nil {
+		return getGetUserResp(errno.Success)
+	}
+
+	e := errno.ErrNo{}
+	if errors.As(err, &e) {
+		return getGetUserResp(e)
+	}
+
+	s := errno.ErrUnknown.WithMessage(err.Error())
+	return getGetUserResp(s)
+}
+
+func getGetUserResp(err errno.ErrNo) *user.DouyinUserResponse {
+	return &user.DouyinUserResponse{StatusCode: int32(err.ErrCode), StatusMsg: &err.ErrMsg}
+}

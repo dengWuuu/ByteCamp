@@ -7,7 +7,7 @@ import (
 )
 
 // User 包装数据库的数据成为rpc中用的数据
-func User(ctx context.Context, u *db.User, fromID int64) (*user.User, error) {
+func User(ctx context.Context, u *db.User) (*user.User, error) {
 	if u == nil {
 		return &user.User{
 			Name: "无此用户",
@@ -40,7 +40,7 @@ func User(ctx context.Context, u *db.User, fromID int64) (*user.User, error) {
 func Users(ctx context.Context, us []*db.User, fromID int64) ([]*user.User, error) {
 	users := make([]*user.User, 0)
 	for _, u := range us {
-		user2, err := User(ctx, u, fromID)
+		user2, err := User(ctx, u)
 		if err != nil {
 			return nil, err
 		}
