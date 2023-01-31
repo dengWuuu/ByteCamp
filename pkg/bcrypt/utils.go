@@ -13,8 +13,8 @@ func PasswordHash(pwd string) (string, error) {
 }
 
 // PasswordVerify 密码验证: pwdVerify  同PHP函数 password_verify()
-func PasswordVerify(pwd, hash string) error {
+func PasswordVerify(pwd, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(pwd))
 
-	return err
+	return err == nil
 }

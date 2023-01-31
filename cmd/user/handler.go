@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
+	"douyin/cmd/user/pack"
 	"douyin/cmd/user/service"
 	user "douyin/kitex_gen/user"
-	"douyin/pack"
 	"douyin/pkg/errno"
 )
 

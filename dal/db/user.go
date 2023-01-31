@@ -12,6 +12,9 @@
 package db
 
 import (
+	"douyin/pkg/bcrypt"
+	"douyin/pkg/errno"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
 	"gorm.io/plugin/optimisticlock"
 )
@@ -36,4 +39,29 @@ func GetUsersByUserName(userName string) ([]*User, error) {
 
 func CreateUser(user *User) error {
 	return DB.Create(user).Error
+}
+
+// CheckUser 检验用户登录信息是否正确
+func CheckUser(username string, password string) ([]*User, error) {
+	//首先加密密码然后进行比对
+	p, err := bcrypt.PasswordHash(password)
+	if err != nil {
+		hlog.Fatalf("checkUser时加密失败")
+		return nil, err
+	}
+	users, err := GetUsersByUserName(username)
+	if err != nil {
+		hlog.Fatalf("根据用户名查找用户信息失败")
+		return nil, err
+	}
+	if len(users) == 0 {
+		return nil, errno.ErrUserNotFound
+	}
+	user := users[0]
+
+	passwordMatch := bcrypt.PasswordVerify(p, user.Password)
+	if !passwordMatch {
+		return nil, errno.ErrPasswordIncorrect
+	}
+	return users, nil
 }
