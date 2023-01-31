@@ -485,11 +485,11 @@ var file_idl_relation_proto_goTypes = []interface{}{
 	(*DouyinRelationFollowListResponse)(nil),   // 3: relation.douyin_relation_follow_list_response
 	(*DouyinRelationFollowerListRequest)(nil),  // 4: relation.douyin_relation_follower_list_request
 	(*DouyinRelationFollowerListResponse)(nil), // 5: relation.douyin_relation_follower_list_response
-	(*user.User)(nil),                          // 6: user.User
+	(*user.User)(nil),                          // 6: userHandler.User
 }
 var file_idl_relation_proto_depIdxs = []int32{
-	6, // 0: relation.douyin_relation_follow_list_response.user_list:type_name -> user.User
-	6, // 1: relation.douyin_relation_follower_list_response.user_list:type_name -> user.User
+	6, // 0: relation.douyin_relation_follow_list_response.user_list:type_name -> userHandler.User
+	6, // 1: relation.douyin_relation_follower_list_response.user_list:type_name -> userHandler.User
 	0, // 2: relation.RelationSrv.RelationAction:input_type -> relation.douyin_relation_action_request
 	2, // 3: relation.RelationSrv.RelationFollowList:input_type -> relation.douyin_relation_follow_list_request
 	4, // 4: relation.RelationSrv.RelationFollowerList:input_type -> relation.douyin_relation_follower_list_request

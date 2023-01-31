@@ -11,12 +11,15 @@
 
 package db
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"gorm.io/plugin/optimisticlock"
+)
 
 type Favorite struct {
 	gorm.Model
 	UserId  int
 	VideoId int
-	Version int
+	Version optimisticlock.Version
 	Cancel  bool
 }

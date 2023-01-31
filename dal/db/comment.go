@@ -12,6 +12,7 @@
 package db
 
 import (
+	"gorm.io/plugin/optimisticlock"
 	"time"
 
 	"gorm.io/gorm"
@@ -23,6 +24,6 @@ type Comment struct {
 	UserId    int
 	Content   string
 	CreatTime time.Time
-	Version   int
+	Version   optimisticlock.Version
 	Cancel    bool
 }

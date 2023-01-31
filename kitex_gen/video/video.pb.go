@@ -666,11 +666,11 @@ var file_idl_video_proto_goTypes = []interface{}{
 	(*DouyinPublishActionResponse)(nil), // 5: video.douyin_publish_action_response
 	(*DouyinPublishListRequest)(nil),    // 6: video.douyin_publish_list_request
 	(*DouyinPublishListResponse)(nil),   // 7: video.douyin_publish_list_response
-	(*user.User)(nil),                   // 8: user.User
+	(*user.User)(nil),                   // 8: userHandler.User
 }
 var file_idl_video_proto_depIdxs = []int32{
 	3, // 0: video.douyin_feed_response.video_list:type_name -> video.Video
-	8, // 1: video.Video.author:type_name -> user.User
+	8, // 1: video.Video.author:type_name -> userHandler.User
 	3, // 2: video.douyin_publish_list_response.video_list:type_name -> video.Video
 	4, // 3: video.VideoSrv.PublishAction:input_type -> video.douyin_publish_action_request
 	6, // 4: video.VideoSrv.PublishList:input_type -> video.douyin_publish_list_request

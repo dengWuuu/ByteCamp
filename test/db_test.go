@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-19 14:13:42
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-01-19 14:18:30
+ * @LastEditTime: 2023-01-31 01:21:03
  * @FilePath: /ByteCamp/test/db_test.go
  * @Description:
  *
@@ -19,7 +19,7 @@ import (
 )
 
 func TestInit(t *testing.T) {
-	db.Init()
+	db.Init("../config")
 	//测试redis
 	db.Redis.Set(context.Background(), "test", "test", time.Hour)
 	fmt.Printf("%v", db.Redis.Get(context.Background(), "test"))

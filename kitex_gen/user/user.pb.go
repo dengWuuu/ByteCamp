@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.28.1
 // 	protoc        v3.21.12
-// source: idl/user.proto
+// source: idl/userHandler.proto
 
 package user
 
@@ -335,7 +335,7 @@ type DouyinUserResponse struct {
 
 	StatusCode int32   `protobuf:"varint,1,opt,name=status_code,json=statusCode,proto3" json:"status_code,omitempty"`   // 状态码，0-成功，其他值-失败
 	StatusMsg  *string `protobuf:"bytes,2,opt,name=status_msg,json=statusMsg,proto3,oneof" json:"status_msg,omitempty"` // 返回状态描述
-	User       *User   `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`                                  // 用户信息
+	User       *User   `protobuf:"bytes,3,opt,name=userHandler,proto3" json:"userHandler,omitempty"`                    // 用户信息
 }
 
 func (x *DouyinUserResponse) Reset() {
@@ -565,22 +565,22 @@ func file_idl_user_proto_rawDescGZIP() []byte {
 
 var file_idl_user_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_idl_user_proto_goTypes = []interface{}{
-	(*DouyinUserRegisterRequest)(nil),  // 0: user.douyin_user_register_request
-	(*DouyinUserRegisterResponse)(nil), // 1: user.douyin_user_register_response
-	(*DouyinUserLoginRequest)(nil),     // 2: user.douyin_user_login_request
-	(*DouyinUserLoginResponse)(nil),    // 3: user.douyin_user_login_response
-	(*DouyinUserRequest)(nil),          // 4: user.douyin_user_request
-	(*DouyinUserResponse)(nil),         // 5: user.douyin_user_response
-	(*User)(nil),                       // 6: user.User
+	(*DouyinUserRegisterRequest)(nil),  // 0: userHandler.douyin_user_register_request
+	(*DouyinUserRegisterResponse)(nil), // 1: userHandler.douyin_user_register_response
+	(*DouyinUserLoginRequest)(nil),     // 2: userHandler.douyin_user_login_request
+	(*DouyinUserLoginResponse)(nil),    // 3: userHandler.douyin_user_login_response
+	(*DouyinUserRequest)(nil),          // 4: userHandler.douyin_user_request
+	(*DouyinUserResponse)(nil),         // 5: userHandler.douyin_user_response
+	(*User)(nil),                       // 6: userHandler.User
 }
 var file_idl_user_proto_depIdxs = []int32{
-	6, // 0: user.douyin_user_response.user:type_name -> user.User
-	0, // 1: user.UserSrv.Register:input_type -> user.douyin_user_register_request
-	2, // 2: user.UserSrv.Login:input_type -> user.douyin_user_login_request
-	4, // 3: user.UserSrv.GetUserById:input_type -> user.douyin_user_request
-	1, // 4: user.UserSrv.Register:output_type -> user.douyin_user_register_response
-	3, // 5: user.UserSrv.Login:output_type -> user.douyin_user_login_response
-	5, // 6: user.UserSrv.GetUserById:output_type -> user.douyin_user_response
+	6, // 0: userHandler.douyin_user_response.userHandler:type_name -> userHandler.User
+	0, // 1: userHandler.UserSrv.Register:input_type -> userHandler.douyin_user_register_request
+	2, // 2: userHandler.UserSrv.Login:input_type -> userHandler.douyin_user_login_request
+	4, // 3: userHandler.UserSrv.GetUserById:input_type -> userHandler.douyin_user_request
+	1, // 4: userHandler.UserSrv.Register:output_type -> userHandler.douyin_user_register_response
+	3, // 5: userHandler.UserSrv.Login:output_type -> userHandler.douyin_user_login_response
+	5, // 6: userHandler.UserSrv.GetUserById:output_type -> userHandler.douyin_user_response
 	4, // [4:7] is the sub-list for method output_type
 	1, // [1:4] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
