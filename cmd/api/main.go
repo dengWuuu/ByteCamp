@@ -32,7 +32,7 @@ func InitHertz() *server.Hertz {
 	}
 	viper.SetConfigName("apiConfig")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(path + "\\config")
+	viper.AddConfigPath(path + "/config")
 	errV := viper.ReadInConfig()
 	if errV != nil {
 		hlog.Fatal("启动http服务器时读取配置文件失败")

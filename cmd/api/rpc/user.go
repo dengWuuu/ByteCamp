@@ -25,10 +25,10 @@ func initUserRpc() {
 	}
 	viper.SetConfigName("userService")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(path + "\\config")
+	viper.AddConfigPath(path + "/config")
 	errV := viper.ReadInConfig()
 	if errV != nil {
-		hlog.Fatal("启动rpc用户服务器时读取配置文件失败")
+		hlog.Fatal("启动rpc客户端时读取配置文件失败")
 		return
 	}
 	userSrvPath := viper.GetString("Server.Address") + ":" + viper.GetString("Server.Port")
