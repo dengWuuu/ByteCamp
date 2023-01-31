@@ -12,6 +12,7 @@ require (
 	github.com/hertz-contrib/pprof v0.1.0
 	github.com/kitex-contrib/obs-opentelemetry/logging/zap v0.0.0-20221109071748-a433b0b57972
 	github.com/spf13/viper v1.14.0
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 	google.golang.org/protobuf v1.28.1
 	gorm.io/driver/mysql v1.4.4
 	gorm.io/gorm v1.24.2
