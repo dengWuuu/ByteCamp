@@ -25,7 +25,7 @@ var (
 	relationService = service.NewRelationService(context.Background())
 )
 
-// 登录用户对其他用户进行关注或取消关注。
+// RelationAction 登录用户对其他用户进行关注或取消关注。
 func (s *RelationSrvImpl) RelationAction(ctx context.Context, req *relation.DouyinRelationActionRequest) (resp *relation.DouyinRelationActionResponse, err error) {
 	// TODO: Your code here...
 	db.Init("../../config")
