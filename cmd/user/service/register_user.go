@@ -4,6 +4,7 @@ import (
 	"context"
 	"douyin/dal/db"
 	"douyin/kitex_gen/user"
+	"douyin/pkg/bcrypt"
 	"douyin/pkg/errno"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
@@ -25,6 +26,12 @@ func (registerService RegisterService) Register(req *user.DouyinUserRegisterRequ
 	if len(userLists) != 0 {
 		return errno.ErrUserAlreadyExist
 	}
+	//加密密码信息
+	p, err := bcrypt.PasswordHash(req.Password)
+	if err != nil {
+		klog.Fatalf("加密密码出现异常")
+		return err
+	}
 	//不存在该用户 直接插入该用户数据
-	return db.CreateUser(&db.User{Name: req.Username, Password: req.Password})
+	return db.CreateUser(&db.User{Name: req.Username, Password: p})
 }
