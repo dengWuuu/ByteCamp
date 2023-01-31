@@ -14,5 +14,5 @@ package dal
 import "douyin/dal/db"
 
 func Init() {
-	db.Init("../../config")
+	db.Init("../config")
 }
