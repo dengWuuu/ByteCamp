@@ -24,3 +24,16 @@ type User struct {
 	FollowerCount  int `gorm:"default:0" json:"follower_count"`
 	Version        optimisticlock.Version
 }
+
+func GetUsersByUserName(userName string) ([]*User, error) {
+	userList := make([]*User, 0)
+	err := DB.Where("name = ?", userName).Find(&userList).Error
+	if err != nil {
+		return nil, err
+	}
+	return userList, nil
+}
+
+func CreateUser(user *User) error {
+	return DB.Create(user).Error
+}

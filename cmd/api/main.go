@@ -9,8 +9,8 @@ package main
 
 import (
 	"crypto/tls"
+	"douyin/cmd/api/handlers/userHandler"
 	"douyin/cmd/api/rpc"
-	"douyin/dal"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -20,10 +20,8 @@ import (
 	"os"
 )
 
-// Init 初始化 API 配置
 func Init() {
-	dal.Init()
-	rpc.InitRpc()
+	rpc.InitRpc() //初始化rpc客户端
 }
 
 // InitHertz 初始化 Hertz
@@ -73,9 +71,12 @@ func InitHertz() *server.Hertz {
 	return h
 }
 
-// 注册 Router组
+// registerGroup 注册 Router组
 func registerGroup(h *server.Hertz) {
+	douyin := h.Group("/douyin")
 
+	user := douyin.Group("/user")
+	user.POST("/register/", userHandler.Register)
 }
 
 // 初始化 Hertz服务器和路由组（Router）

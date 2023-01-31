@@ -11,8 +11,16 @@
 
 package dal
 
-import "douyin/dal/db"
+import (
+	"douyin/dal/db"
+	"os"
+)
 
 func Init() {
-	db.Init("../config")
+	path, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	db.Init(path + "\\config")
 }

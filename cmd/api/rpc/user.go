@@ -4,6 +4,7 @@ import (
 	"context"
 	"douyin/kitex_gen/user"
 	"douyin/kitex_gen/user/usersrv"
+	"douyin/pkg/errno"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
@@ -51,5 +52,11 @@ func initUserRpc() {
 // Register 注册方法，传递注册上下文，并且获取prc响应
 func Register(ctx context.Context, req *user.DouyinUserRegisterRequest) (resp *user.DouyinUserRegisterResponse, err error) {
 	resp, err = userClient.Register(ctx, req)
-	return resp, err
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 0 {
+		return nil, errno.NewErrNo(int(resp.StatusCode), *resp.StatusMsg)
+	}
+	return resp, nil
 }

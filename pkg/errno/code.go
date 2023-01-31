@@ -4,7 +4,7 @@ import code "github.com/a76yyyy/ErrnoCode"
 
 // HTTP Error
 var (
-	HttpSuccess                  = NewHttpErr(code.ErrSuccess, 200, "OK")
+	HttpSuccess                  = NewHttpErr(200, 200, "OK")
 	ErrHttpUnknown               = NewHttpErr(code.ErrUnknown, 500, "Internal server error")
 	ErrHttpBind                  = NewHttpErr(code.ErrBind, 400, "Error occurred while binding the request body to the struct")
 	ErrHttpValidation            = NewHttpErr(code.ErrValidation, 400, "Validation failed")
@@ -54,7 +54,7 @@ var (
 
 // Server Error
 var (
-	Success         = NewErrNo(code.ErrSuccess, "OK")
+	Success         = NewErrNo(200, "OK")
 	ErrUnknown      = NewErrNo(code.ErrUnknown, "Internal server error")
 	ErrBind         = NewErrNo(code.ErrBind, "Error occurred while binding the request body to the struct")
 	ErrValidation   = NewErrNo(code.ErrValidation, "Validation failed")
