@@ -23,3 +23,6 @@ type Favorite struct {
 	Version optimisticlock.Version
 	Cancel  bool
 }
+
+
+// 点赞操作，同时要将点赞
