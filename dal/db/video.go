@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-19 11:27:35
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-01-19 14:22:42
+ * @LastEditTime: 2023-02-01 22:15:54
  * @FilePath: /ByteCamp/dal/db/video.go
  * @Description: 视频实体类及相关crud
  *
@@ -12,18 +12,21 @@
 package db
 
 import (
-	"gorm.io/plugin/optimisticlock"
 	"time"
+
+	"gorm.io/plugin/optimisticlock"
 
 	"gorm.io/gorm"
 )
 
 type Video struct {
 	gorm.Model
-	AuthorId   int
-	PlayUrl    string
-	CoverUrl   string
-	UploadTime time.Time
-	Title      string
-	Version    optimisticlock.Version
+	AuthorId      int
+	PlayUrl       string
+	CoverUrl      string
+	UploadTime    time.Time
+	Title         string
+	Version       optimisticlock.Version
+	FavoriteCount int64
+	CommentCount  int64
 }
