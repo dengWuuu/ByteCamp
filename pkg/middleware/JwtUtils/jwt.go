@@ -1,4 +1,4 @@
-package middleware
+package JwtUtils
 
 import (
 	"context"
@@ -17,15 +17,22 @@ var (
 	IdentityKey   = "identity"
 )
 
+func GetUserIdFromJwtToken(ctx context.Context, c *app.RequestContext) uint {
+	claims := jwt.ExtractClaims(ctx, c)
+	userMap := claims[jwt.IdentityKey].(map[string]interface{})
+	userId := uint(userMap["ID"].(float64))
+	return userId
+}
+
 func InitJwt() {
 	var err error
 	JwtMiddleware, err = jwt.New(&jwt.HertzJWTMiddleware{
-		Realm:            "DouYin jwt",
+		Realm:            "DouYin JwtUtils",
 		SigningAlgorithm: "HS256",
 		Key:              []byte("secret key"),
 		Timeout:          time.Hour,
 		MaxRefresh:       time.Hour,
-		TokenLookup:      "header: Authorization, query: token, cookie: jwt",
+		TokenLookup:      "header: Authorization, query: token, cookie: JwtUtils",
 		TokenHeadName:    "Bearer",
 		//构造登录成功的返回请求
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
@@ -81,7 +88,7 @@ func InitJwt() {
 			return jwt.MapClaims{}
 		},
 		HTTPStatusMessageFunc: func(e error, ctx context.Context, c *app.RequestContext) string {
-			hlog.CtxErrorf(ctx, "jwt biz err = %+v", e.Error())
+			hlog.CtxErrorf(ctx, "JwtUtils biz err = %+v", e.Error())
 			return e.Error()
 		},
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {

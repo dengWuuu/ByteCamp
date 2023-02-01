@@ -13,7 +13,7 @@ import (
 	"douyin/cmd/api/handlers/userHandler"
 	"douyin/cmd/api/rpc"
 	"douyin/dal"
-	"douyin/pkg/middleware"
+	"douyin/pkg/middleware/JwtUtils"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -73,8 +73,8 @@ func InitHertz() *server.Hertz {
 	h := server.Default(opts...)
 
 	//JWT中间键初始化
-	middleware.InitJwt()
-	err = middleware.JwtMiddleware.MiddlewareInit()
+	JwtUtils.InitJwt()
+	err = JwtUtils.JwtMiddleware.MiddlewareInit()
 	if err != nil {
 		hlog.Fatalf("Jwt初始化失败")
 		return nil
@@ -86,14 +86,17 @@ func InitHertz() *server.Hertz {
 func registerGroup(h *server.Hertz) {
 	douyin := h.Group("/douyin")
 
-	//user模块下无需权限认证的接口
 	user := douyin.Group("/user")
-	user.POST("/register/", userHandler.Register)
-	user.POST("/login/", middleware.JwtMiddleware.LoginHandler)
-	//user模块下需要认证权限的接口
-	user.Use(middleware.JwtMiddleware.MiddlewareFunc())
 	{
-		user.GET("/", userHandler.GetUserById)
+		//user模块下无需权限认证的接口
+		user.POST("/register/", userHandler.Register)
+		user.POST("/login/", JwtUtils.JwtMiddleware.LoginHandler)
+
+		//user模块下需要认证权限的接口
+		user.Use(JwtUtils.JwtMiddleware.MiddlewareFunc())
+		{
+			user.GET("/", userHandler.GetUserById)
+		}
 	}
 
 	//relation模块接口
