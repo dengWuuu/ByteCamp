@@ -53,7 +53,7 @@ func CreateUser(user *User) error {
 // CheckUser 检验用户登录信息是否正确
 func CheckUser(username string, password string) ([]*User, error) {
 	//首先加密密码然后进行比对
-	p, err := bcrypt.PasswordHash(password)
+	hash, err := bcrypt.PasswordHash(password)
 	if err != nil {
 		hlog.Fatalf("checkUser时加密失败")
 		return nil, err
@@ -66,9 +66,9 @@ func CheckUser(username string, password string) ([]*User, error) {
 	if len(users) == 0 {
 		return nil, errno.ErrUserNotFound
 	}
-	user := users[0]
+	//user := users[0]
 
-	passwordMatch := bcrypt.PasswordVerify(p, user.Password)
+	passwordMatch := bcrypt.PasswordVerify(password, hash)
 	if !passwordMatch {
 		return nil, errno.ErrPasswordIncorrect
 	}
