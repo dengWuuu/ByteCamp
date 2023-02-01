@@ -63,5 +63,4 @@ type CommentActionParam struct {
 type CommentListParam struct {
 	Token   string `json:"token,omitempty"`    // 用户鉴权token
 	VideoId int64  `json:"video_id,omitempty"` // 视频id
-
 }
