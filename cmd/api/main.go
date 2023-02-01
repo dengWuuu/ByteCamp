@@ -9,15 +9,17 @@ package main
 
 import (
 	"crypto/tls"
+	relationhandler "douyin/cmd/api/handlers/relationHandler"
 	"douyin/cmd/api/handlers/userHandler"
 	"douyin/cmd/api/rpc"
+	"os"
+
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	hertzzap "github.com/hertz-contrib/logger/zap"
 	"github.com/hertz-contrib/pprof"
 	"github.com/spf13/viper"
-	"os"
 )
 
 func Init() {
@@ -78,6 +80,12 @@ func registerGroup(h *server.Hertz) {
 	user := douyin.Group("/user")
 	user.POST("/register/", userHandler.Register)
 	user.GET("/", userHandler.GetUserById)
+
+	//relation模块接口
+	relation := douyin.Group("/relation")
+	{
+		relation.POST("/action", relationhandler.RelationAction)
+	}
 }
 
 // 初始化 Hertz服务器和路由组（Router）

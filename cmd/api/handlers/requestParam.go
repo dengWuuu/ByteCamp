@@ -21,3 +21,9 @@ type UserParam struct {
 	UserId int64  `json:"user_id,omitempty"` // 用户id
 	Token  string `json:"token,omitempty"`   // 用户鉴权token
 }
+
+type RelationActionParam struct {
+	Token      string `json:"token"`
+	ToUserId   int64  `json:"to_user_id"`
+	ActionType int32  `json:"action_type"`
+}
