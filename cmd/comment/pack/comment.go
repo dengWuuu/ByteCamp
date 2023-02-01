@@ -14,7 +14,7 @@ func Comment(ctx context.Context, m *db.Comment) (*comment.Comment, error) {
 		return &comment.Comment{Content: "no content"}, nil
 	}
 	// 获取对应的用户数据
-	u, err := db.GetUserById(m.UserId)
+	u, err := db.GetUserById(int64(m.UserId))
 	if err != nil || u == nil {
 		return &comment.Comment{Content: "no user"}, nil
 	}

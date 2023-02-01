@@ -9,14 +9,12 @@ package main
 
 import (
 	"crypto/tls"
+	"douyin/cmd/api/handlers/commentHandler"
 	relationhandler "douyin/cmd/api/handlers/relationHandler"
 	"douyin/cmd/api/handlers/userHandler"
 	"douyin/cmd/api/rpc"
 	"douyin/dal"
 	"douyin/pkg/middleware/JwtUtils"
-	"douyin/cmd/api/handlers/commentHandler"
-	"douyin/cmd/api/handlers/userHandler"
-	"douyin/cmd/api/rpc"
 	"os"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
