@@ -32,8 +32,7 @@ type UserParam struct {
 	Token  string `json:"token,omitempty"`   // 用户鉴权token
 }
 
-
-//relation 微服务参数
+// relation 微服务参数
 type RelationActionParam struct {
 	Token      string `json:"token"`
 	ToUserId   int64  `json:"to_userid"`
@@ -48,6 +47,7 @@ type FollowListParam struct {
 type FollowerListParam struct {
 	UserId int64  `json:"user_id"`
 	Token  string `json:"token"`
+}
 
 // comment操作服务输入参数
 type CommentActionParam struct {
