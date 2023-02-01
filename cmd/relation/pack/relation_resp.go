@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-31 00:49:20
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-01 02:08:39
+ * @LastEditTime: 2023-02-01 15:50:11
  * @FilePath: /ByteCamp/cmd/relation/pack/relation_resp.go
  * @Description:
  *
@@ -13,6 +13,7 @@ package pack
 
 import (
 	relation "douyin/kitex_gen/relation"
+	"douyin/kitex_gen/user"
 	"douyin/pkg/errno"
 	"errors"
 )
@@ -38,5 +39,27 @@ func getRelationActionResp(err errno.ErrNo) *relation.DouyinRelationActionRespon
 	return &relation.DouyinRelationActionResponse{
 		StatusCode: int32(err.ErrCode),
 		StatusMsg:  &err.ErrMsg,
+	}
+}
+
+func BuildRelationFollowingListResp(users []*user.User, err error) *relation.DouyinRelationFollowListResponse {
+	if err == nil {
+		return getRelationFollowingListResp(users, errno.Success)
+	} else {
+		e := errno.ErrNo{}
+		if errors.As(err, &e) {
+			return getRelationFollowingListResp(users, e)
+		}
+
+		s := errno.ErrUnknown.WithMessage(err.Error())
+		return getRelationFollowingListResp(users, s)
+	}
+}
+
+func getRelationFollowingListResp(users []*user.User, err errno.ErrNo) *relation.DouyinRelationFollowListResponse {
+	return &relation.DouyinRelationFollowListResponse{
+		StatusCode: int32(err.ErrCode),
+		StatusMsg:  &err.ErrMsg,
+		UserList:   users,
 	}
 }

@@ -100,6 +100,7 @@ func registerGroup(h *server.Hertz) {
 	relation := douyin.Group("/relation")
 	{
 		relation.POST("/action", relationhandler.RelationAction)
+		relation.GET("/follow/list", relationhandler.FollowList)
 	}
 }
 
