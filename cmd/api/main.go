@@ -14,8 +14,6 @@ import (
 	"douyin/cmd/api/rpc"
 	"douyin/dal"
 	"douyin/pkg/middleware"
-	"os"
-
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -91,18 +89,17 @@ func registerGroup(h *server.Hertz) {
 	//user模块下无需权限认证的接口
 	user := douyin.Group("/user")
 	user.POST("/register/", userHandler.Register)
-	user.GET("/", userHandler.GetUserById)
-
-	//relation模块接口
-	relation := douyin.Group("/relation")
-	{
-		relation.POST("/action", relationhandler.RelationAction)
-	}
 	user.POST("/login/", middleware.JwtMiddleware.LoginHandler)
 	//user模块下需要认证权限的接口
 	user.Use(middleware.JwtMiddleware.MiddlewareFunc())
 	{
 		user.GET("/", userHandler.GetUserById)
+	}
+
+	//relation模块接口
+	relation := douyin.Group("/relation")
+	{
+		relation.POST("/action", relationhandler.RelationAction)
 	}
 }
 
