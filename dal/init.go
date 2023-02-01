@@ -22,5 +22,5 @@ func Init() {
 		panic(err)
 	}
 
-	db.Init(path + "\\config")
+	db.Init(path + "/config")
 }

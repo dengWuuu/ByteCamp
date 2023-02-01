@@ -3,6 +3,10 @@ package main
 import (
 	"douyin/dal"
 	user "douyin/kitex_gen/user/usersrv"
+	"log"
+	"net"
+	"os"
+
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
@@ -10,9 +14,6 @@ import (
 	"github.com/cloudwego/kitex/server"
 	kitexzap "github.com/kitex-contrib/obs-opentelemetry/logging/zap"
 	"github.com/spf13/viper"
-	"log"
-	"net"
-	"os"
 )
 
 // Init User RPC Server 端配置初始化
@@ -28,7 +29,7 @@ func main() {
 	}
 	viper.SetConfigName("userService")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(path + "\\config")
+	viper.AddConfigPath(path + "/config")
 	errV := viper.ReadInConfig()
 	if errV != nil {
 		hlog.Fatal("启动rpc用户服务器时读取配置文件失败")
