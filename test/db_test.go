@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-19 14:13:42
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-01 16:35:57
+ * @LastEditTime: 2023-02-01 22:16:17
  * @FilePath: /ByteCamp/test/db_test.go
  * @Description:
  *
@@ -31,5 +31,5 @@ func TestInit(t *testing.T) {
 	db.DB.Where("id in ?", ids).Find(&users)
 	fmt.Printf("%v", users)
 	//迁移数据库
-	// db.DB.AutoMigrate(&db.User{}, &db.Video{}, &db.Favorite{}, &db.Follow{}, &db.Comment{})
+	db.DB.AutoMigrate(&db.Video{})
 }
