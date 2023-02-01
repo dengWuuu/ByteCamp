@@ -11,6 +11,8 @@ import (
 	"crypto/tls"
 	"douyin/cmd/api/handlers/userHandler"
 	"douyin/cmd/api/rpc"
+	"douyin/dal"
+	"douyin/pkg/middleware"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -68,6 +70,14 @@ func InitHertz() *server.Hertz {
 	}
 	// Hertz
 	h := server.Default(opts...)
+
+	//JWT中间键初始化
+	middleware.InitJwt()
+	err = middleware.JwtMiddleware.MiddlewareInit()
+	if err != nil {
+		hlog.Fatalf("Jwt初始化失败")
+		return nil
+	}
 	return h
 }
 
@@ -75,13 +85,21 @@ func InitHertz() *server.Hertz {
 func registerGroup(h *server.Hertz) {
 	douyin := h.Group("/douyin")
 
+	//user模块下无需权限认证的接口
 	user := douyin.Group("/user")
 	user.POST("/register/", userHandler.Register)
-	user.GET("/", userHandler.GetUserById)
+	user.POST("/login/", middleware.JwtMiddleware.LoginHandler)
+	//user模块下需要认证权限的接口
+	user.Use(middleware.JwtMiddleware.MiddlewareFunc())
+	{
+		user.GET("/", userHandler.GetUserById)
+	}
 }
 
 // 初始化 Hertz服务器和路由组（Router）
 func main() {
+	//数据库初始化
+	dal.Init()
 	//设置系统日志框架 使用zap
 	logger := hertzzap.NewLogger()
 	hlog.SetLogger(logger)

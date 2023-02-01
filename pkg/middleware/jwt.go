@@ -20,18 +20,29 @@ var (
 func InitJwt() {
 	var err error
 	JwtMiddleware, err = jwt.New(&jwt.HertzJWTMiddleware{
-		Realm:         "test zone",
-		Key:           []byte("secret key"),
-		Timeout:       time.Hour,
-		MaxRefresh:    time.Hour,
-		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
-		TokenHeadName: "Bearer",
+		Realm:            "DouYin jwt",
+		SigningAlgorithm: "HS256",
+		Key:              []byte("secret key"),
+		Timeout:          time.Hour,
+		MaxRefresh:       time.Hour,
+		TokenLookup:      "header: Authorization, query: token, cookie: jwt",
+		TokenHeadName:    "Bearer",
+		//构造登录成功的返回请求
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
+			//从token中获取用户id
+			Token, err := JwtMiddleware.ParseTokenString(token)
+			claims := jwt.ExtractClaimsFromToken(Token)
+			userMap, _ := claims[IdentityKey].(jwt.MapClaims)
+			if err != nil {
+				hlog.Fatalf("不能从Jwt中获取claims")
+				c.JSON(10086, "登录请求响应失败")
+			}
 			c.JSON(http.StatusOK, utils.H{
-				"code":    code,
-				"token":   token,
-				"expire":  expire.Format(time.RFC3339),
-				"message": "success",
+				"status_code": 0,
+				"token":       token,
+				"user_id":     userMap["ID"],
+				"status_msg":  "success",
+				"expire_time": expire.Format(time.RFC3339),
 			})
 		},
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
@@ -40,6 +51,7 @@ func InitJwt() {
 				Password string `json:"password" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 			}
 			if err := c.BindAndValidate(&loginStruct); err != nil {
+				hlog.Infof("jwt认证用户数据绑定失败")
 				return nil, err
 			}
 
@@ -54,16 +66,16 @@ func InitJwt() {
 			return users[0], nil
 		},
 		IdentityKey: IdentityKey,
+		//登录成功后获取请求中jwt中存储用户的id
 		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
 			claims := jwt.ExtractClaims(ctx, c)
-			return &db.User{
-				Name: claims[IdentityKey].(string),
-			}
+			return claims[IdentityKey].(map[string]interface{})
 		},
+		//登录成功 token中放入userId信息
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*db.User); ok {
 				return jwt.MapClaims{
-					IdentityKey: v.Name,
+					IdentityKey: v,
 				}
 			}
 			return jwt.MapClaims{}
