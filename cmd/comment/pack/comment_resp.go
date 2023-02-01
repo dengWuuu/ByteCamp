@@ -6,31 +6,42 @@ import (
 	"errors"
 )
 
-func BuildBaseCommentResp(m *comment.Comment, err error) *comment.DouyinCommentActionResponse {
+// 根据错误信息包装RPC返回数据结构体
+func BuildCommentActionResp(err error) *comment.DouyinCommentActionResponse {
 	if err == nil {
-		return baseSuccessResp(m, errno.Success)
+		return commentActionResp(errno.Success)
 	}
 	e := errno.ErrNo{}
-	//如果是定义的错误则打印
+	// 查看是否在错误链上能够查询到
 	if errors.As(err, &e) {
-		return baseFailResp(e)
+		return commentActionResp(e)
 	}
-
-	s := errno.ErrUnknown.WithMessage(err.Error())
-	return baseFailResp(s)
+	// 未知错误，提出错误信息包装为新的未知错误
+	e = errno.ErrUnknown.WithMessage(err.Error())
+	return commentActionResp(e)
+}
+func BuildCommentListResp(err error) *comment.DouyinCommentListResponse {
+	if err == nil {
+		return commentListResp(errno.Success)
+	}
+	e := errno.ErrNo{}
+	if errors.As(err, &e) {
+		return commentListResp(e)
+	}
+	e = errno.ErrUnknown.WithMessage(err.Error())
+	return commentListResp(e)
 }
 
-func baseSuccessResp(m *comment.Comment, err errno.ErrNo) *comment.DouyinCommentActionResponse {
+// 自定义的错误来封装响应结果
+func commentActionResp(err errno.ErrNo) *comment.DouyinCommentActionResponse {
 	return &comment.DouyinCommentActionResponse{
 		StatusCode: int32(err.ErrCode),
 		StatusMsg:  &err.ErrMsg,
-		Comment:    m, // 没有评论内容
 	}
 }
-func baseFailResp(err errno.ErrNo) *comment.DouyinCommentActionResponse {
-	return &comment.DouyinCommentActionResponse{
+func commentListResp(err errno.ErrNo) *comment.DouyinCommentListResponse {
+	return &comment.DouyinCommentListResponse{
 		StatusCode: int32(err.ErrCode),
 		StatusMsg:  &err.ErrMsg,
-		Comment:    nil,
 	}
 }
