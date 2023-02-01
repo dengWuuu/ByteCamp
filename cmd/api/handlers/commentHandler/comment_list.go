@@ -8,7 +8,6 @@ import (
 	"douyin/kitex_gen/comment"
 	"douyin/pkg/errno"
 	"encoding/json"
-	"fmt"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -41,9 +40,6 @@ func CommentList(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		handlers.SendResponse(c, pack.BuildCommentListResp(errno.ConvertErr(err)))
 		return
-	}
-	if len(rpcResp.CommentList) == 0 {
-		fmt.Println("获取的内容为空")
 	}
 	handlers.SendResponse(c, rpcResp)
 }
