@@ -108,12 +108,13 @@ func registerGroup(h *server.Hertz) {
 		relation.GET("/follow/list", relationhandler.FollowList)
 		relation.GET("/follower/list", relationhandler.FollowerList)
 	}
-	user.POST("/register/", userHandler.Register)
 
 	// comment模块http接口
 	comment := douyin.Group("/comment")
-	comment.POST("/action/", commentHandler.CommentAction)
-	comment.GET("/list/", commentHandler.CommentList)
+	{
+		comment.POST("/action/", commentHandler.CommentAction)
+		comment.GET("/list/", commentHandler.CommentList)
+	}
 }
 
 // 初始化 Hertz服务器和路由组（Router）
