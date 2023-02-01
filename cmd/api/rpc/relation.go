@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-01 02:20:30
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-01 14:03:16
+ * @LastEditTime: 2023-02-01 18:38:22
  * @FilePath: /ByteCamp/cmd/api/rpc/relation.go
  * @Description: 用于初始化relation微服务的client,并且通过relation微服务的client调用relation微服务的方法从而实现api中http接口
  *
@@ -60,6 +60,7 @@ func initRelationRpc() {
 	relationClient = c
 }
 
+//用户关注或取消关注
 func RelationAction(ctx context.Context, req *relation.DouyinRelationActionRequest) (resp *relation.DouyinRelationActionResponse, err error) {
 	//1、调用rpc接口完成操作,注意需要判断RPC调用是否成功
 	resp, err = relationClient.RelationAction(ctx, req)
@@ -67,6 +68,30 @@ func RelationAction(ctx context.Context, req *relation.DouyinRelationActionReque
 		return nil, err
 	}
 	//2、检查resp是否合法
+	if resp.StatusCode != 0 {
+		return nil, errno.NewErrNo(int(resp.StatusCode), *resp.StatusMsg)
+	}
+	return resp, nil
+}
+
+//用户关注列表
+func FollowList(ctx context.Context, req *relation.DouyinRelationFollowListRequest) (resp *relation.DouyinRelationFollowListResponse, err error) {
+	resp, err = relationClient.RelationFollowList(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 0 {
+		return nil, errno.NewErrNo(int(resp.StatusCode), *resp.StatusMsg)
+	}
+	return resp, nil
+}
+
+//用户粉丝列表
+func FollowerList(ctx context.Context, req *relation.DouyinRelationFollowerListRequest) (resp *relation.DouyinRelationFollowerListResponse, err error) {
+	resp, err = relationClient.RelationFollowerList(ctx, req)
+	if err != nil {
+		return nil, err
+	}
 	if resp.StatusCode != 0 {
 		return nil, errno.NewErrNo(int(resp.StatusCode), *resp.StatusMsg)
 	}
