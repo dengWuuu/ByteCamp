@@ -9,6 +9,11 @@ package main
 
 import (
 	"crypto/tls"
+	relationhandler "douyin/cmd/api/handlers/relationHandler"
+	"douyin/cmd/api/handlers/userHandler"
+	"douyin/cmd/api/rpc"
+	"douyin/dal"
+	"douyin/pkg/middleware/JwtUtils"
 	"douyin/cmd/api/handlers/commentHandler"
 	"douyin/cmd/api/handlers/userHandler"
 	"douyin/cmd/api/rpc"
@@ -34,7 +39,7 @@ func InitHertz() *server.Hertz {
 	}
 	viper.SetConfigName("apiConfig")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(path + "\\config")
+	viper.AddConfigPath(path + "/config")
 	errV := viper.ReadInConfig()
 	if errV != nil {
 		hlog.Fatal("启动http服务器时读取配置文件失败")
@@ -70,6 +75,14 @@ func InitHertz() *server.Hertz {
 	}
 	// Hertz
 	h := server.Default(opts...)
+
+	//JWT中间键初始化
+	JwtUtils.InitJwt()
+	err = JwtUtils.JwtMiddleware.MiddlewareInit()
+	if err != nil {
+		hlog.Fatalf("Jwt初始化失败")
+		return nil
+	}
 	return h
 }
 
@@ -78,6 +91,25 @@ func registerGroup(h *server.Hertz) {
 	douyin := h.Group("/douyin")
 
 	user := douyin.Group("/user")
+	{
+		//user模块下无需权限认证的接口
+		user.POST("/register/", userHandler.Register)
+		user.POST("/login/", JwtUtils.JwtMiddleware.LoginHandler)
+
+		//user模块下需要认证权限的接口
+		user.Use(JwtUtils.JwtMiddleware.MiddlewareFunc())
+		{
+			user.GET("/", userHandler.GetUserById)
+		}
+	}
+
+	//relation模块接口
+	relation := douyin.Group("/relation")
+	{
+		relation.POST("/action", relationhandler.RelationAction)
+		relation.GET("/follow/list", relationhandler.FollowList)
+		relation.GET("/follower/list", relationhandler.FollowerList)
+	}
 	user.POST("/register/", userHandler.Register)
 
 	// comment模块http接口
@@ -88,6 +120,8 @@ func registerGroup(h *server.Hertz) {
 
 // 初始化 Hertz服务器和路由组（Router）
 func main() {
+	//数据库初始化
+	dal.Init()
 	//设置系统日志框架 使用zap
 	logger := hertzzap.NewLogger()
 	hlog.SetLogger(logger)

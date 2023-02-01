@@ -17,22 +17,27 @@ type RegisterService struct {
 func NewRegisterService(ctx context.Context) RegisterService {
 	return RegisterService{ctx: ctx}
 }
-func (registerService RegisterService) Register(req *user.DouyinUserRegisterRequest) error {
+func (registerService RegisterService) Register(req *user.DouyinUserRegisterRequest) (*db.User, error) {
 	userLists, err := db.GetUsersByUserName(req.GetUsername())
 	//首先查询数据库中是否有该用户
 	if err != nil {
 		klog.Fatalf("数据库中根据用户查找用户名报错")
-		return err
+		return nil, err
 	}
 	if len(userLists) != 0 {
-		return errno.ErrUserAlreadyExist
+		return nil, errno.ErrUserAlreadyExist
 	}
 	//加密密码信息
 	p, err := bcrypt.PasswordHash(req.Password)
 	if err != nil {
 		klog.Fatalf("加密密码出现异常")
-		return err
+		return nil, err
 	}
 	//不存在该用户 直接插入该用户数据
-	return db.CreateUser(&db.User{Name: req.Username, Password: p})
+	insertUser := &db.User{Name: req.Username, Password: p}
+	err = db.CreateUser(insertUser)
+	if err != nil {
+		return nil, err
+	}
+	return insertUser, nil
 }

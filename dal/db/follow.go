@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-19 11:42:43
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-01-31 12:17:18
+ * @LastEditTime: 2023-02-01 15:35:55
  * @FilePath: /ByteCamp/dal/db/follow.go
  * @Description: 关注实体类及相关crud
  *
@@ -54,15 +54,15 @@ func DeleteRelation(userId, followId int) error {
 }
 
 //根据用户id查询关注列表
-func GetFollowedByUserId(userId int) ([]Follow, error) {
-	var follows []Follow
+func GetFollowingByUserId(userId int) ([]*Follow, error) {
+	var follows []*Follow
 	err := DB.Where("user_id = ? and cancel = ?", userId, false).Find(&follows).Error
 	return follows, err
 }
 
 //根据用户id查询粉丝列表
-func GetFansByUserId(userId int) ([]Follow, error) {
-	var follows []Follow
+func GetFansByUserId(userId int) ([]*Follow, error) {
+	var follows []*Follow
 	err := DB.Where("follow_id = ? and cancel = ?", userId, false).Find(&follows).Error
 	return follows, err
 }

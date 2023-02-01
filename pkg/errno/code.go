@@ -4,7 +4,7 @@ import code "github.com/a76yyyy/ErrnoCode"
 
 // HTTP Error
 var (
-	HttpSuccess                  = NewHttpErr(200, 200, "OK")
+	HttpSuccess                  = NewHttpErr(code.ErrSuccess, 200, "OK")
 	ErrHttpUnknown               = NewHttpErr(code.ErrUnknown, 500, "Internal server error")
 	ErrHttpBind                  = NewHttpErr(code.ErrBind, 400, "Error occurred while binding the request body to the struct")
 	ErrHttpValidation            = NewHttpErr(code.ErrValidation, 400, "Validation failed")
@@ -52,9 +52,9 @@ var (
 	ErrHttpIncompatibleVersion   = NewHttpErr(code.ErrIncompatibleVersion, 500, "Encoded hash is not in the correct format")
 )
 
-// Server Error
+// Server Error,用于RPC handler出错时传递给responseBuilder
 var (
-	Success         = NewErrNo(200, "OK")
+	Success         = NewErrNo(code.ErrSuccess, "OK")
 	ErrUnknown      = NewErrNo(code.ErrUnknown, "Internal server error")
 	ErrBind         = NewErrNo(code.ErrBind, "Error occurred while binding the request body to the struct")
 	ErrValidation   = NewErrNo(code.ErrValidation, "Validation failed")

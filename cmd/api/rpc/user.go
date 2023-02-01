@@ -27,10 +27,9 @@ func initUserRpc() {
 	viper.SetConfigName("userService")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(path + "/config")
-
 	errV := viper.ReadInConfig()
 	if errV != nil {
-		hlog.Fatal("启动rpc用户服务器时读取配置文件失败")
+		hlog.Fatal("启动rpc客户端时读取配置文件失败")
 		return
 	}
 	userSrvPath := viper.GetString("Server.Address") + ":" + viper.GetString("Server.Port")
@@ -54,6 +53,28 @@ func initUserRpc() {
 // Register 注册方法，传递注册上下文，并且获取prc响应
 func Register(ctx context.Context, req *user.DouyinUserRegisterRequest) (resp *user.DouyinUserRegisterResponse, err error) {
 	resp, err = userClient.Register(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 0 {
+		return nil, errno.NewErrNo(int(resp.StatusCode), *resp.StatusMsg)
+	}
+	return resp, nil
+}
+
+func Login(ctx context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
+	resp, err = userClient.Login(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 0 {
+		return nil, errno.NewErrNo(int(resp.StatusCode), *resp.StatusMsg)
+	}
+	return resp, nil
+}
+
+func GetUserById(ctx context.Context, req *user.DouyinUserRequest) (resp *user.DouyinUserResponse, err error) {
+	resp, err = userClient.GetUserById(ctx, req)
 	if err != nil {
 		return nil, err
 	}
