@@ -1,3 +1,13 @@
+/*
+ * @Author: zy 953725892@qq.com
+ * @Date: 2023-02-01 16:41:53
+ * @LastEditors: zy 953725892@qq.com
+ * @LastEditTime: 2023-02-01 18:40:34
+ * @FilePath: /ByteCamp/cmd/api/handlers/requestParam.go
+ * @Description: 用于定义handler传入参数,方便json绑定
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
 package handlers
 
 import (
@@ -30,6 +40,11 @@ type RelationActionParam struct {
 }
 
 type FollowListParam struct {
+	UserId int64  `json:"user_id"`
+	Token  string `json:"token"`
+}
+
+type FollowerListParam struct {
 	UserId int64  `json:"user_id"`
 	Token  string `json:"token"`
 }

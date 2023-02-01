@@ -1,5 +1,15 @@
 /*
  * @Author: zy 953725892@qq.com
+ * @Date: 2023-02-01 16:41:53
+ * @LastEditors: zy 953725892@qq.com
+ * @LastEditTime: 2023-02-01 18:32:04
+ * @FilePath: /ByteCamp/cmd/relation/service/relation_follow_list.go
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
+/*
+ * @Author: zy 953725892@qq.com
  * @Date: 2023-02-01 15:29:24
  * @LastEditors: zy 953725892@qq.com
  * @LastEditTime: 2023-02-01 15:41:48

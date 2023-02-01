@@ -86,6 +86,7 @@ func registerGroup(h *server.Hertz) {
 	{
 		relation.POST("/action", relationhandler.RelationAction)
 		relation.GET("/follow/list", relationhandler.FollowList)
+		relation.GET("/follower/list", relationhandler.FollowerList)
 	}
 }
 
