@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-01 02:20:30
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-01 13:13:48
+ * @LastEditTime: 2023-02-01 14:03:16
  * @FilePath: /ByteCamp/cmd/api/rpc/relation.go
  * @Description: 用于初始化relation微服务的client,并且通过relation微服务的client调用relation微服务的方法从而实现api中http接口
  *

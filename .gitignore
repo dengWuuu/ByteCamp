@@ -22,3 +22,10 @@
 go.work
 
 .idea
+
+#所有微服务的编译文件
+cmd/comment/output
+cmd/favorite/output
+cmd/relation/output
+cmd/user/output
+cmd/video/output

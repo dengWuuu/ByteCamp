@@ -24,6 +24,6 @@ type UserParam struct {
 
 type RelationActionParam struct {
 	Token      string `json:"token"`
-	ToUserId   int64  `json:"to_user_id"`
+	ToUserId   int64  `json:"to_userid"`
 	ActionType int32  `json:"action_type"`
 }
