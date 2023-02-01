@@ -5,13 +5,14 @@ import (
 	"douyin/kitex_gen/user"
 	"douyin/kitex_gen/user/usersrv"
 	"douyin/pkg/errno"
+	"os"
+	"time"
+
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/spf13/viper"
-	"os"
-	"time"
 )
 
 var userClient usersrv.Client

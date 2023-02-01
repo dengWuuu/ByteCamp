@@ -12,8 +12,9 @@
 package db
 
 import (
-	"gorm.io/plugin/optimisticlock"
 	"time"
+
+	"gorm.io/plugin/optimisticlock"
 
 	"gorm.io/gorm"
 )
@@ -26,4 +27,7 @@ type Video struct {
 	UploadTime time.Time
 	Title      string
 	Version    optimisticlock.Version
+	// TODO: 暂时增加了视频的点赞和评论数目字段
+	FavoriteCount int
+	CommentCount  int
 }

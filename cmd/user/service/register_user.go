@@ -6,6 +6,7 @@ import (
 	"douyin/kitex_gen/user"
 	"douyin/pkg/bcrypt"
 	"douyin/pkg/errno"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
