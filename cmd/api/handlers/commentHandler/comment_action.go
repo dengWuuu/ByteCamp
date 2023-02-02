@@ -7,21 +7,14 @@ import (
 	"douyin/cmd/comment/pack"
 	"douyin/kitex_gen/comment"
 	"douyin/pkg/errno"
-	"encoding/json"
-
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
-// 传递请求上下文到comment服务的rpc客户端并获取对应的响应
+// CommentAction 传递请求上下文到comment服务的rpc客户端并获取对应的响应
 func CommentAction(ctx context.Context, c *app.RequestContext) {
 	var commentActionParam handlers.CommentActionParam
-	body, err := c.Body()
-	if err != nil {
-		hlog.Fatalf("获取请求体失败")
-		panic(err)
-	}
-	err = json.Unmarshal(body, &commentActionParam)
+	err := c.Bind(&commentActionParam)
 	if err != nil {
 		hlog.Fatal("序列化用户评论请求参数失败")
 		panic(err)
