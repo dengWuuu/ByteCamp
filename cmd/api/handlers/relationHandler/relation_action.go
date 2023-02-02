@@ -17,7 +17,7 @@ import (
 	"douyin/cmd/relation/pack"
 	"douyin/kitex_gen/relation"
 	"douyin/pkg/errno"
-	"douyin/pkg/middleware/JwtUtils"
+	"douyin/pkg/middleware"
 	"encoding/json"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -45,7 +45,7 @@ func RelationAction(ctx context.Context, c *app.RequestContext) {
 
 	//3、调用rpc
 	//TODO:从token中解析出userId,这里暂时先将userId写死为1
-	userId := JwtUtils.GetUserIdFromJwtToken(ctx, c)
+	userId := middleware.GetUserIdFromJwtToken(ctx, c)
 	resp, err := rpc.RelationAction(ctx, &relation.DouyinRelationActionRequest{
 		UserId:     int64(userId),
 		Token:      param.Token,

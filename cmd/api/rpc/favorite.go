@@ -2,8 +2,8 @@ package rpc
 
 import (
 	"context"
-	"douyin/kitex_gen/comment"
-	"douyin/kitex_gen/comment/commentsrv"
+	"douyin/kitex_gen/favorite"
+	"douyin/kitex_gen/favorite/favoritesrv"
 	"douyin/pkg/errno"
 	"os"
 	"time"
@@ -15,28 +15,28 @@ import (
 	"github.com/spf13/viper"
 )
 
-var commentClient commentsrv.Client
+var favoriteClient favoritesrv.Client
 
-// comment客户端初始化
-func initCommentRpc() {
+// favorite客户端初始化
+func initFavoriteRpc() {
 	//读取配置
 	path, err1 := os.Getwd()
 	if err1 != nil {
 		panic(err1)
 	}
-	viper.SetConfigName("commentService")
+	viper.SetConfigName("favoriteService")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(path + "/config")
 	errV := viper.ReadInConfig()
 	if errV != nil {
-		hlog.Fatal("启动rpc comment服务器时读取配置文件失败")
+		hlog.Fatal("启动rpc favorite服务器时读取配置文件失败")
 		return
 	}
-	commentSrvPath := viper.GetString("Server.Address") + ":" + viper.GetString("Server.Port")
-	hlog.Info("comment客户端对应的服务端地址" + commentSrvPath)
-	c, err := commentsrv.NewClient(
+	favoriteSrvPath := viper.GetString("Server.Address") + ":" + viper.GetString("Server.Port")
+	hlog.Info("favorite客户端对应的服务端地址" + favoriteSrvPath)
+	c, err := favoritesrv.NewClient(
 		viper.GetString("Server.Name"),
-		client.WithHostPorts(commentSrvPath),
+		client.WithHostPorts(favoriteSrvPath),
 		client.WithRPCTimeout(30*time.Second),             // rpc timeout
 		client.WithConnectTimeout(30000*time.Millisecond), // conn timeout
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
@@ -47,12 +47,12 @@ func initCommentRpc() {
 		hlog.Fatal("客户端启动失败")
 		panic(err)
 	}
-	commentClient = c
+	favoriteClient = c
 }
 
-// 传递评论操作的上下文，并且获取RPC服务端的响应
-func CommentAction(ctx context.Context, req *comment.DouyinCommentActionRequest) (resp *comment.DouyinCommentActionResponse, err error) {
-	resp, err = commentClient.CommentAction(ctx, req)
+// 传递点赞操作的上下文，同时获取rpc服务端的响应结果
+func FavoriteAction(ctx context.Context, req *favorite.DouyinFavoriteActionRequest) (resp *favorite.DouyinFavoriteActionResponse, err error) {
+	resp, err = favoriteClient.FavoriteAction(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -62,9 +62,9 @@ func CommentAction(ctx context.Context, req *comment.DouyinCommentActionRequest)
 	return resp, nil
 }
 
-// 传递评论获取的上下文，并且获取RPC服务端的响应
-func CommentList(ctx context.Context, req *comment.DouyinCommentListRequest) (resp *comment.DouyinCommentListResponse, err error) {
-	resp, err = commentClient.CommentList(ctx, req)
+// 传递获取点赞视频的上下文，同时获取rpc服务端的响应结果
+func FavoriteList(ctx context.Context, req *favorite.DouyinFavoriteListRequest) (resp *favorite.DouyinFavoriteListResponse, err error) {
+	resp, err = favoriteClient.FavoriteList(ctx, req)
 	if err != nil {
 		return nil, err
 	}

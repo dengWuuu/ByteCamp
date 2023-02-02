@@ -7,24 +7,17 @@ import (
 	"douyin/cmd/user/pack"
 	"douyin/kitex_gen/user"
 	"douyin/pkg/errno"
-	"encoding/json"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/hertz/pkg/common/utils"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // Register 传递注册http请求到rpc服务
 func Register(ctx context.Context, c *app.RequestContext) {
 	var registerParam handlers.UserRegisterParam
-	body, err := c.Body()
-	if err != nil {
-		hlog.Fatalf("获取请求体失败")
-		panic(err)
-	}
-	err = json.Unmarshal(body, &registerParam)
-	if err != nil {
-		hlog.Fatal("序列化用户注册请求参数失败")
-		panic(err)
-	}
+	registerParam.UserName = c.Query("username")
+	registerParam.PassWord = c.Query("password")
+
 	if len(registerParam.UserName) == 0 || len(registerParam.PassWord) == 0 {
 		handlers.SendResponse(c, pack.BuildUserRegisterResp(errno.ErrBind))
 		return
@@ -38,5 +31,10 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		handlers.SendResponse(c, pack.BuildUserRegisterResp(errno.ConvertErr(err)))
 		return
 	}
-	handlers.SendResponse(c, resp)
+	c.JSON(consts.StatusOK, utils.H{
+		"status_code": resp.StatusCode,
+		"status_msg":  resp.StatusMsg,
+		"user_id":     resp.UserId,
+		"token":       "string",
+	})
 }

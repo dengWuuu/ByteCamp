@@ -27,7 +27,7 @@ func getUserRegisterResp(err errno.ErrNo) *user.DouyinUserRegisterResponse {
 
 func BuildGetUserResp(err error) *user.DouyinUserResponse {
 	if err == nil {
-		return getGetUserResp(errno.Success)
+		return &user.DouyinUserResponse{StatusCode: 0, StatusMsg: &errno.Success.ErrMsg}
 	}
 
 	e := errno.ErrNo{}

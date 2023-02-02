@@ -18,6 +18,7 @@
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
  */
+
 package service
 
 import (
@@ -27,7 +28,7 @@ import (
 	"douyin/kitex_gen/user"
 )
 
-//根据req获取RPC所需的user列表
+// 根据req获取RPC所需的user列表
 func (service RelationService) FollowList(req *relation.DouyinRelationFollowListRequest) ([]*user.User, error) {
 	//1、根据userId获取该user的所有follow列表
 	followings, err := db.GetFollowingByUserId(int(req.UserId))

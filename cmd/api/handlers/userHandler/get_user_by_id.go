@@ -7,17 +7,22 @@ import (
 	"douyin/cmd/user/pack"
 	"douyin/kitex_gen/user"
 	"douyin/pkg/errno"
-	"douyin/pkg/middleware/JwtUtils"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/hertz/pkg/common/utils"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"strconv"
 )
 
 func GetUserById(ctx context.Context, c *app.RequestContext) {
-	hlog.Infof("当前用户是?", JwtUtils.GetUserIdFromJwtToken(ctx, c))
-	str := c.Query("user_id")
-
-	id, err := strconv.Atoi(str)
+	var userParam handlers.UserParam
+	userid, err := strconv.Atoi(c.Query("user_id"))
+	if err != nil {
+		handlers.SendResponse(c, pack.BuildGetUserResp(errno.ErrBind))
+		return
+	}
+	userParam.UserId = int64(userid)
+	userParam.Token = c.Query("token")
+	id, err := strconv.Atoi(strconv.FormatInt(userParam.UserId, 10))
 	if err != nil {
 		handlers.SendResponse(c, pack.BuildGetUserResp(errno.ErrBind))
 		return
@@ -35,6 +40,9 @@ func GetUserById(ctx context.Context, c *app.RequestContext) {
 		handlers.SendResponse(c, pack.BuildGetUserResp(errno.ConvertErr(err)))
 		return
 	}
-	handlers.SendResponse(c, resp)
-
+	c.JSON(consts.StatusOK, utils.H{
+		"status_code": resp.StatusCode, // 状态码，0-成功，其他值-失败
+		"status_msg":  resp.StatusMsg,  // 返回状态描述
+		"user":        resp.User,       // 用户信息
+	})
 }

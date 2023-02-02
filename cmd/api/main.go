@@ -10,12 +10,12 @@ package main
 import (
 	"crypto/tls"
 	"douyin/cmd/api/handlers/commentHandler"
+	"douyin/cmd/api/handlers/favoriteHandler"
 	"douyin/cmd/api/handlers/relationHandler"
 	"douyin/cmd/api/handlers/userHandler"
-	"douyin/cmd/api/handlers/videoHandler"
 	"douyin/cmd/api/rpc"
 	"douyin/dal"
-	"douyin/pkg/middleware/JwtUtils"
+	"douyin/pkg/middleware"
 	"os"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -76,8 +76,8 @@ func InitHertz() *server.Hertz {
 	h := server.Default(opts...)
 
 	//JWT中间键初始化
-	JwtUtils.InitJwt()
-	err = JwtUtils.JwtMiddleware.MiddlewareInit()
+	middleware.InitJwt()
+	err = middleware.JwtMiddleware.MiddlewareInit()
 	if err != nil {
 		hlog.Fatalf("Jwt初始化失败")
 		return nil
@@ -93,10 +93,10 @@ func registerGroup(h *server.Hertz) {
 	{
 		//user模块下无需权限认证的接口
 		user.POST("/register/", userHandler.Register)
-		user.POST("/login/", JwtUtils.JwtMiddleware.LoginHandler)
+		user.POST("/login/", middleware.JwtMiddleware.LoginHandler)
 
 		//user模块下需要认证权限的接口
-		user.Use(JwtUtils.JwtMiddleware.MiddlewareFunc())
+		user.Use(middleware.JwtMiddleware.MiddlewareFunc())
 		{
 			user.GET("/", userHandler.GetUserById)
 		}
@@ -104,11 +104,11 @@ func registerGroup(h *server.Hertz) {
 
 	//relation模块接口
 	relation := douyin.Group("/relation")
-	relation.Use(JwtUtils.JwtMiddleware.MiddlewareFunc())
+	relation.Use(middleware.JwtMiddleware.MiddlewareFunc())
 	{
-		relation.POST("/action", relationHandler.RelationAction)
-		relation.GET("/follow/list", relationHandler.FollowList)
-		relation.GET("/follower/list", relationHandler.FollowerList)
+		relation.POST("/action", relationhandler.RelationAction)
+		relation.GET("/follow/list", relationhandler.FollowList)
+		relation.GET("/follower/list", relationhandler.FollowerList)
 	}
 
 	// comment模块http接口
@@ -116,6 +116,12 @@ func registerGroup(h *server.Hertz) {
 	{
 		comment.POST("/action/", commentHandler.CommentAction)
 		comment.GET("/list/", commentHandler.CommentList)
+	}
+	// favorite模块http接口
+	favorite := douyin.Group("/favorite")
+	{
+		favorite.POST("/action/", favoriteHandler.FavoriteAction)
+		favorite.GET("/list/", favoriteHandler.FavoriteList)
 	}
 
 	// video模块接口
