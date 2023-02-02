@@ -13,7 +13,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
-// 传递请求上下文到favorite服务的rpc客户端并获取对应的响应
+// FavoriteAction 传递请求上下文到favorite服务的rpc客户端并获取对应的响应
 func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 	var favoriteActionParam handlers.FavoriteActionParam
 	body, err := c.Body()
