@@ -1,15 +1,19 @@
-package JwtUtils
+package middleware
 
 import (
 	"context"
+	"douyin/cmd/api/handlers"
+	"douyin/cmd/user/pack"
 	"douyin/dal/db"
+	"douyin/pkg/errno"
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/hertz-contrib/jwt"
-	"net/http"
-	"time"
 )
 
 var (
@@ -32,14 +36,15 @@ func InitJwt() {
 		Key:              []byte("secret key"),
 		Timeout:          time.Hour,
 		MaxRefresh:       time.Hour,
-		TokenLookup:      "header: Authorization, query: token, cookie: JwtUtils",
+		TokenLookup:      "header: Authorization, query: token, cookie: jwt, param: token, form: token",
 		TokenHeadName:    "Bearer",
+
 		//构造登录成功的返回请求
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
 			//从token中获取用户id
 			Token, err := JwtMiddleware.ParseTokenString(token)
 			claims := jwt.ExtractClaimsFromToken(Token)
-			userMap, _ := claims[IdentityKey].(jwt.MapClaims)
+			userMap, _ := claims[IdentityKey].(map[string]interface{})
 			if err != nil {
 				hlog.Fatalf("不能从Jwt中获取claims")
 				c.JSON(10086, "登录请求响应失败")
@@ -57,9 +62,11 @@ func InitJwt() {
 				UserName string `json:"username" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 				Password string `json:"password" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 			}
-			if err := c.BindAndValidate(&loginStruct); err != nil {
-				hlog.Infof("jwt认证用户数据绑定失败")
-				return nil, err
+			loginStruct.UserName = c.Query("username")
+			loginStruct.Password = c.Query("password")
+			if len(loginStruct.UserName) == 0 || len(loginStruct.Password) == 0 {
+				handlers.SendResponse(c, pack.BuildUserRegisterResp(errno.ErrBind))
+				return nil, nil
 			}
 
 			users, err := db.CheckUser(loginStruct.UserName, loginStruct.Password)

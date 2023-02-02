@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-29 21:58:00
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-01 18:35:13
+ * @LastEditTime: 2023-02-02 18:27:56
  * @FilePath: /ByteCamp/cmd/relation/handler.go
  * @Description: relation微服务handler
  *
@@ -69,5 +69,20 @@ func (s *RelationSrvImpl) RelationFollowerList(ctx context.Context, req *relatio
 		return resp, nil
 	}
 	resp = pack.BuildRelationFollowerListResp(users, err)
+	return resp, nil
+}
+
+// RelationFriendList implements the RelationSrvImpl interface.
+func (s *RelationSrvImpl) RelationFriendList(ctx context.Context, req *relation.DouyinRelationFriendListRequest) (resp *relation.DouyinRelationFriendListResponse, err error) {
+	if req.UserId <= 0 {
+		resp = pack.BuildRelationFriendListResp(nil, errno.ErrBind)
+		return resp, nil
+	}
+	users, err := relationService.FriendList(req)
+	if err != nil {
+		resp = pack.BuildRelationFriendListResp(nil, err)
+		return resp, nil
+	}
+	resp = pack.BuildRelationFriendListResp(users, err)
 	return resp, nil
 }

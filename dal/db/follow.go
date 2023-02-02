@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-19 11:42:43
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-01 15:35:55
+ * @LastEditTime: 2023-02-02 18:25:09
  * @FilePath: /ByteCamp/dal/db/follow.go
  * @Description: 关注实体类及相关crud
  *
@@ -10,6 +10,8 @@
  */
 
 package db
+
+//TODO:为高频字段添加索引
 
 import (
 	"errors"
@@ -53,6 +55,7 @@ func DeleteRelation(userId, followId int) error {
 	return err
 }
 
+//TODO:这里查询了follow的所有字段，而实际上我们只需要follow_id，这会导致无法索引覆盖，需要优化
 //根据用户id查询关注列表
 func GetFollowingByUserId(userId int) ([]*Follow, error) {
 	var follows []*Follow
@@ -60,9 +63,16 @@ func GetFollowingByUserId(userId int) ([]*Follow, error) {
 	return follows, err
 }
 
+//TODO:这里查询了follow的所有字段，而实际上我们只需要user_id，这会导致无法索引覆盖，需要优化
 //根据用户id查询粉丝列表
 func GetFansByUserId(userId int) ([]*Follow, error) {
 	var follows []*Follow
 	err := DB.Where("follow_id = ? and cancel = ?", userId, false).Find(&follows).Error
 	return follows, err
+}
+
+func GetFriendsByUserId(userId int) ([]int64, error) {
+	var friends []int64
+	err := DB.Raw("select a.follow_id from follows as a INNER JOIN follows as b ON a.follow_id=b.user_id where a.user_id = b.follow_id and a.user_id = ?", userId).Scan(&friends).Error
+	return friends, err
 }

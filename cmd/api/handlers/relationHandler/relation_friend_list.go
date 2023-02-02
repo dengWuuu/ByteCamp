@@ -1,13 +1,3 @@
-/*
- * @Author: zy 953725892@qq.com
- * @Date: 2023-02-02 16:44:03
- * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-02 17:14:24
- * @FilePath: /ByteCamp/cmd/api/handlers/relationHandler/relation_follower_list.go
- * @Description:
- *
- * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
- */
 package relationHandler
 
 import (
@@ -23,12 +13,12 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/utils"
 )
 
-func FollowerList(ctx context.Context, c *app.RequestContext) {
-	var param handlers.FollowerListParam
+func FriendList(ctx context.Context, c *app.RequestContext) {
+	var param handlers.FriendListParam
 	//1、绑定http参数
 	err := c.Bind(&param)
 	if err != nil {
-		hlog.Fatal("序列化粉丝列表请求参数失败")
+		hlog.Fatal("序列化朋友列表请求参数失败")
 		panic(err)
 	}
 	//2、入参校验
@@ -38,7 +28,7 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 	}
 
 	//3、调用rpc
-	resp, err := rpc.FollowerList(ctx, &relation.DouyinRelationFollowerListRequest{
+	resp, err := rpc.FriendList(ctx, &relation.DouyinRelationFriendListRequest{
 		UserId: param.UserId,
 		Token:  param.Token,
 	})

@@ -7,24 +7,17 @@ import (
 	"douyin/cmd/comment/pack"
 	"douyin/kitex_gen/comment"
 	"douyin/pkg/errno"
-	"encoding/json"
-
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
-// 传送http请求上下文到rpc客户端，并且获得客户端的响应
+// CommentList 传送http请求上下文到rpc客户端，并且获得客户端的响应
 func CommentList(ctx context.Context, c *app.RequestContext) {
 	var commentListParam handlers.CommentListParam
-	body, err := c.Body()
-	if err != nil {
-		hlog.Fatalf("获取请求体失败")
-		panic(err)
-	}
-	err = json.Unmarshal(body, &commentListParam)
+	err := c.Bind(&commentListParam)
 	if err != nil {
 		hlog.Fatal("序列化评论获取请求参数失败")
-		panic(err)
+		// panic(err)
 	}
 	// 检查参数
 	if commentListParam.VideoId <= 0 {

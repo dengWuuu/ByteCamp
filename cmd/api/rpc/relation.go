@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-01 02:20:30
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-01 18:38:22
+ * @LastEditTime: 2023-02-02 18:32:37
  * @FilePath: /ByteCamp/cmd/api/rpc/relation.go
  * @Description: 用于初始化relation微服务的client,并且通过relation微服务的client调用relation微服务的方法从而实现api中http接口
  *
@@ -89,6 +89,17 @@ func FollowList(ctx context.Context, req *relation.DouyinRelationFollowListReque
 //用户粉丝列表
 func FollowerList(ctx context.Context, req *relation.DouyinRelationFollowerListRequest) (resp *relation.DouyinRelationFollowerListResponse, err error) {
 	resp, err = relationClient.RelationFollowerList(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 0 {
+		return nil, errno.NewErrNo(int(resp.StatusCode), *resp.StatusMsg)
+	}
+	return resp, nil
+}
+
+func FriendList(ctx context.Context, req *relation.DouyinRelationFriendListRequest) (resp *relation.DouyinRelationFriendListResponse, err error) {
+	resp, err = relationClient.RelationFriendList(ctx, req)
 	if err != nil {
 		return nil, err
 	}
