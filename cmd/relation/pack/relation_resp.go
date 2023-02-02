@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-31 00:49:20
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-01 18:28:12
+ * @LastEditTime: 2023-02-02 18:17:58
  * @FilePath: /ByteCamp/cmd/relation/pack/relation_resp.go
  * @Description:
  *
@@ -83,6 +83,29 @@ func BuildRelationFollowerListResp(users []*user.User, err error) *relation.Douy
 
 func getRelationFollowerListResp(users []*user.User, err errno.ErrNo) *relation.DouyinRelationFollowerListResponse {
 	return &relation.DouyinRelationFollowerListResponse{
+		StatusCode: int32(err.ErrCode),
+		StatusMsg:  &err.ErrMsg,
+		UserList:   users,
+	}
+}
+
+//构造朋友列表RPC response
+func BuildRelationFriendListResp(users []*user.User, err error) *relation.DouyinRelationFriendListResponse {
+	if err == nil {
+		return getRelationFriendListResp(users, errno.Success)
+	} else {
+		e := errno.ErrNo{}
+		if errors.As(err, &e) {
+			return getRelationFriendListResp(users, e)
+		}
+
+		s := errno.ErrUnknown.WithMessage(err.Error())
+		return getRelationFriendListResp(users, s)
+	}
+}
+
+func getRelationFriendListResp(users []*user.User, err errno.ErrNo) *relation.DouyinRelationFriendListResponse {
+	return &relation.DouyinRelationFriendListResponse{
 		StatusCode: int32(err.ErrCode),
 		StatusMsg:  &err.ErrMsg,
 		UserList:   users,
