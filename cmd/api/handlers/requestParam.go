@@ -8,6 +8,7 @@
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
  */
+
 package handlers
 
 import (
@@ -32,7 +33,7 @@ type UserParam struct {
 	Token  string `json:"token,omitempty"`   // 用户鉴权token
 }
 
-// relation 微服务参数
+// RelationActionParam relation 微服务参数
 type RelationActionParam struct {
 	Token      string `json:"token"`
 	ToUserId   int64  `json:"to_userid"`
@@ -49,7 +50,7 @@ type FollowerListParam struct {
 	Token  string `json:"token"`
 }
 
-// comment操作服务输入参数
+// CommentActionParam comment操作服务输入参数
 type CommentActionParam struct {
 	UserId      int64   `json:"user_id,omitempty"`      // 用户id
 	Token       string  `json:"token,omitempty"`        // 用户鉴权token
@@ -59,7 +60,7 @@ type CommentActionParam struct {
 	CommentId   *int64  `json:"comment_id,omitempty"`   // 要删除的评论id，在action_type=2的时候使用
 }
 
-// comment获取的服务输入参数
+// CommentListParam comment获取的服务输入参数
 type CommentListParam struct {
 	Token   string `json:"token,omitempty"`    // 用户鉴权token
 	VideoId int64  `json:"video_id,omitempty"` // 视频id
