@@ -7,9 +7,7 @@ import (
 	"douyin/cmd/user/pack"
 	"douyin/kitex_gen/user"
 	"douyin/pkg/errno"
-	"encoding/json"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"strconv"
@@ -17,17 +15,13 @@ import (
 
 func GetUserById(ctx context.Context, c *app.RequestContext) {
 	var userParam handlers.UserParam
-	body, err := c.Body()
+	userid, err := strconv.Atoi(c.Query("user_id"))
 	if err != nil {
-		hlog.Fatalf("获取请求体失败")
-		panic(err)
+		handlers.SendResponse(c, pack.BuildGetUserResp(errno.ErrBind))
+		return
 	}
-	err = json.Unmarshal(body, &userParam)
-	if err != nil {
-		hlog.Fatal("序列化查找请求参数失败")
-		panic(err)
-	}
-
+	userParam.UserId = int64(userid)
+	userParam.Token = c.Query("token")
 	id, err := strconv.Atoi(strconv.FormatInt(userParam.UserId, 10))
 	if err != nil {
 		handlers.SendResponse(c, pack.BuildGetUserResp(errno.ErrBind))
