@@ -48,9 +48,6 @@ func AddFavorite(ctx context.Context, user_id int64, video_id int64) error {
 		// 检查是否存在
 		var temp Favorite
 		duplicate := tx.Where("user_id = ? and video_id = ?", user_id, video_id).First(&temp)
-		if duplicate.Error != nil {
-			return duplicate.Error
-		}
 		if duplicate.RowsAffected > 0 {
 			return errors.New("点赞关系重复出现")
 		}
@@ -92,9 +89,6 @@ func DeleteFavorite(ctx context.Context, user_id int64, video_id int64) error {
 		// 检查是否存在
 		var temp Favorite
 		duplicate := tx.Where("user_id = ? and video_id = ?", user_id, video_id).First(&temp)
-		if duplicate.Error != nil {
-			return duplicate.Error
-		}
 		if duplicate.RowsAffected == 0 {
 			return errors.New("不存在点赞关系")
 		}

@@ -2,7 +2,6 @@ package rpc
 
 import (
 	"context"
-	"douyin/kitex_gen/comment/commentsrv"
 	"douyin/kitex_gen/favorite"
 	"douyin/kitex_gen/favorite/favoritesrv"
 	"douyin/pkg/errno"
@@ -35,7 +34,7 @@ func initFavoriteRpc() {
 	}
 	commentSrvPath := viper.GetString("Server.Address") + ":" + viper.GetString("Server.Port")
 	hlog.Info("favorite客户端对应的服务端地址" + commentSrvPath)
-	c, err := commentsrv.NewClient(
+	c, err := favoritesrv.NewClient(
 		viper.GetString("Server.Name"),
 		client.WithHostPorts(commentSrvPath),
 		client.WithRPCTimeout(30*time.Second),             // rpc timeout
@@ -48,7 +47,7 @@ func initFavoriteRpc() {
 		hlog.Fatal("客户端启动失败")
 		panic(err)
 	}
-	commentClient = c
+	favoriteClient = c
 }
 
 // 传递点赞操作的上下文，同时获取rpc服务端的响应结果
