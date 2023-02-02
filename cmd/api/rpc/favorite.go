@@ -32,11 +32,11 @@ func initFavoriteRpc() {
 		hlog.Fatal("启动rpc favorite服务器时读取配置文件失败")
 		return
 	}
-	commentSrvPath := viper.GetString("Server.Address") + ":" + viper.GetString("Server.Port")
-	hlog.Info("favorite客户端对应的服务端地址" + commentSrvPath)
+	favoriteSrvPath := viper.GetString("Server.Address") + ":" + viper.GetString("Server.Port")
+	hlog.Info("favorite客户端对应的服务端地址" + favoriteSrvPath)
 	c, err := favoritesrv.NewClient(
 		viper.GetString("Server.Name"),
-		client.WithHostPorts(commentSrvPath),
+		client.WithHostPorts(favoriteSrvPath),
 		client.WithRPCTimeout(30*time.Second),             // rpc timeout
 		client.WithConnectTimeout(30000*time.Millisecond), // conn timeout
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
