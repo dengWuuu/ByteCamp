@@ -30,3 +30,12 @@ type Video struct {
 	FavoriteCount int64
 	CommentCount  int64
 }
+
+// 根据视频ID获取视频信息
+func GetVideoByIds(vids []int64) (resp []*Video, err error) {
+	err = DB.Where("ID in ?", vids).Find(&resp).Error
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
