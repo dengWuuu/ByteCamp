@@ -11,8 +11,9 @@ import (
 	"crypto/tls"
 	"douyin/cmd/api/handlers/commentHandler"
 	"douyin/cmd/api/handlers/favoriteHandler"
-	relationhandler "douyin/cmd/api/handlers/relationHandler"
+	"douyin/cmd/api/handlers/relationHandler"
 	"douyin/cmd/api/handlers/userHandler"
+	"douyin/cmd/api/handlers/videoHandler"
 	"douyin/cmd/api/rpc"
 	"douyin/dal"
 	"douyin/pkg/middleware"
@@ -106,9 +107,9 @@ func registerGroup(h *server.Hertz) {
 	relation := douyin.Group("/relation")
 	relation.Use(middleware.JwtMiddleware.MiddlewareFunc())
 	{
-		relation.POST("/action", relationhandler.RelationAction)
-		relation.GET("/follow/list", relationhandler.FollowList)
-		relation.GET("/follower/list", relationhandler.FollowerList)
+		relation.POST("/action", relationHandler.RelationAction)
+		relation.GET("/follow/list", relationHandler.FollowList)
+		relation.GET("/follower/list", relationHandler.FollowerList)
 	}
 
 	// comment模块http接口
@@ -122,6 +123,15 @@ func registerGroup(h *server.Hertz) {
 	{
 		favorite.POST("/action/", favoriteHandler.FavoriteAction)
 		favorite.GET("/list/", favoriteHandler.FavoriteList)
+	}
+
+	// video模块接口
+	douyin.GET("/feed/", videoHandler.Feed)
+	publish := douyin.Group("/publish")
+	publish.Use(middleware.JwtMiddleware.MiddlewareFunc())
+	{
+		publish.POST("/action/", videoHandler.PublishAction)
+		publish.GET("/list/", videoHandler.PublishList)
 	}
 }
 
