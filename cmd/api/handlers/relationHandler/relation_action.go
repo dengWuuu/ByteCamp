@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-01 14:46:43
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-02 17:02:15
+ * @LastEditTime: 2023-02-02 17:10:23
  * @FilePath: /ByteCamp/cmd/api/handlers/relationHandler/relation_action.go
  * @Description:
  *
@@ -25,7 +25,7 @@ import (
 )
 
 func RelationAction(ctx context.Context, c *app.RequestContext) {
-	//TODO:修改参数请求方式
+	//TODO:修改参数请求方式(Done)
 
 	//1、绑定http参数
 	var param handlers.RelationActionParam

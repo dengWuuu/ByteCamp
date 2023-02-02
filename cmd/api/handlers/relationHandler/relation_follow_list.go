@@ -7,23 +7,18 @@ import (
 	"douyin/cmd/relation/pack"
 	"douyin/kitex_gen/relation"
 	"douyin/pkg/errno"
-	"encoding/json"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 )
 
 func FollowList(ctx context.Context, c *app.RequestContext) {
 	var param handlers.FollowListParam
 	//1、绑定http参数
-	body, err := c.Body()
+	err := c.Bind(&param)
 	if err != nil {
 		hlog.Fatalf("获取请求体失败")
-		panic(err)
-	}
-	err = json.Unmarshal(body, &param)
-	if err != nil {
-		hlog.Fatal("序列化关注列表请求参数失败")
 		panic(err)
 	}
 	//2、入参校验
@@ -41,5 +36,9 @@ func FollowList(ctx context.Context, c *app.RequestContext) {
 		handlers.SendResponse(c, pack.BuildRelationFollowingListResp(nil, errno.ErrBind))
 		return
 	}
-	handlers.SendResponse(c, resp)
+	c.JSON(200, utils.H{
+		"status_code": resp.StatusCode, // 状态码，0-成功，其他值-失败
+		"status_msg":  resp.StatusMsg,  // 返回状态描述
+		"user_list":   resp.UserList,
+	})
 }

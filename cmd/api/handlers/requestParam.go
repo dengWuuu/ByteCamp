@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-01 16:41:53
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-02 16:50:26
+ * @LastEditTime: 2023-02-02 17:11:45
  * @FilePath: /ByteCamp/cmd/api/handlers/requestParam.go
  * @Description: 用于定义handler传入参数,方便json绑定
  *
@@ -41,13 +41,13 @@ type RelationActionParam struct {
 }
 
 type FollowListParam struct {
-	UserId int64  `json:"user_id"`
-	Token  string `json:"token"`
+	UserId int64  `query:"user_id"`
+	Token  string `query:"token"`
 }
 
 type FollowerListParam struct {
-	UserId int64  `json:"user_id"`
-	Token  string `json:"token"`
+	UserId int64  `query:"user_id"`
+	Token  string `query:"token"`
 }
 
 // CommentActionParam comment操作服务输入参数

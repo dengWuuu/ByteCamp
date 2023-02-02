@@ -1,3 +1,13 @@
+/*
+ * @Author: zy 953725892@qq.com
+ * @Date: 2023-02-02 16:44:03
+ * @LastEditors: zy 953725892@qq.com
+ * @LastEditTime: 2023-02-02 17:14:24
+ * @FilePath: /ByteCamp/cmd/api/handlers/relationHandler/relation_follower_list.go
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
 package relationHandler
 
 import (
@@ -7,21 +17,16 @@ import (
 	"douyin/cmd/relation/pack"
 	"douyin/kitex_gen/relation"
 	"douyin/pkg/errno"
-	"encoding/json"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 )
 
 func FollowerList(ctx context.Context, c *app.RequestContext) {
 	var param handlers.FollowerListParam
 	//1、绑定http参数
-	body, err := c.Body()
-	if err != nil {
-		hlog.Fatalf("获取请求体失败")
-		panic(err)
-	}
-	err = json.Unmarshal(body, &param)
+	err := c.Bind(&param)
 	if err != nil {
 		hlog.Fatal("序列化粉丝列表请求参数失败")
 		panic(err)
@@ -41,5 +46,9 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 		handlers.SendResponse(c, pack.BuildRelationFollowerListResp(nil, errno.ErrBind))
 		return
 	}
-	handlers.SendResponse(c, resp)
+	c.JSON(200, utils.H{
+		"status_code": resp.StatusCode, // 状态码，0-成功，其他值-失败
+		"status_msg":  resp.StatusMsg,  // 返回状态描述
+		"user_list":   resp.UserList,
+	})
 }
