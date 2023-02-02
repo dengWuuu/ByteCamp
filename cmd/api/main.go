@@ -10,6 +10,7 @@ package main
 import (
 	"crypto/tls"
 	"douyin/cmd/api/handlers/commentHandler"
+	"douyin/cmd/api/handlers/favoriteHandler"
 	relationhandler "douyin/cmd/api/handlers/relationHandler"
 	"douyin/cmd/api/handlers/userHandler"
 	"douyin/cmd/api/rpc"
@@ -115,6 +116,12 @@ func registerGroup(h *server.Hertz) {
 	{
 		comment.POST("/action/", commentHandler.CommentAction)
 		comment.GET("/list/", commentHandler.CommentList)
+	}
+	// favorite模块http接口
+	favorite := douyin.Group("/favorite")
+	{
+		favorite.POST("/action/", favoriteHandler.FavoriteAction)
+		favorite.GET("/list/", favoriteHandler.FavoriteList)
 	}
 }
 
