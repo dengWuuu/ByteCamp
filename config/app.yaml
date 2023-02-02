@@ -6,3 +6,6 @@ redis:
   password: "Aa1076766987"
   poolSize: 30
   minConns: 30
+  followersdb: 0
+  followingdb: 1
+  friendsdb: 2
