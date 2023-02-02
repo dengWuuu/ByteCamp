@@ -7,12 +7,13 @@ import (
 	"douyin/dal/db"
 	"douyin/pkg/errno"
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/hertz-contrib/jwt"
-	"net/http"
-	"time"
 )
 
 var (

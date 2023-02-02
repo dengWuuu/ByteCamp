@@ -105,7 +105,7 @@ func registerGroup(h *server.Hertz) {
 
 	//relation模块接口
 	relation := douyin.Group("/relation")
-	relation.Use(middleware.JwtMiddleware.MiddlewareFunc())
+	// relation.Use(middleware.JwtMiddleware.MiddlewareFunc())
 	{
 		relation.POST("/action", relationHandler.RelationAction)
 		relation.GET("/follow/list", relationHandler.FollowList)
