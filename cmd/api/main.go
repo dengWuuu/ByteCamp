@@ -146,8 +146,8 @@ func main() {
 
 	Init()
 	h := InitHertz()
+	h.Use(middleware.AccessLog())
 	pprof.Register(h)
 	registerGroup(h)
-	h.Use(middleware.AccessLog())
 	h.Spin()
 }
