@@ -7,6 +7,7 @@ import (
 	"douyin/cmd/favorite/pack"
 	"douyin/kitex_gen/favorite"
 	"douyin/pkg/errno"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )

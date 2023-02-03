@@ -1,15 +1,4 @@
-/*
- * @Author: zy 953725892@qq.com
- * @Date: 2023-01-31 12:23:15
- * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-01 02:21:45
- * @FilePath: /ByteCamp/cmd/api/rpc/init.go
- * @Description:
- *
- * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
- */
-
-package rpc
+package nacos
 
 import (
 	"github.com/nacos-group/nacos-sdk-go/clients"
@@ -18,14 +7,7 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
-func InitRpc() {
-	initUserRpc()
-	initRelationRpc()
-	initCommentRpc()
-	initFavoriteRpc()
-}
-
-func NacosInit() naming_client.INamingClient {
+func InitNacos() naming_client.INamingClient {
 	// the nacos server config
 	sc := []constant.ServerConfig{
 		*constant.NewServerConfig("81.70.207.243", 8848),
@@ -39,7 +21,6 @@ func NacosInit() naming_client.INamingClient {
 		LogDir:              "/tmp/nacos/log",
 		CacheDir:            "/tmp/nacos/cache",
 		LogLevel:            "info",
-		// more ...
 	}
 
 	cli, err := clients.NewNamingClient(

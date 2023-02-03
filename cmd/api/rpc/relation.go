@@ -8,6 +8,7 @@
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
  */
+
 package rpc
 
 import (
@@ -15,6 +16,7 @@ import (
 	"douyin/kitex_gen/relation"
 	"douyin/kitex_gen/relation/relationsrv"
 	"douyin/pkg/errno"
+	"github.com/kitex-contrib/registry-nacos/resolver"
 	"os"
 	"time"
 
@@ -42,11 +44,10 @@ func initRelationRpc() {
 		hlog.Fatal("启动rpc客户端时读取配置文件失败")
 		return
 	}
-	relationSrvPath := viper.GetString("Server.Address") + ":" + viper.GetString("Server.Port")
-	hlog.Info("relation客户端对应的服务端地址" + relationSrvPath)
+	hlog.Info("relation客户端对应的服务端地址" + "服务名字" + viper.GetString("Server.Name"))
 	c, err := relationsrv.NewClient(
 		viper.GetString("Server.Name"),
-		client.WithHostPorts(relationSrvPath),
+		client.WithResolver(resolver.NewNacosResolver(NacosInit())),
 		client.WithRPCTimeout(30*time.Second),             // rpc timeout
 		client.WithConnectTimeout(30000*time.Millisecond), // conn timeout
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
@@ -60,7 +61,7 @@ func initRelationRpc() {
 	relationClient = c
 }
 
-//用户关注或取消关注
+// 用户关注或取消关注
 func RelationAction(ctx context.Context, req *relation.DouyinRelationActionRequest) (resp *relation.DouyinRelationActionResponse, err error) {
 	//1、调用rpc接口完成操作,注意需要判断RPC调用是否成功
 	resp, err = relationClient.RelationAction(ctx, req)
@@ -74,7 +75,7 @@ func RelationAction(ctx context.Context, req *relation.DouyinRelationActionReque
 	return resp, nil
 }
 
-//用户关注列表
+// 用户关注列表
 func FollowList(ctx context.Context, req *relation.DouyinRelationFollowListRequest) (resp *relation.DouyinRelationFollowListResponse, err error) {
 	resp, err = relationClient.RelationFollowList(ctx, req)
 	if err != nil {
@@ -86,7 +87,7 @@ func FollowList(ctx context.Context, req *relation.DouyinRelationFollowListReque
 	return resp, nil
 }
 
-//用户粉丝列表
+// 用户粉丝列表
 func FollowerList(ctx context.Context, req *relation.DouyinRelationFollowerListRequest) (resp *relation.DouyinRelationFollowerListResponse, err error) {
 	resp, err = relationClient.RelationFollowerList(ctx, req)
 	if err != nil {
