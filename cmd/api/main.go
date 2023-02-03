@@ -138,10 +138,10 @@ func registerGroup(h *server.Hertz) {
 	{
 		//user模块下无需权限认证的接口
 		user.POST("/register/", userHandler.Register)
-		user.POST("/login/", middleware.JwtMiddleware.LoginHandler)
+		user.POST("/login/", userHandler.Login)
 
 		//user模块下需要认证权限的接口
-		user.Use(middleware.JwtMiddleware.MiddlewareFunc())
+		user.Use(middleware.JwtMiddlewareFunc())
 		{
 			user.GET("/", userHandler.GetUserById)
 		}
