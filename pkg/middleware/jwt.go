@@ -6,8 +6,10 @@ import (
 	"douyin/cmd/user/pack"
 	"douyin/dal/db"
 	"douyin/pkg/errno"
+	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -22,10 +24,77 @@ var (
 )
 
 func GetUserIdFromJwtToken(ctx context.Context, c *app.RequestContext) uint {
-	claims := jwt.ExtractClaims(ctx, c)
+	claims, err := JwtMiddleware.GetClaimsFromJWT(ctx, c)
+	if err != nil {
+		unauthorized(ctx, c, http.StatusUnauthorized, JwtMiddleware.HTTPStatusMessageFunc(err, ctx, c))
+		return 0
+	}
 	userMap := claims[jwt.IdentityKey].(map[string]interface{})
 	userId := uint(userMap["ID"].(float64))
 	return userId
+}
+
+func unauthorized(ctx context.Context, c *app.RequestContext, code int, message string) {
+	c.Header("WWW-Authenticate", "JWT realm="+JwtMiddleware.Realm)
+	if !JwtMiddleware.DisabledAbort {
+		c.Abort()
+	}
+
+	JwtMiddleware.Unauthorized(ctx, c, code, message)
+}
+
+func JwtMiddlewareFunc() app.HandlerFunc {
+	return func(ctx context.Context, c *app.RequestContext) {
+		//验证服务端token有么有过期
+		userId := GetUserIdFromJwtToken(ctx, c)
+		isNil := db.UserRedis.Get(ctx, "user:"+strconv.Itoa(int(userId)))
+		if isNil.Val() == "" {
+			unauthorized(ctx, c, http.StatusUnauthorized, JwtMiddleware.HTTPStatusMessageFunc(jwt.ErrExpiredToken, ctx, c))
+		}
+		//验证客户端token有没有过期
+		claims, err := JwtMiddleware.GetClaimsFromJWT(ctx, c)
+		if err != nil {
+			unauthorized(ctx, c, http.StatusUnauthorized, JwtMiddleware.HTTPStatusMessageFunc(err, ctx, c))
+			return
+		}
+
+		switch v := claims["exp"].(type) {
+		case nil:
+			unauthorized(ctx, c, http.StatusBadRequest, JwtMiddleware.HTTPStatusMessageFunc(jwt.ErrMissingExpField, ctx, c))
+			return
+		case float64:
+			if int64(v) < JwtMiddleware.TimeFunc().Unix() {
+				unauthorized(ctx, c, http.StatusUnauthorized, JwtMiddleware.HTTPStatusMessageFunc(jwt.ErrExpiredToken, ctx, c))
+				return
+			}
+		case json.Number:
+			n, err := v.Int64()
+			if err != nil {
+				unauthorized(ctx, c, http.StatusBadRequest, JwtMiddleware.HTTPStatusMessageFunc(jwt.ErrWrongFormatOfExp, ctx, c))
+				return
+			}
+			if n < JwtMiddleware.TimeFunc().Unix() {
+				unauthorized(ctx, c, http.StatusUnauthorized, JwtMiddleware.HTTPStatusMessageFunc(jwt.ErrExpiredToken, ctx, c))
+				return
+			}
+		default:
+			JwtMiddleware.Unauthorized(ctx, c, http.StatusBadRequest, JwtMiddleware.HTTPStatusMessageFunc(jwt.ErrWrongFormatOfExp, ctx, c))
+		}
+
+		c.Set("JWT_PAYLOAD", claims)
+		identity := JwtMiddleware.IdentityHandler(ctx, c)
+
+		if identity != nil {
+			c.Set(JwtMiddleware.IdentityKey, identity)
+		}
+
+		if !JwtMiddleware.Authorizator(identity, ctx, c) {
+			unauthorized(ctx, c, http.StatusForbidden, JwtMiddleware.HTTPStatusMessageFunc(jwt.ErrForbidden, ctx, c))
+			return
+		}
+
+		c.Next(ctx)
+	}
 }
 
 func InitJwt() {
@@ -45,6 +114,10 @@ func InitJwt() {
 			Token, err := JwtMiddleware.ParseTokenString(token)
 			claims := jwt.ExtractClaimsFromToken(Token)
 			userMap, _ := claims[IdentityKey].(map[string]interface{})
+			//将token同时存进redis
+			userId := uint(userMap["ID"].(float64))
+
+			db.UserRedis.Set(ctx, "user"+":"+strconv.Itoa(int(userId)), token, time.Hour*24)
 			if err != nil {
 				hlog.Fatalf("不能从Jwt中获取claims")
 				c.JSON(10086, "登录请求响应失败")
@@ -52,7 +125,7 @@ func InitJwt() {
 			c.JSON(http.StatusOK, utils.H{
 				"status_code": 0,
 				"token":       token,
-				"user_id":     userMap["ID"],
+				"user_id":     userId,
 				"status_msg":  "success",
 				"expire_time": expire.Format(time.RFC3339),
 			})

@@ -18,10 +18,11 @@ import (
 var DB *gorm.DB
 var dbErr error
 
-//relation部分redis客户端
+// FollowingRedis relation部分redis客户端
 var FollowingRedis *redis.Client
 var FollowersRedis *redis.Client
 var FriendsRedis *redis.Client
+var UserRedis *redis.Client
 
 func Init(configPath string) {
 	viper.SetConfigName("app")
@@ -93,6 +94,13 @@ func InitRedis() {
 		PoolSize:     poolSize,
 		MinIdleConns: minConns,
 		DB:           viper.GetInt("redis.friendsdb"),
+	})
+	UserRedis = redis.NewClient(&redis.Options{
+		Addr:         addr,
+		Password:     password,
+		PoolSize:     poolSize,
+		MinIdleConns: minConns,
+		DB:           viper.GetInt("redis.userdb"),
 	})
 
 }
