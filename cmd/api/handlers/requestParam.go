@@ -12,9 +12,10 @@
 package handlers
 
 import (
+	"mime/multipart"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"mime/multipart"
 )
 
 // SendResponse pack response
@@ -58,7 +59,6 @@ type FriendListParam struct {
 
 // CommentActionParam comment操作服务输入参数
 type CommentActionParam struct {
-	UserId      int64   `query:"user_id,omitempty"`      // 用户id
 	Token       string  `query:"token,omitempty"`        // 用户鉴权token
 	VideoId     int64   `query:"video_id,omitempty"`     // 视频id
 	ActionType  int32   `query:"action_type,omitempty"`  // 1-发布评论，2-删除评论
@@ -82,8 +82,8 @@ type FavoriteActionParam struct {
 
 // FavoriteListParam 获取点赞视频的 handler 输入参数
 type FavoriteListParam struct {
-	UserId int64  `json:"user_id,omitempty"` // 用户id
-	Token  string `json:"token,omitempty"`   // 用户鉴权token
+	UserId int64  `query:"user_id,omitempty"` // 用户id
+	Token  string `query:"token,omitempty"`   // 用户鉴权token
 }
 
 type VideoFeedParam struct {
