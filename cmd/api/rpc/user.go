@@ -5,13 +5,14 @@ import (
 	"douyin/kitex_gen/user"
 	"douyin/kitex_gen/user/usersrv"
 	"douyin/pkg/errno"
+	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	"github.com/kitex-contrib/registry-nacos/resolver"
 	"os"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
-	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/spf13/viper"
 )
 
@@ -32,11 +33,11 @@ func initUserRpc() {
 		hlog.Fatal("启动rpc客户端时读取配置文件失败")
 		return
 	}
-	userSrvPath := viper.GetString("Server.Address") + ":" + viper.GetString("Server.Port")
-	hlog.Info("user客户端对应的服务端地址" + userSrvPath)
+	hlog.Info("user客户端对应的服务端地址" + "服务名字" + viper.GetString("Server.Name"))
+
 	c, err := usersrv.NewClient(
 		viper.GetString("Server.Name"),
-		client.WithHostPorts(userSrvPath),
+		client.WithResolver(resolver.NewNacosResolver(NacosInit())),
 		client.WithRPCTimeout(30*time.Second),             // rpc timeout
 		client.WithConnectTimeout(30000*time.Millisecond), // conn timeout
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry

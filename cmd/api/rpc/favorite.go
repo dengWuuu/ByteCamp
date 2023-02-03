@@ -5,6 +5,7 @@ import (
 	"douyin/kitex_gen/favorite"
 	"douyin/kitex_gen/favorite/favoritesrv"
 	"douyin/pkg/errno"
+	"github.com/kitex-contrib/registry-nacos/resolver"
 	"os"
 	"time"
 
@@ -32,11 +33,10 @@ func initFavoriteRpc() {
 		hlog.Fatal("启动rpc favorite服务器时读取配置文件失败")
 		return
 	}
-	favoriteSrvPath := viper.GetString("Server.Address") + ":" + viper.GetString("Server.Port")
-	hlog.Info("favorite客户端对应的服务端地址" + favoriteSrvPath)
+	hlog.Info("favorite客户端对应的服务端地址" + "服务名字" + viper.GetString("Server.Name"))
 	c, err := favoritesrv.NewClient(
 		viper.GetString("Server.Name"),
-		client.WithHostPorts(favoriteSrvPath),
+		client.WithResolver(resolver.NewNacosResolver(NacosInit())),
 		client.WithRPCTimeout(30*time.Second),             // rpc timeout
 		client.WithConnectTimeout(30000*time.Millisecond), // conn timeout
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
