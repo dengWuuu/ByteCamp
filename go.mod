@@ -11,8 +11,10 @@ require (
 	github.com/hertz-contrib/jwt v1.0.2
 	github.com/hertz-contrib/logger/zap v0.0.0-20221227100845-46a8693d7847
 	github.com/hertz-contrib/pprof v0.1.0
+	github.com/hertz-contrib/registry/nacos v0.0.0-20221226122036-3c451682dc72
 	github.com/kitex-contrib/obs-opentelemetry/logging/zap v0.0.0-20221109071748-a433b0b57972
 	github.com/kitex-contrib/registry-nacos v0.0.1
+	github.com/nacos-group/nacos-sdk-go v1.1.2
 	github.com/spf13/viper v1.14.0
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 	google.golang.org/protobuf v1.28.1
@@ -63,7 +65,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/nacos-group/nacos-sdk-go v1.1.2-0.20220407143335-bff55a2174fc // indirect
 	github.com/novalagung/gubrak v1.0.0 // indirect
 	github.com/nyaruka/phonenumbers v1.0.55 // indirect
 	github.com/oleiade/lane v1.0.1 // indirect
