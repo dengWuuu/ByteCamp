@@ -7,6 +7,7 @@ import (
 	"douyin/cmd/comment/pack"
 	"douyin/kitex_gen/comment"
 	"douyin/pkg/errno"
+	"douyin/pkg/middleware"
 	"strconv"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -18,8 +19,14 @@ func CommentAction(ctx context.Context, c *app.RequestContext) {
 	token := c.Query("token")
 	video_id := c.Query("video_id")
 	action_type := c.Query("action_type")
+	// 从token中获取用户ID
+	user_id := middleware.GetUserIdFromJwtToken(ctx, c)
 
 	// 检查参数
+	if user_id <= 0 {
+		handlers.SendResponse(c, pack.BuildCommentActionResp(errno.ErrTokenInvalid))
+		return
+	}
 	vid, err := strconv.Atoi(video_id)
 	if err != nil {
 		handlers.SendResponse(c, pack.BuildCommentActionResp(errno.ErrBind))
@@ -41,6 +48,7 @@ func CommentAction(ctx context.Context, c *app.RequestContext) {
 	}
 	// 封装请求传送到rpc客户端
 	queryParam := &comment.DouyinCommentActionRequest{
+		UserId:     int64(user_id),
 		Token:      commentActionParam.Token,
 		VideoId:    commentActionParam.VideoId,
 		ActionType: commentActionParam.ActionType,
