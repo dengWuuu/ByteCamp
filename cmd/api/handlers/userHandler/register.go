@@ -35,6 +35,6 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		"status_code": resp.StatusCode,
 		"status_msg":  resp.StatusMsg,
 		"user_id":     resp.UserId,
-		"token":       "string",
+		"token":       resp.Token,
 	})
 }
