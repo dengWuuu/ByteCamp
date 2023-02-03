@@ -14,7 +14,7 @@ func (service RelationService) FollowerList(req *relation.DouyinRelationFollower
 	if err != nil {
 		return nil, err
 	}
-	fansUsers, err := pack.GetFansByFollows(fans)
+	fansUsers, err := pack.GetUsersByIds(fans)
 	if err != nil {
 		return nil, err
 	}

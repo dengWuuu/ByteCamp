@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-19 11:42:43
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-02 18:25:09
+ * @LastEditTime: 2023-02-03 23:58:09
  * @FilePath: /ByteCamp/dal/db/follow.go
  * @Description: 关注实体类及相关crud
  *
@@ -55,24 +55,40 @@ func DeleteRelation(userId, followId int) error {
 	return err
 }
 
-//TODO:这里查询了follow的所有字段，而实际上我们只需要follow_id，这会导致无法索引覆盖，需要优化
-//根据用户id查询关注列表
-func GetFollowingByUserId(userId int) ([]*Follow, error) {
-	var follows []*Follow
-	err := DB.Where("user_id = ? and cancel = ?", userId, false).Find(&follows).Error
-	return follows, err
+func GetFollowByUserAndTarget(userId, toUserId int64) (*Follow, error) {
+	follow := new(Follow)
+	err := DB.Where("user_id = ? and follow_id = ?", userId, toUserId).First(&follow).Error
+	return follow, err
 }
 
-//TODO:这里查询了follow的所有字段，而实际上我们只需要user_id，这会导致无法索引覆盖，需要优化
+//TODO:这里查询了follow的所有字段，而实际上我们只需要follow_id，这会导致无法索引覆盖，需要优化(Done)
+//根据用户id查询关注列表
+func GetFollowingByUserId(userId int) ([]int64, error) {
+	var followers []int64
+	err := DB.Model(&Follow{}).Select("follow_id").Where("user_id = ? and cancel = ?", userId, false).Distinct("follow_id").Find(&followers).Error
+	return followers, err
+}
+
+//TODO:这里查询了follow的所有字段，而实际上我们只需要user_id，这会导致无法索引覆盖，需要优化(Done)
 //根据用户id查询粉丝列表
-func GetFansByUserId(userId int) ([]*Follow, error) {
-	var follows []*Follow
-	err := DB.Where("follow_id = ? and cancel = ?", userId, false).Find(&follows).Error
-	return follows, err
+func GetFansByUserId(userId int) ([]int64, error) {
+	var followings []int64
+	err := DB.Model(&Follow{}).Select("user_id").Where("follow_id = ? and cancel = ?", userId, false).Distinct("user_id").Find(&followings).Error
+	return followings, err
 }
 
 func GetFriendsByUserId(userId int) ([]int64, error) {
 	var friends []int64
 	err := DB.Raw("select a.follow_id from follows as a INNER JOIN follows as b ON a.follow_id=b.user_id where a.user_id = b.follow_id and a.user_id = ?", userId).Scan(&friends).Error
 	return friends, err
+}
+
+func UpdateFollow(userId, toUserId int64, actionType int) error {
+	var err error
+	if actionType == 1 {
+		err = DB.Model(&Follow{}).Where("user_id = ? and follow_id = ?", userId, toUserId).Update("cancel", 0).Error
+	} else {
+		err = DB.Model(&Follow{}).Where("user_id = ? and follow_id = ?", userId, toUserId).Update("cancel", 1).Error
+	}
+	return err
 }

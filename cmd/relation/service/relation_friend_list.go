@@ -1,3 +1,23 @@
+/*
+ * @Author: zy 953725892@qq.com
+ * @Date: 2023-02-02 18:43:44
+ * @LastEditors: zy 953725892@qq.com
+ * @LastEditTime: 2023-02-03 23:34:28
+ * @FilePath: /ByteCamp/cmd/relation/service/relation_friend_list.go
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
+/*
+ * @Author: zy 953725892@qq.com
+ * @Date: 2023-02-02 18:43:44
+ * @LastEditors: zy 953725892@qq.com
+ * @LastEditTime: 2023-02-03 23:09:26
+ * @FilePath: /ByteCamp/cmd/relation/service/relation_friend_list.go
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
 package service
 
 import (

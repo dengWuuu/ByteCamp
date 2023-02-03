@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-01 16:41:53
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-01 18:32:04
+ * @LastEditTime: 2023-02-03 23:34:17
  * @FilePath: /ByteCamp/cmd/relation/service/relation_follow_list.go
  * @Description:
  *
@@ -31,11 +31,11 @@ import (
 // 根据req获取RPC所需的user列表
 func (service RelationService) FollowList(req *relation.DouyinRelationFollowListRequest) ([]*user.User, error) {
 	//1、根据userId获取该user的所有follow列表
-	followings, err := db.GetFollowingByUserId(int(req.UserId))
+	ids, err := db.GetFollowingByUserId(int(req.UserId))
 	if err != nil {
 		return nil, err
 	}
-	followingUsers, err := pack.GetFollowingByFollows(followings)
+	followingUsers, err := pack.GetUsersByIds(ids)
 	if err != nil {
 		return nil, err
 	}

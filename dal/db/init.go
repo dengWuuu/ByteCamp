@@ -15,6 +15,8 @@ import (
 	"gorm.io/plugin/dbresolver"
 )
 
+var ExpireTime time.Duration
+
 var DB *gorm.DB
 var dbErr error
 
@@ -69,6 +71,8 @@ func InitRedis() {
 	password := viper.GetString("redis.password")
 	poolSize := viper.GetInt("redis.poolSize")
 	minConns := viper.GetInt("redis.minConns")
+
+	ExpireTime = viper.GetDuration("redis.exipretime")
 
 	hlog.Info("followingdb:%v,followerdb:%v,friendsdb:%v\n", viper.GetInt("redis.followingdb"), viper.GetInt("redis.followersdb"), viper.GetInt("redis.friendsdb"))
 
