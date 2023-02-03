@@ -10,30 +10,21 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"strconv"
 )
 
 func GetUserById(ctx context.Context, c *app.RequestContext) {
 	var userParam handlers.UserParam
-	userid, err := strconv.Atoi(c.Query("user_id"))
+	err := c.Bind(&userParam)
 	if err != nil {
-		handlers.SendResponse(c, pack.BuildGetUserResp(errno.ErrBind))
 		return
 	}
-	userParam.UserId = int64(userid)
-	userParam.Token = c.Query("token")
-	id, err := strconv.Atoi(strconv.FormatInt(userParam.UserId, 10))
-	if err != nil {
-		handlers.SendResponse(c, pack.BuildGetUserResp(errno.ErrBind))
-		return
-	}
-	userId := int64(id)
-	if userId < 0 {
+
+	if userParam.UserId < 0 {
 		handlers.SendResponse(c, pack.BuildGetUserResp(errno.ErrBind))
 		return
 	}
 	resp, err := rpc.GetUserById(ctx, &user.DouyinUserRequest{
-		UserId: userId,
+		UserId: userParam.UserId,
 	})
 
 	if err != nil {
