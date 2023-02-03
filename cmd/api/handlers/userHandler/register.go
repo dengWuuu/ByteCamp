@@ -15,8 +15,10 @@ import (
 // Register 传递注册http请求到rpc服务
 func Register(ctx context.Context, c *app.RequestContext) {
 	var registerParam handlers.UserRegisterParam
-	registerParam.UserName = c.Query("username")
-	registerParam.PassWord = c.Query("password")
+	err := c.Bind(&registerParam)
+	if err != nil {
+		return
+	}
 
 	if len(registerParam.UserName) == 0 || len(registerParam.PassWord) == 0 {
 		handlers.SendResponse(c, pack.BuildUserRegisterResp(errno.ErrBind))
