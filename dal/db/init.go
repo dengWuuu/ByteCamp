@@ -1,10 +1,11 @@
 package db
 
 import (
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"log"
 	"os"
 	"time"
+
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
@@ -15,8 +16,12 @@ import (
 )
 
 var DB *gorm.DB
-var Redis *redis.Client
 var dbErr error
+
+//relation部分redis客户端
+var FollowingRedis *redis.Client
+var FollowersRedis *redis.Client
+var FriendsRedis *redis.Client
 
 func Init(configPath string) {
 	viper.SetConfigName("app")
@@ -64,10 +69,30 @@ func InitRedis() {
 	poolSize := viper.GetInt("redis.poolSize")
 	minConns := viper.GetInt("redis.minConns")
 
-	Redis = redis.NewClient(&redis.Options{
+	hlog.Info("followingdb:%v,followerdb:%v,friendsdb:%v\n", viper.GetInt("redis.followingdb"), viper.GetInt("redis.followersdb"), viper.GetInt("redis.friendsdb"))
+
+	FollowingRedis = redis.NewClient(&redis.Options{
 		Addr:         addr,
 		Password:     password,
 		PoolSize:     poolSize,
 		MinIdleConns: minConns,
+		DB:           viper.GetInt("redis.followingdb"),
 	})
+
+	FollowersRedis = redis.NewClient(&redis.Options{
+		Addr:         addr,
+		Password:     password,
+		PoolSize:     poolSize,
+		MinIdleConns: minConns,
+		DB:           viper.GetInt("redis.followersdb"),
+	})
+
+	FriendsRedis = redis.NewClient(&redis.Options{
+		Addr:         addr,
+		Password:     password,
+		PoolSize:     poolSize,
+		MinIdleConns: minConns,
+		DB:           viper.GetInt("redis.friendsdb"),
+	})
+
 }
