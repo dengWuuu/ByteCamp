@@ -7,19 +7,25 @@ import (
 	"douyin/cmd/comment/pack"
 	"douyin/kitex_gen/comment"
 	"douyin/pkg/errno"
+	"strconv"
+
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 // CommentList 传送http请求上下文到rpc客户端，并且获得客户端的响应
 func CommentList(ctx context.Context, c *app.RequestContext) {
 	var commentListParam handlers.CommentListParam
-	err := c.Bind(&commentListParam)
-	if err != nil {
-		hlog.Fatal("序列化评论获取请求参数失败")
-		// panic(err)
-	}
+	// 获取参数
+	token := c.Query("token")
+	video_id := c.Query("video_id")
 	// 检查参数
+	vid, err := strconv.Atoi(video_id)
+	if err != nil {
+		handlers.SendResponse(c, pack.BuildCommentListResp(errno.ErrBind))
+		return
+	}
+	commentListParam.Token = token
+	commentListParam.VideoId = int64(vid)
 	if commentListParam.VideoId <= 0 {
 		handlers.SendResponse(c, pack.BuildCommentListResp(errno.ErrBind))
 		return
