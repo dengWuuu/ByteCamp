@@ -30,8 +30,8 @@ type UserRegisterParam struct {
 
 // UserParam 用户输出参数
 type UserParam struct {
-	UserId int64  `json:"user_id,omitempty"` // 用户id
-	Token  string `json:"token,omitempty"`   // 用户鉴权token
+	UserId int64  `query:"user_id,omitempty"` // 用户id
+	Token  string `query:"token,omitempty"`   // 用户鉴权token
 }
 
 // RelationActionParam relation 微服务参数
