@@ -17,18 +17,50 @@ import (
 	"douyin/cmd/api/rpc"
 	"douyin/dal"
 	"douyin/pkg/middleware"
-	"os"
-
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/cloudwego/hertz/pkg/app/server/registry"
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 	hertzzap "github.com/hertz-contrib/logger/zap"
 	"github.com/hertz-contrib/pprof"
+	"github.com/hertz-contrib/registry/nacos"
+	"github.com/nacos-group/nacos-sdk-go/clients"
+	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
+	"github.com/nacos-group/nacos-sdk-go/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/vo"
 	"github.com/spf13/viper"
+	"os"
 )
 
 func Init() {
 	rpc.InitRpc() //初始化rpc客户端
+}
+
+func InitNacos() naming_client.INamingClient {
+	//nacos
+	sc := []constant.ServerConfig{
+		*constant.NewServerConfig("81.70.207.243", 8848),
+	}
+	cc := constant.ClientConfig{
+		NamespaceId:         "public",
+		TimeoutMs:           5000,
+		NotLoadCacheAtStart: true,
+		LogDir:              "/tmp/nacos/log",
+		CacheDir:            "/tmp/nacos/cache",
+		LogLevel:            "info",
+	}
+
+	cli, err := clients.NewNamingClient(
+		vo.NacosClientParam{
+			ClientConfig:  &cc,
+			ServerConfigs: sc,
+		},
+	)
+	if err != nil {
+		panic(err)
+	}
+	return cli
 }
 
 // InitHertz 初始化 Hertz
@@ -45,7 +77,18 @@ func InitHertz() *server.Hertz {
 		hlog.Fatal("启动http服务器时读取配置文件失败")
 		return nil
 	}
-	opts := []config.Option{server.WithHostPorts(viper.GetString("Server.address") + ":" + viper.GetString("Server.Port"))}
+
+	//Nacos
+	cli := InitNacos()
+	addr := "81.70.207.243:8848"
+	r := nacos.NewNacosRegistry(cli)
+	opts := []config.Option{server.WithHostPorts(viper.GetString("Server.address") + ":" + viper.GetString("Server.Port")),
+		server.WithRegistry(r, &registry.Info{
+			ServiceName: "API",
+			Addr:        utils.NewNetAddr("tcp", addr),
+			Weight:      10,
+			Tags:        nil,
+		})}
 
 	// TLS & Http2
 	tlsEnable := viper.GetBool("Hertz.Tls.Enable")
@@ -73,6 +116,7 @@ func InitHertz() *server.Hertz {
 	} else if h2Enable {
 		opts = append(opts, server.WithH2C(h2Enable))
 	}
+
 	// Hertz
 	h := server.Default(opts...)
 

@@ -54,7 +54,8 @@ func main() {
 
 	//nacos
 	r := registry.NewNacosRegistry(nacos.InitNacos())
-	svr := relation.NewServer(new(RelationSrvImpl),
+	svr := relation.NewServer(
+		new(RelationSrvImpl),
 		server.WithServiceAddr(addr),
 		server.WithRegistry(r),
 		server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 100}),

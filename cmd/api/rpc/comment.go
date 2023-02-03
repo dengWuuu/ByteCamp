@@ -5,6 +5,7 @@ import (
 	"douyin/kitex_gen/comment"
 	"douyin/kitex_gen/comment/commentsrv"
 	"douyin/pkg/errno"
+	"github.com/kitex-contrib/registry-nacos/resolver"
 	"os"
 	"time"
 
@@ -32,11 +33,10 @@ func initCommentRpc() {
 		hlog.Fatal("启动rpc comment服务器时读取配置文件失败")
 		return
 	}
-	commentSrvPath := viper.GetString("Server.Address") + ":" + viper.GetString("Server.Port")
-	hlog.Info("comment客户端对应的服务端地址" + commentSrvPath)
+	hlog.Info("comment客户端对应的服务端地址" + "服务名字" + viper.GetString("Server.Name"))
 	c, err := commentsrv.NewClient(
 		viper.GetString("Server.Name"),
-		client.WithHostPorts(commentSrvPath),
+		client.WithResolver(resolver.NewNacosResolver(NacosInit())),
 		client.WithRPCTimeout(30*time.Second),             // rpc timeout
 		client.WithConnectTimeout(30000*time.Millisecond), // conn timeout
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
