@@ -3,6 +3,8 @@ package main
 import (
 	"douyin/dal"
 	user "douyin/kitex_gen/user/usersrv"
+	"douyin/pkg/nacos"
+	"github.com/kitex-contrib/registry-nacos/registry"
 	"log"
 	"net"
 	"os"
@@ -36,11 +38,16 @@ func main() {
 		return
 	}
 
+	//nacos
+	r := registry.NewNacosRegistry(nacos.InitNacos())
+
 	klog.SetLogger(kitexzap.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
 	addr, _ := net.ResolveTCPAddr("tcp", viper.GetString("Server.Address")+":"+viper.GetString("Server.Port"))
-	svr := user.NewServer(new(UserSrvImpl),
+	svr := user.NewServer(
+		new(UserSrvImpl),
 		server.WithServiceAddr(addr),
+		server.WithRegistry(r),
 		server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 100}),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: viper.GetString("Server.Name")}))
 
