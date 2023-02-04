@@ -15,10 +15,11 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 	var param handlers.VideoFeedParam
 	err := c.Bind(&param)
 	if err != nil {
-		hlog.Fatalf("参数绑定失败")
-		panic(err)
+		handlers.SendResponse(c, pack.BuildFavoriteListResp(errno.ErrBind))
+		return
 	}
 
+	hlog.CtxInfof(ctx, "Feed Req:%v", param)
 	rpcResp, err := rpc.GetUserFeed(ctx, &video.DouyinFeedRequest{
 		Token:      &param.Token,
 		LatestTime: &param.LatestTime,
@@ -27,5 +28,6 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 		handlers.SendResponse(c, pack.BuildFavoriteListResp(errno.ConvertErr(err)))
 		return
 	}
+	hlog.CtxInfof(ctx, "Feed Resp:%v", rpcResp)
 	handlers.SendResponse(c, rpcResp)
 }
