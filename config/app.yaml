@@ -10,3 +10,10 @@ redis:
   followingdb: 1
   friendsdb: 2
   userdb: 3
+
+oss:
+  endpoint: "oss-cn-beijing.aliyuncs.com"
+  ak: "LTAI5tPgCbMia8qwAy2xesdP"
+  sk: "5F3lX57hEguOpYXtM2C9fEGuyUQ4VP"
+  videobucket: "bytecampvideo"
+  imagebucket: "bytecampimage"
