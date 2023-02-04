@@ -9,16 +9,12 @@ import (
 const MQURL = "amqp://root:Aa1076766987@81.70.207.243:5672/"
 
 type RabbitMQ struct {
-	Conn    *amqp.Connection
-	Channel *amqp.Channel
-	// 队列名称
-	QueueName string
-	// 交换机
-	Exchange string
-	// routing Key
+	conn       *amqp.Connection
+	Channel    *amqp.Channel
+	QueueName  string
+	Exchange   string
 	RoutingKey string
-	//MQ链接字符串
-	Mqurl string
+	mqurl      string
 }
 
 var Rmq *RabbitMQ
@@ -26,30 +22,29 @@ var Rmq *RabbitMQ
 // InitRabbitMQ 初始化RabbitMQ的连接和通道。
 func InitRabbitMQ() {
 	Rmq = &RabbitMQ{
-		Mqurl: MQURL,
+		mqurl: MQURL,
 	}
-	dial, err := amqp.Dial(Rmq.Mqurl)
+	dial, err := amqp.Dial(Rmq.mqurl)
 	if err != nil {
 		Rmq.failOnErr(err, "创建连接失败")
 		return
 	}
-	Rmq.Conn = dial
+	Rmq.conn = dial
 }
 func NewRabbitMq(queueName, exchange, routingKey string) *RabbitMQ {
 	rabbitMQ := RabbitMQ{
 		QueueName:  queueName,
+		conn:       Rmq.conn,
 		Exchange:   exchange,
 		RoutingKey: routingKey,
-		Mqurl:      MQURL,
+		mqurl:      MQURL,
 	}
 	var err error
-	//创建rabbitmq连接
-	rabbitMQ.Conn, err = amqp.Dial(rabbitMQ.Mqurl)
-	Rmq.failOnErr(err, "创建连接失败")
-
 	//创建Channel
-	rabbitMQ.Channel, err = rabbitMQ.Conn.Channel()
-	Rmq.failOnErr(err, "创建channel失败")
+	rabbitMQ.Channel, err = rabbitMQ.conn.Channel()
+	if err != nil {
+		Rmq.failOnErr(err, "创建channel失败")
+	}
 	return &rabbitMQ
 }
 
@@ -63,14 +58,9 @@ func (r *RabbitMQ) failOnErr(err error, message string) {
 
 // ReleaseRes 关闭mq通道和mq的连接。
 func (r *RabbitMQ) ReleaseRes() {
-	err := r.Conn.Close()
+	err := r.conn.Close()
 	if err != nil {
 		Rmq.failOnErr(err, "连接关闭失败")
-		return
-	}
-	err = r.Channel.Close()
-	if err != nil {
-		Rmq.failOnErr(err, "信道关闭失败")
 		return
 	}
 }
