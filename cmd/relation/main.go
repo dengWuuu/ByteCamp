@@ -39,6 +39,7 @@ func main() {
 	//if err != nil{
 	//	panic(err)
 	//}
+	nacos.GetFreePort()
 	klog.SetLogger(kitexzap.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
 	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port)) //nacos
