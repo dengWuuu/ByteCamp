@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-29 21:58:00
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-03 23:37:29
+ * @LastEditTime: 2023-02-04 13:30:27
  * @FilePath: /ByteCamp/cmd/relation/handler.go
  * @Description: relation微服务handler
  *
@@ -29,7 +29,7 @@ var (
 func (s *RelationSrvImpl) RelationAction(ctx context.Context, req *relation.DouyinRelationActionRequest) (resp *relation.DouyinRelationActionResponse, err error) {
 	//1、入参校验
 	//2、调用service层，完成关注或取消关注
-	err = relationService.RelationAction(req)
+	err = relationService.RelationActionByRedis(req)
 	if err != nil {
 		resp = pack.BuildRelationActionResponse(err)
 		return resp, nil
@@ -46,7 +46,7 @@ func (s *RelationSrvImpl) RelationFollowList(ctx context.Context, req *relation.
 		return resp, nil
 	}
 	//2、调用service
-	users, err := relationService.FollowList(req)
+	users, err := relationService.FollowListByRedis(req)
 	if err != nil {
 		resp = pack.BuildRelationFollowingListResp(nil, err)
 		return resp, nil
@@ -63,7 +63,7 @@ func (s *RelationSrvImpl) RelationFollowerList(ctx context.Context, req *relatio
 		return resp, nil
 	}
 	//2、调用service
-	users, err := relationService.FollowerList(req)
+	users, err := relationService.FollowerListByRedis(req)
 	if err != nil {
 		resp = pack.BuildRelationFollowerListResp(nil, err)
 		return resp, nil
@@ -78,7 +78,7 @@ func (s *RelationSrvImpl) RelationFriendList(ctx context.Context, req *relation.
 		resp = pack.BuildRelationFriendListResp(nil, errno.ErrBind)
 		return resp, nil
 	}
-	users, err := relationService.FriendList(req)
+	users, err := relationService.FriendListByRedis(req)
 	if err != nil {
 		resp = pack.BuildRelationFriendListResp(nil, err)
 		return resp, nil

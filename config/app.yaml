@@ -11,3 +11,22 @@ redis:
   friendsdb: 2
   userdb: 3
   exipretime: "48h"
+
+oss:
+  endpoint: "oss-cn-beijing.aliyuncs.com"
+  ak: "LTAI5tPgCbMia8qwAy2xesdP"
+  sk: "5F3lX57hEguOpYXtM2C9fEGuyUQ4VP"
+  videobucket: "bytecampvideo"
+  imagebucket: "bytecampimage"
+
+rpc:
+  comment:
+    psm: "bytecamp.douyin.comment"
+  favorite:
+    psm: "bytecamp.douyin.comment"
+  relation:
+    psm: "bytecamp.douyin.relation"
+  user:
+    psm: "bytecamp.douyin.user"
+  video:
+    psm: "bytecamp.douyin.video"

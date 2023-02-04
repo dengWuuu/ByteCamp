@@ -2,8 +2,8 @@ package rpc
 
 import (
 	"context"
-	"douyin/kitex_gen/user"
-	"douyin/kitex_gen/user/usersrv"
+	"douyin/kitex_gen/video"
+	"douyin/kitex_gen/video/videosrv"
 	"douyin/pkg/errno"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/kitex-contrib/registry-nacos/resolver"
@@ -14,31 +14,32 @@ import (
 	"github.com/cloudwego/kitex/pkg/retry"
 )
 
-var userClient usersrv.Client
+var videoClient videosrv.Client
 
 // init 初始化用户 rpc 客户端
-func initUserRpc() {
-	hlog.Info("User Client PSM:" + UserRPCPSM)
+func initVideoRpc() {
+	hlog.Info("Video Client PSM:" + VideoRPCPSM)
 
-	c, err := usersrv.NewClient(
-		UserRPCPSM,
+	c, err := videosrv.NewClient(
+		VideoRPCPSM,
 		client.WithResolver(resolver.NewNacosResolver(NacosInit())),
 		client.WithRPCTimeout(30*time.Second),             // rpc timeout
 		client.WithConnectTimeout(30000*time.Millisecond), // conn timeout
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
 		// Please keep the same as provider.WithServiceName
-		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: UserRPCPSM}),
+		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: VideoRPCPSM}),
 	)
 	if err != nil {
 		hlog.Fatal("客户端启动失败")
 		panic(err)
 	}
-	userClient = c
+
+	videoClient = c
 }
 
-// Register 注册方法，传递注册上下文，并且获取prc响应
-func Register(ctx context.Context, req *user.DouyinUserRegisterRequest) (resp *user.DouyinUserRegisterResponse, err error) {
-	resp, err = userClient.Register(ctx, req)
+// PublishAction implements the VideoSrvImpl interface.
+func PublishAction(ctx context.Context, req *video.DouyinPublishActionRequest) (resp *video.DouyinPublishActionResponse, err error) {
+	resp, err = videoClient.PublishAction(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -48,8 +49,9 @@ func Register(ctx context.Context, req *user.DouyinUserRegisterRequest) (resp *u
 	return resp, nil
 }
 
-func Login(ctx context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
-	resp, err = userClient.Login(ctx, req)
+// PublishList implements the VideoSrvImpl interface.
+func PublishList(ctx context.Context, req *video.DouyinPublishListRequest) (resp *video.DouyinPublishListResponse, err error) {
+	resp, err = videoClient.PublishList(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -59,8 +61,9 @@ func Login(ctx context.Context, req *user.DouyinUserLoginRequest) (resp *user.Do
 	return resp, nil
 }
 
-func GetUserById(ctx context.Context, req *user.DouyinUserRequest) (resp *user.DouyinUserResponse, err error) {
-	resp, err = userClient.GetUserById(ctx, req)
+// GetUserFeed implements the VideoSrvImpl interface.
+func GetUserFeed(ctx context.Context, req *video.DouyinFeedRequest) (resp *video.DouyinFeedResponse, err error) {
+	resp, err = videoClient.GetUserFeed(ctx, req)
 	if err != nil {
 		return nil, err
 	}

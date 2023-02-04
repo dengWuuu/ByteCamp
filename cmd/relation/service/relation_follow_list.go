@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-01 16:41:53
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-03 23:34:17
+ * @LastEditTime: 2023-02-04 13:14:58
  * @FilePath: /ByteCamp/cmd/relation/service/relation_follow_list.go
  * @Description:
  *
@@ -22,10 +22,12 @@
 package service
 
 import (
+	"context"
 	"douyin/cmd/relation/pack"
 	"douyin/dal/db"
 	"douyin/kitex_gen/relation"
 	"douyin/kitex_gen/user"
+	"strconv"
 )
 
 // 根据req获取RPC所需的user列表
@@ -39,5 +41,33 @@ func (service RelationService) FollowList(req *relation.DouyinRelationFollowList
 	if err != nil {
 		return nil, err
 	}
+	return followingUsers, nil
+}
+
+func (service RelationService) FollowListByRedis(req *relation.DouyinRelationFollowListRequest) ([]*user.User, error) {
+	//1、查看following redis中是否有对应的key,若没有，则从mysql中获取到redis中
+	ctx := context.Background()
+	userIdStr := strconv.Itoa(int(req.UserId))
+	cnt, err := db.FollowingRedis.Exists(ctx, userIdStr).Result()
+	if err != nil {
+		return nil, err
+	}
+	if cnt == 0 {
+		loadFollowingListToRedis(ctx, req.UserId)
+	} else {
+		//更新过期时间
+		db.FollowingRedis.Expire(ctx, userIdStr, db.ExpireTime)
+	}
+	//2、从redis中拿到所有的followingId
+	ids, err := getFollowingListFromRedis(ctx, req.UserId)
+	if err != nil {
+		return nil, err
+	}
+	//3、根据followingId获取user
+	followingUsers, err := pack.GetUsersByIds(ids)
+	if err != nil {
+		return nil, err
+	}
+	//4、返回user
 	return followingUsers, nil
 }

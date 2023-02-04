@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// 封装db层数据结构为rpc使用的数据结构
+// Video 封装db层数据结构为rpc使用的数据结构
 func Video(ctx context.Context, m *db.Video) (*video.Video, error) {
 	// 检查非空
 	if m == nil {

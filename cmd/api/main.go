@@ -176,7 +176,7 @@ func registerGroup(h *server.Hertz) {
 	// video模块接口
 	douyin.GET("/feed/", videoHandler.Feed)
 	publish := douyin.Group("/publish")
-	publish.Use(middleware.JwtMiddleware.MiddlewareFunc())
+	publish.Use(middleware.JwtMiddlewareFunc())
 	{
 		publish.POST("/action/", videoHandler.PublishAction)
 		publish.GET("/list/", videoHandler.PublishList)
