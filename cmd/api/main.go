@@ -167,6 +167,7 @@ func registerGroup(h *server.Hertz) {
 	}
 	// favorite模块http接口
 	favorite := douyin.Group("/favorite")
+	favorite.Use(middleware.JwtMiddleware.MiddlewareFunc())
 	{
 		favorite.POST("/action/", favoriteHandler.FavoriteAction)
 		favorite.GET("/list/", favoriteHandler.FavoriteList)
