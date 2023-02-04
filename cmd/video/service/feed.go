@@ -2,10 +2,11 @@ package service
 
 import (
 	"context"
-	"douyin/cmd/video/pack"
-	"douyin/dal/db"
-	"douyin/kitex_gen/video"
 	"time"
+
+	"douyin/cmd/video/dal/db"
+	"douyin/cmd/video/pack"
+	"douyin/kitex_gen/video"
 )
 
 // GetUserFeed implements the VideoSrvImpl interface.
