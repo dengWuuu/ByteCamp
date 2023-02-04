@@ -5,6 +5,7 @@ import (
 	"douyin/cmd/video/pack"
 	"douyin/dal/db"
 	"douyin/kitex_gen/video"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"strconv"
 	"time"
 )
@@ -16,6 +17,10 @@ func PublishAction(ctx context.Context, req *video.DouyinPublishActionRequest) (
 
 	videoTable := &db.Video{}
 	playUrl, coverUrl, err := db.UploadVideo(&req.Data)
+	if err != nil {
+		klog.CtxErrorf(ctx, "UploadVideo Err:%v", err.Error())
+		return nil, err
+	}
 	videoTable.AuthorId, _ = strconv.ParseInt(req.Token, 10, 64)
 	videoTable.Title = req.Title
 	videoTable.PlayUrl = playUrl
