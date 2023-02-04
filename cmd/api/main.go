@@ -17,6 +17,8 @@ import (
 	"douyin/cmd/api/rpc"
 	"douyin/dal"
 	"douyin/pkg/middleware"
+	"os"
+
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/app/server/registry"
 	"github.com/cloudwego/hertz/pkg/common/config"
@@ -30,7 +32,6 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 	"github.com/spf13/viper"
-	"os"
 )
 
 func Init() {
@@ -159,12 +160,14 @@ func registerGroup(h *server.Hertz) {
 
 	// comment模块http接口
 	comment := douyin.Group("/comment")
+	comment.Use(middleware.JwtMiddleware.MiddlewareFunc())
 	{
 		comment.POST("/action/", commentHandler.CommentAction)
 		comment.GET("/list/", commentHandler.CommentList)
 	}
 	// favorite模块http接口
 	favorite := douyin.Group("/favorite")
+	favorite.Use(middleware.JwtMiddleware.MiddlewareFunc())
 	{
 		favorite.POST("/action/", favoriteHandler.FavoriteAction)
 		favorite.GET("/list/", favoriteHandler.FavoriteList)

@@ -1,7 +1,7 @@
 Server:
   Name: "DouYinFavoriteServer"
   Address: "127.0.0.1"
-  Port: 8084
+  Port: 8085
   Argon2ID:
     Memory: 64*1024
     Iterations: 3

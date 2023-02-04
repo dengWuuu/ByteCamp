@@ -4,6 +4,10 @@ import (
 	"douyin/dal"
 	"douyin/kitex_gen/video/videosrv"
 	"douyin/pkg/nacos"
+	"log"
+	"net"
+	"os"
+
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
@@ -12,9 +16,6 @@ import (
 	kitexzap "github.com/kitex-contrib/obs-opentelemetry/logging/zap"
 	"github.com/kitex-contrib/registry-nacos/registry"
 	"github.com/spf13/viper"
-	"log"
-	"net"
-	"os"
 )
 
 // Init Relation RPC Server 端配置初始化
@@ -33,7 +34,7 @@ func main() {
 	viper.AddConfigPath(path + "/config")
 	errV := viper.ReadInConfig()
 	if errV != nil {
-		hlog.Fatal("启动rpc relation 服务器时读取配置文件失败")
+		hlog.Fatal("启动rpc video服务器时读取配置文件失败")
 		return
 	}
 
