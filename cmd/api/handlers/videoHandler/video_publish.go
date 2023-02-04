@@ -18,10 +18,11 @@ func PublishAction(ctx context.Context, c *app.RequestContext) {
 	var param handlers.VideoPublishActionParam
 	err := c.Bind(&param)
 	if err != nil {
-		hlog.Fatalf("参数绑定失败")
-		panic(err)
+		handlers.SendResponse(c, pack.BuildFavoriteListResp(errno.ErrBind))
+		return
 	}
 
+	hlog.CtxInfof(ctx, "Publish Req:%v", param)
 	file, err := param.Data.Open()
 	fileData, err := io.ReadAll(file)
 	userID := middleware.GetUserIdFromJwtToken(ctx, c)
@@ -37,6 +38,7 @@ func PublishAction(ctx context.Context, c *app.RequestContext) {
 		handlers.SendResponse(c, pack.BuildFavoriteListResp(errno.ConvertErr(err)))
 		return
 	}
+	hlog.CtxInfof(ctx, "Publish Resp:%v", rpcResp)
 	handlers.SendResponse(c, rpcResp)
 }
 
@@ -44,10 +46,11 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 	var param handlers.VideoPublishListParam
 	err := c.Bind(&param)
 	if err != nil {
-		hlog.Fatalf("参数绑定失败")
-		panic(err)
+		handlers.SendResponse(c, pack.BuildFavoriteListResp(errno.ErrBind))
+		return
 	}
 
+	hlog.CtxInfof(ctx, "PublishList Req:%v", param)
 	rpcResp, err := rpc.PublishList(ctx, &video.DouyinPublishListRequest{
 		Token:  param.Token,
 		UserId: param.UserId,
@@ -57,5 +60,6 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 		handlers.SendResponse(c, pack.BuildFavoriteListResp(errno.ConvertErr(err)))
 		return
 	}
+	hlog.CtxInfof(ctx, "PublishList Resp:%v", rpcResp)
 	handlers.SendResponse(c, rpcResp)
 }
