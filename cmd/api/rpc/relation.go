@@ -47,7 +47,7 @@ func initRelationRpc() {
 	relationClient = c
 }
 
-// 用户关注或取消关注
+// RelationAction 用户关注或取消关注
 func RelationAction(ctx context.Context, req *relation.DouyinRelationActionRequest) (resp *relation.DouyinRelationActionResponse, err error) {
 	//1、调用rpc接口完成操作,注意需要判断RPC调用是否成功
 	resp, err = relationClient.RelationAction(ctx, req)
@@ -61,7 +61,7 @@ func RelationAction(ctx context.Context, req *relation.DouyinRelationActionReque
 	return resp, nil
 }
 
-// 用户关注列表
+// FollowList 用户关注列表
 func FollowList(ctx context.Context, req *relation.DouyinRelationFollowListRequest) (resp *relation.DouyinRelationFollowListResponse, err error) {
 	resp, err = relationClient.RelationFollowList(ctx, req)
 	if err != nil {
@@ -73,7 +73,7 @@ func FollowList(ctx context.Context, req *relation.DouyinRelationFollowListReque
 	return resp, nil
 }
 
-// 用户粉丝列表
+// FollowerList 用户粉丝列表
 func FollowerList(ctx context.Context, req *relation.DouyinRelationFollowerListRequest) (resp *relation.DouyinRelationFollowerListResponse, err error) {
 	resp, err = relationClient.RelationFollowerList(ctx, req)
 	if err != nil {

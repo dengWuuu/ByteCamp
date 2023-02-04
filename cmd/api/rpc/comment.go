@@ -36,7 +36,7 @@ func initCommentRpc() {
 	commentClient = c
 }
 
-// 传递评论操作的上下文，并且获取RPC服务端的响应
+// CommentAction 传递评论操作的上下文，并且获取RPC服务端的响应
 func CommentAction(ctx context.Context, req *comment.DouyinCommentActionRequest) (resp *comment.DouyinCommentActionResponse, err error) {
 	resp, err = commentClient.CommentAction(ctx, req)
 	if err != nil {
@@ -48,7 +48,7 @@ func CommentAction(ctx context.Context, req *comment.DouyinCommentActionRequest)
 	return resp, nil
 }
 
-// 传递评论获取的上下文，并且获取RPC服务端的响应
+// CommentList 传递评论获取的上下文，并且获取RPC服务端的响应
 func CommentList(ctx context.Context, req *comment.DouyinCommentListRequest) (resp *comment.DouyinCommentListResponse, err error) {
 	resp, err = commentClient.CommentList(ctx, req)
 	if err != nil {

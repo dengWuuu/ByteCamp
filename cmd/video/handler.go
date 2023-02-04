@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"douyin/cmd/video/service"
-	video "douyin/kitex_gen/video"
+	"douyin/kitex_gen/video"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
