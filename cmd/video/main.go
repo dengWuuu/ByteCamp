@@ -28,7 +28,7 @@ func main() {
 	if err1 != nil {
 		panic(err1)
 	}
-	viper.SetConfigName("relationService")
+	viper.SetConfigName("videoService")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(path + "/config")
 	errV := viper.ReadInConfig()

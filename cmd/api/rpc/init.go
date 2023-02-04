@@ -23,6 +23,7 @@ func InitRpc() {
 	initRelationRpc()
 	initCommentRpc()
 	initFavoriteRpc()
+	initVideoRpc()
 }
 
 func NacosInit() naming_client.INamingClient {
