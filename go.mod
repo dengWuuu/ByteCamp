@@ -18,6 +18,7 @@ require (
 	github.com/nacos-group/nacos-sdk-go v1.1.2
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/viper v1.14.0
+	github.com/streadway/amqp v1.0.0
 	github.com/u2takey/ffmpeg-go v0.4.1
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 	google.golang.org/protobuf v1.28.1

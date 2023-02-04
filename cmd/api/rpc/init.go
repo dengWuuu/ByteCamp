@@ -31,7 +31,6 @@ var (
 
 func InitRpc() {
 	ReadConfig()
-
 	initUserRpc()
 	initRelationRpc()
 	initCommentRpc()
