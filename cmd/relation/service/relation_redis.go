@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-03 22:16:48
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-04 13:56:24
+ * @LastEditTime: 2023-02-04 14:31:27
  * @FilePath: /ByteCamp/cmd/relation/service/relation_redis.go
  * @Description: relation微服务对redis的操作封装
  *
@@ -78,7 +78,7 @@ func addRedisFriendsList(ctx context.Context, userId, toUserId int64) error {
 		}
 	}
 	//如果redis中不存在该用户的关注列表，那么不对redis进行操作
-	//TODO:如果要添加朋友关系，首先必须将toUser的following set添加进来
+	//TODO:如果要添加朋友关系，首先必须将toUser的following set添加进来(Done)
 	//1、将toUser的following set添加进来
 	toUserIdStr := strconv.Itoa(int(toUserId))
 	toUserFollowingCnt, err := db.FollowingRedis.Exists(ctx, toUserIdStr).Result()

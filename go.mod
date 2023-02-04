@@ -26,6 +26,7 @@ require (
 	gorm.io/gorm v1.24.2
 	gorm.io/plugin/dbresolver v1.4.0
 	gorm.io/plugin/optimisticlock v1.1.0
+	k8s.io/klog v1.0.0
 )
 
 require (
