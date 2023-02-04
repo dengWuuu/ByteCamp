@@ -19,11 +19,6 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 		panic(err)
 	}
 
-	if err != nil {
-		hlog.Fatalf("参数绑定失败")
-		panic(err)
-	}
-
 	rpcResp, err := rpc.GetUserFeed(ctx, &video.DouyinFeedRequest{
 		Token:      &param.Token,
 		LatestTime: &param.LatestTime,

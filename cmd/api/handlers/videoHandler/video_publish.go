@@ -7,9 +7,11 @@ import (
 	"douyin/cmd/favorite/pack"
 	"douyin/kitex_gen/video"
 	"douyin/pkg/errno"
+	"douyin/pkg/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
+	"strconv"
 )
 
 func PublishAction(ctx context.Context, c *app.RequestContext) {
@@ -22,11 +24,12 @@ func PublishAction(ctx context.Context, c *app.RequestContext) {
 
 	file, err := param.Data.Open()
 	fileData, err := io.ReadAll(file)
+	userID := middleware.GetUserIdFromJwtToken(ctx, c)
 	if err != nil {
 		return
 	}
 	rpcResp, err := rpc.PublishAction(ctx, &video.DouyinPublishActionRequest{
-		Token: param.Token,
+		Token: strconv.Itoa(int(userID)),
 		Title: param.Title,
 		Data:  fileData,
 	})
