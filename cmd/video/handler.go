@@ -12,7 +12,7 @@ type VideoSrvImpl struct{}
 
 // PublishAction implements the VideoSrvImpl interface.
 func (s *VideoSrvImpl) PublishAction(ctx context.Context, req *video.DouyinPublishActionRequest) (resp *video.DouyinPublishActionResponse, err error) {
-	klog.CtxInfof(ctx, "PublishAction Req: %v", req)
+	klog.CtxInfof(ctx, "PublishAction Req: %v, %v", req.Token, req.Title)
 	resp, err = service.PublishAction(ctx, req)
 	if err != nil {
 		return nil, err
