@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+var PublishSuccess = "Success"
+
 // PublishAction implements the VideoSrvImpl interface.
 func PublishAction(ctx context.Context, req *video.DouyinPublishActionRequest) (resp *video.DouyinPublishActionResponse, err error) {
 
@@ -25,6 +27,7 @@ func PublishAction(ctx context.Context, req *video.DouyinPublishActionRequest) (
 	}
 	resp = &video.DouyinPublishActionResponse{
 		StatusCode: 0,
+		StatusMsg:  &PublishSuccess,
 	}
 	return
 }
