@@ -26,6 +26,7 @@ func GetUserFeed(ctx context.Context, req *video.DouyinFeedRequest) (resp *video
 	t := nextTime.Unix()
 	resp = &video.DouyinFeedResponse{
 		StatusCode: 0,
+		StatusMsg:  &SuccessMsg,
 		VideoList:  videoList,
 		NextTime:   &t,
 	}
@@ -34,6 +35,5 @@ func GetUserFeed(ctx context.Context, req *video.DouyinFeedRequest) (resp *video
 
 // GetVideoById implements the VideoSrvImpl interface.
 func GetVideoById(ctx context.Context, req *video.VideoIdRequest) (resp *video.Video, err error) {
-	// TODO: Your code here...
 	return
 }

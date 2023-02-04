@@ -1,9 +1,11 @@
 package main
 
 import (
+	"douyin/cmd/comment/commentMq"
 	"douyin/dal"
 	comment "douyin/kitex_gen/comment/commentsrv"
 	"douyin/pkg/nacos"
+	"douyin/pkg/rabbitmq"
 	"fmt"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
@@ -18,6 +20,8 @@ import (
 // Init Relation RPC Server 端配置初始化
 func Init() {
 	dal.Init()
+	commentMq.InitCommentMq()
+	go commentMq.CommentConsumer()
 }
 func main() {
 	Init()
@@ -42,4 +46,5 @@ func main() {
 	if err != nil {
 		log.Println(err.Error())
 	}
+	defer rabbitmq.Rmq.ReleaseRes()
 }
