@@ -36,7 +36,7 @@ func initFavoriteRpc() {
 	favoriteClient = c
 }
 
-// 传递点赞操作的上下文，同时获取rpc服务端的响应结果
+// FavoriteAction 传递点赞操作的上下文，同时获取rpc服务端的响应结果
 func FavoriteAction(ctx context.Context, req *favorite.DouyinFavoriteActionRequest) (resp *favorite.DouyinFavoriteActionResponse, err error) {
 	resp, err = favoriteClient.FavoriteAction(ctx, req)
 	if err != nil {
@@ -48,7 +48,7 @@ func FavoriteAction(ctx context.Context, req *favorite.DouyinFavoriteActionReque
 	return resp, nil
 }
 
-// 传递获取点赞视频的上下文，同时获取rpc服务端的响应结果
+// FavoriteList 传递获取点赞视频的上下文，同时获取rpc服务端的响应结果
 func FavoriteList(ctx context.Context, req *favorite.DouyinFavoriteListRequest) (resp *favorite.DouyinFavoriteListResponse, err error) {
 	resp, err = favoriteClient.FavoriteList(ctx, req)
 	if err != nil {

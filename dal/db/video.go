@@ -61,8 +61,8 @@ func GetVideosByLastTime(lastTime time.Time) ([]*Video, error) {
 }
 
 // GetPublishListByAuthorId 获取用户发布列表
-func GetPublishListByAuthorId(authorId int64) ([]Video, error) {
-	var data []Video
+func GetPublishListByAuthorId(authorId int64) ([]*Video, error) {
+	var data []*Video
 	//初始化db
 	//Init()
 	result := DB.Where(&Video{AuthorId: authorId}).Find(&data)
