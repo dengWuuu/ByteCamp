@@ -17,42 +17,28 @@ import (
 	"douyin/kitex_gen/relation/relationsrv"
 	"douyin/pkg/errno"
 	"github.com/kitex-contrib/registry-nacos/resolver"
-	"os"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
-	"github.com/spf13/viper"
 )
 
 var relationClient relationsrv.Client
 
 // init 初始化relation rpc 客户端
 func initRelationRpc() {
-	//读取配置
-	path, err1 := os.Getwd()
-	if err1 != nil {
-		panic(err1)
-	}
-	viper.SetConfigName("relationService")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(path + "/config")
-	errV := viper.ReadInConfig()
-	if errV != nil {
-		hlog.Fatal("启动rpc客户端时读取配置文件失败")
-		return
-	}
-	hlog.Info("relation客户端对应的服务端地址" + "服务名字" + viper.GetString("Server.Name"))
+	hlog.Info("Relation Client PSM:" + RelationRPCPSM)
+
 	c, err := relationsrv.NewClient(
-		viper.GetString("Server.Name"),
+		RelationRPCPSM,
 		client.WithResolver(resolver.NewNacosResolver(NacosInit())),
 		client.WithRPCTimeout(30*time.Second),             // rpc timeout
 		client.WithConnectTimeout(30000*time.Millisecond), // conn timeout
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
 		// Please keep the same as provider.WithServiceName
-		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: viper.GetString("Server.Name")}),
+		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: RelationRPCPSM}),
 	)
 	if err != nil {
 		hlog.Fatal("客户端启动失败")

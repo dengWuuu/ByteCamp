@@ -18,3 +18,15 @@ oss:
   sk: "5F3lX57hEguOpYXtM2C9fEGuyUQ4VP"
   videobucket: "bytecampvideo"
   imagebucket: "bytecampimage"
+
+rpc:
+  comment:
+    psm: "bytecamp.douyin.comment"
+  favorite:
+    psm: "bytecamp.douyin.comment"
+  relation:
+    psm: "bytecamp.douyin.relation"
+  user:
+    psm: "bytecamp.douyin.user"
+  video:
+    psm: "bytecamp.douyin.video"
