@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
+	"douyin/cmd/video/dal/db"
+	"douyin/cmd/video/dal/oss"
 	"douyin/cmd/video/pack"
-	"douyin/dal/db"
 	"douyin/kitex_gen/video"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"strconv"
@@ -16,7 +17,7 @@ var SuccessMsg = "Success"
 func PublishAction(ctx context.Context, req *video.DouyinPublishActionRequest) (resp *video.DouyinPublishActionResponse, err error) {
 
 	videoTable := &db.Video{}
-	playUrl, coverUrl, err := db.UploadVideo(&req.Data)
+	playUrl, coverUrl, err := oss.UploadVideo(&req.Data)
 	if err != nil {
 		klog.CtxErrorf(ctx, "UploadVideo Err:%v", err.Error())
 		return nil, err

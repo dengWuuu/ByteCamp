@@ -2,7 +2,6 @@ package pack
 
 import (
 	"context"
-	"douyin/cmd/video/pack"
 	"douyin/dal/db"
 	"douyin/kitex_gen/video"
 )
@@ -17,7 +16,7 @@ func GetVideosByFavorites(ctx context.Context, m []*db.Favorite) ([]*video.Video
 	if err != nil {
 		return nil, err
 	}
-	vids, err := pack.Videos(ctx, dbvids)
+	vids, err := Videos(ctx, dbvids)
 	if err != nil {
 		return nil, err
 	}

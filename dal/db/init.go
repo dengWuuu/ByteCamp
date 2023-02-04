@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -14,8 +13,6 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/plugin/dbresolver"
-
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
 
 var ExpireTime time.Duration
@@ -29,11 +26,6 @@ var FollowersRedis *redis.Client
 var FriendsRedis *redis.Client
 var UserRedis *redis.Client
 
-var VideoBucket *oss.Bucket
-var ImageBucket *oss.Bucket
-var VideoBucketLinkPrefix string
-var ImageBucketLinkPrefix string
-
 func Init(configPath string) {
 	viper.SetConfigName("app")
 	viper.SetConfigType("yaml")
@@ -45,7 +37,6 @@ func Init(configPath string) {
 	}
 	InitMysql()
 	InitRedis()
-	InitOSS()
 }
 
 func InitMysql() {
@@ -116,31 +107,4 @@ func InitRedis() {
 		DB:           viper.GetInt("redis.userdb"),
 	})
 
-}
-
-func InitOSS() {
-	ossClient, err := oss.New(
-		viper.GetString("oss.endpoint"),
-		viper.GetString("oss.ak"),
-		viper.GetString("oss.sk"))
-	if err != nil {
-		hlog.Fatalf("OSS Init Failed")
-		panic(err)
-	}
-
-	VideoBucket, err = ossClient.Bucket(viper.GetString("oss.videobucket"))
-	if err != nil {
-		hlog.Fatalf("VideoBucket Init Failed")
-		panic(err)
-	}
-	VideoBucketLinkPrefix = fmt.Sprintf(
-		"https://%s.%s/", viper.GetString("oss.videobucket"), viper.GetString("oss.endpoint"))
-
-	ImageBucket, err = ossClient.Bucket(viper.GetString("oss.imagebucket"))
-	if err != nil {
-		hlog.Fatalf("ImageBucket Init Failed")
-		panic(err)
-	}
-	ImageBucketLinkPrefix = fmt.Sprintf(
-		"https://%s.%s/", viper.GetString("oss.imagebucket"), viper.GetString("oss.endpoint"))
 }
