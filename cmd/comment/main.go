@@ -21,7 +21,7 @@ import (
 func Init() {
 	dal.Init()
 	commentMq.InitCommentMq()
-	commentMq.CommentConsumer()
+	go commentMq.CommentConsumer()
 }
 func main() {
 	Init()

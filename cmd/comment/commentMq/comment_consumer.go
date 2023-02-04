@@ -37,7 +37,7 @@ func CommentConsumer() {
 	for msg := range msgChanel {
 		// 这里写你的处理逻辑
 		// 获取到的消息是amqp.Delivery对象，从中可以获取消息信息
-		commentAdd(string(msg.Body))
+		commentAction(string(msg.Body))
 		// 主动应答
 		err := msg.Ack(true)
 		if err != nil {
@@ -45,10 +45,9 @@ func CommentConsumer() {
 			return
 		}
 	}
-
 }
 
-func commentAdd(msg string) {
+func commentAction(msg string) {
 	var req *comment.DouyinCommentActionRequest
 	err := json.Unmarshal([]byte(msg), &req)
 	if err != nil {
