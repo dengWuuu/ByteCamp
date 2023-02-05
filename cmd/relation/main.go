@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-29 21:58:00
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-01 14:02:20
+ * @LastEditTime: 2023-02-05 10:37:04
  * @FilePath: /ByteCamp/cmd/relation/main.go
  * @Description: relation rpc server 启动入口
  *
@@ -11,23 +11,26 @@
 package main
 
 import (
+	"douyin/cmd/relation/relationMq"
 	"douyin/dal"
 	relation "douyin/kitex_gen/relation/relationsrv"
 	"douyin/pkg/nacos"
 	"fmt"
+	"log"
+	"net"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	kitexzap "github.com/kitex-contrib/obs-opentelemetry/logging/zap"
 	"github.com/kitex-contrib/registry-nacos/registry"
-	"log"
-	"net"
 )
 
 // Init Relation RPC Server 端配置初始化
 func Init() {
 	dal.Init()
+	relationMq.InitRelationMq() //初始化mq
 }
 func main() {
 	Init()

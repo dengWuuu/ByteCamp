@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-04 20:32:01
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-05 09:37:02
+ * @LastEditTime: 2023-02-05 11:08:06
  * @FilePath: /ByteCamp/cmd/relation/relationMq/relation_consumer.go
  * @Description: mq消费者代码
  *
@@ -65,15 +65,11 @@ func relationConsumer() {
 		if err != nil {
 			klog.Fatalf("relation模块mq解析消息失败: %v", err)
 		}
-		err = msg.Ack(true)
-		if err != nil {
-			klog.Info("ack失败")
-			return
-		}
-		if err != nil {
-			klog.Info("ack失败")
-			return
-		}
+		// err = msg.Ack(true)
+		// if err != nil {
+		// 	klog.Info("ack失败")
+		// 	return
+		// }
 		err = relationActionHandle(req)
 		if err != nil {
 			klog.Infof("relation模块处理消息失败：%v", err)

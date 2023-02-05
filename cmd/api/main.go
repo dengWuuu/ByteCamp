@@ -15,7 +15,6 @@ import (
 	"douyin/cmd/api/handlers/userHandler"
 	"douyin/cmd/api/handlers/videoHandler"
 	"douyin/cmd/api/rpc"
-	"douyin/cmd/relation/relationMq"
 	"douyin/dal"
 	"douyin/pkg/middleware"
 	"os"
@@ -36,8 +35,7 @@ import (
 )
 
 func Init() {
-	rpc.InitRpc()               //初始化rpc客户端
-	relationMq.InitRelationMq() //初始化mq
+	rpc.InitRpc() //初始化rpc客户端
 }
 
 func InitNacos() naming_client.INamingClient {
