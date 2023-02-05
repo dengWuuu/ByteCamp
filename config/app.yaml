@@ -17,7 +17,7 @@ rpc:
   comment:
     psm: "bytecamp.douyin.comment"
   favorite:
-    psm: "bytecamp.douyin.comment"
+    psm: "bytecamp.douyin.favorite"
   relation:
     psm: "bytecamp.douyin.relation"
   user:
