@@ -2,10 +2,9 @@ package pack
 
 import (
 	"context"
-	"douyin/cmd/video/dal/db"
+	"douyin/dal/db"
 	"douyin/kitex_gen/video"
 	"errors"
-
 	"gorm.io/gorm"
 )
 
