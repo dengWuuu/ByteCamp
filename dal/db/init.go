@@ -25,8 +25,7 @@ var FollowingRedis *redis.Client
 var FollowersRedis *redis.Client
 var FriendsRedis *redis.Client
 var UserRedis *redis.Client
-var CTVRedis *redis.Client
-var VTCRedis *redis.Client
+var CommentRedis *redis.Client
 
 func Init(configPath string) {
 	viper.SetConfigName("app")
@@ -108,18 +107,11 @@ func InitRedis() {
 		MinIdleConns: minConns,
 		DB:           viper.GetInt("redis.userdb"),
 	})
-	CTVRedis = redis.NewClient(&redis.Options{
+	CommentRedis = redis.NewClient(&redis.Options{
 		Addr:         addr,
 		Password:     password,
 		PoolSize:     poolSize,
 		MinIdleConns: minConns,
-		DB:           viper.GetInt("redis.ctvdb"),
-	})
-	VTCRedis = redis.NewClient(&redis.Options{
-		Addr:         addr,
-		Password:     password,
-		PoolSize:     poolSize,
-		MinIdleConns: minConns,
-		DB:           viper.GetInt("redis.vtcdb"),
+		DB:           viper.GetInt("redis.commentdb"),
 	})
 }
