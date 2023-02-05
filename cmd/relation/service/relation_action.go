@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-31 12:15:33
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-04 12:29:16
+ * @LastEditTime: 2023-02-05 09:09:55
  * @FilePath: /ByteCamp/cmd/relation/service/relation_action.go
  * @Description: relationAction接口对应service
  *
@@ -12,9 +12,13 @@ package service
 
 import (
 	"context"
+	"douyin/cmd/relation/relationMq"
 	"douyin/dal/db"
 	"douyin/kitex_gen/relation"
+	"encoding/json"
 	"errors"
+
+	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 //TODO:采用redis维护用户的关注、粉丝、朋友列表
@@ -48,14 +52,19 @@ func (service *RelationService) RelationAction(req *relation.DouyinRelationActio
 
 func (service *RelationService) RelationActionByRedis(req *relation.DouyinRelationActionRequest) error {
 	ctx := context.Background()
+	//发送mq
+	msg, err := json.Marshal(req)
+	if err != nil {
+		klog.Info("mq msg json marshal error")
+		return err
+	}
+	relationMq.RelationActionMqSend([]byte(msg))
 	if req.ActionType == 1 {
-		//发送mq
 		//更新redis
 		addRedisFollowList(ctx, req.UserId, req.ToUserId)
 		addRedisFollowerList(ctx, req.UserId, req.ToUserId)
 		addRedisFriendsList(ctx, req.UserId, req.ToUserId)
 	} else if req.ActionType == 2 {
-		//发送mq
 		//更新redis
 		remRedisFollowList(ctx, req.UserId, req.ToUserId)
 		remRedisFollowerList(ctx, req.UserId, req.ToUserId)
