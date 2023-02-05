@@ -14,6 +14,7 @@ package db
 import (
 	"douyin/pkg/bcrypt"
 	"douyin/pkg/errno"
+	"github.com/cloudwego/kitex/pkg/klog"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
@@ -83,4 +84,13 @@ func CheckUser(username string, password string) ([]*User, error) {
 		return nil, errno.ErrPasswordIncorrect
 	}
 	return users, nil
+}
+
+func GetAllUser() []*User {
+	users := make([]*User, 0)
+	err := DB.Find(&users).Error
+	if err != nil {
+		klog.Fatal("获取所有用户信息失败")
+	}
+	return users
 }
