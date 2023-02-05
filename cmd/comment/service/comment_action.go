@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"douyin/cmd/comment/commentMq"
 	"douyin/dal/db"
 	"douyin/kitex_gen/comment"
 	"douyin/pkg/errno"
+	"encoding/json"
 	"strconv"
 	"time"
 
@@ -36,7 +38,7 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 		comment_id, err := GetOneId(s.ctx, db.CommentRedis, id_type)
 		cid_string := strconv.Itoa(int(comment_id))
 		if err != nil {
-			klog.Error("获取自增ID错误")
+			klog.Fatalf("获取自增ID错误")
 			return err
 		}
 		// 查找redis里面是否存在对应的video对象
@@ -44,11 +46,11 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 		vid_cnt, err := db.CommentRedis.Exists(s.ctx, vid_string).Result()
 		// 下面都是严重的错误
 		if err != nil {
-			klog.Error("查询redis视频对象出错")
+			klog.Fatalf("查询redis视频对象出错")
 			panic(err)
 		}
 		if vid_cnt > 1 {
-			klog.Error("video对象不唯一")
+			klog.Fatalf("video对象不唯一")
 			panic(err)
 		}
 		if vid_cnt == 1 {
@@ -63,16 +65,22 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 			commentInfo.CreateDate = commentModel.CreatTime.String()
 			comment_binary, err := commentInfo.MarshalBinary()
 			if err != nil {
-				klog.Error("评论信息序列化失败")
+				klog.Fatalf("评论信息序列化失败")
 				return err
 			}
 			// 修改video的键值对
 			err = db.CommentRedis.HSet(s.ctx, vid_string, cid_string, comment_binary).Err()
 			if err != nil {
-				klog.Error("redis修改video对象失败")
+				klog.Fatalf("redis修改video对象失败")
 				return err
 			}
-			//TODO 发送更新消息给MQ异步更新
+			// 发送消息给MQ
+			msg, err := json.Marshal(req)
+			if err != nil {
+				klog.Fatalf("序列化添加评论请求参数失败")
+				return err
+			}
+			commentMq.CommentActionMqSend([]byte(msg))
 			return nil
 		}
 		// 直接修改数据库
@@ -89,21 +97,27 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 		vid_cnt, err := db.CommentRedis.Exists(s.ctx, vid_string).Result()
 		// 下面都是严重的错误
 		if err != nil {
-			klog.Error("查询redis video对象出错")
+			klog.Fatalf("查询redis video对象出错")
 			panic(err)
 		}
 		if vid_cnt > 1 {
-			klog.Error("video对象不唯一")
+			klog.Fatalf("video对象不唯一")
 			panic(err)
 		}
 		if vid_cnt == 1 {
 			// 存在vidoe对象
 			err := db.CommentRedis.HDel(s.ctx, vid_string, cid_string).Err()
 			if err != nil {
-				klog.Error("redis修改video对象失败")
+				klog.Fatalf("redis修改video对象失败")
 				return err
 			}
-			// TODO 异步发送消息给MQ
+			// 发送消息给MQ
+			msg, err := json.Marshal(req)
+			if err != nil {
+				klog.Fatalf("序列化添加评论请求参数失败")
+				return err
+			}
+			commentMq.CommentActionMqSend([]byte(msg))
 			return nil
 		}
 		// 直接修改数据库
