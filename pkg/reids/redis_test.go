@@ -26,3 +26,8 @@ func TestPutUserToRedis(t *testing.T) {
 	}
 	PutUserToRedis(context.Background(), &user)
 }
+
+func TestPutAllUserToRedis(t *testing.T) {
+	db.Init("D:\\GolandProjects\\Douyin\\config")
+	LoadUserFromMysqlToRedis(context.Background())
+}

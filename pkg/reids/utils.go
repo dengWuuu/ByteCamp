@@ -53,3 +53,19 @@ func PutUserToRedis(ctx context.Context, user *db.User) {
 	s, err := result.Result()
 	klog.Info("redis放入user信息" + s)
 }
+
+func LoadUserFromMysqlToRedis(ctx context.Context) {
+	user := db.GetAllUser()
+	pipelined := db.UserRedis.Pipeline()
+	for i := 0; i < len(user); i++ {
+		marshal, err := json.Marshal(user[i])
+		if err != nil {
+			klog.Fatalf("将user放入redis时序列化失败")
+		}
+		pipelined.Set(ctx, prefix+strconv.Itoa(int(user[i].ID)), marshal, time.Hour*24*180)
+	}
+	_, err := pipelined.Exec(ctx)
+	if err != nil {
+		klog.Fatalf("LoadUserFromMysqlToRedis管道命令执行失败")
+	}
+}
