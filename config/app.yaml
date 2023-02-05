@@ -10,6 +10,8 @@ redis:
   followingdb: 1
   friendsdb: 2
   userdb: 3
+  ctvdb: 4
+  vtcdb: 5
   exipretime: "48h"
 
 rpc:
