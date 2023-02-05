@@ -5,6 +5,7 @@ import (
 	"douyin/dal/db"
 	"douyin/kitex_gen/comment"
 	"encoding/json"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
@@ -39,11 +40,13 @@ func CommentConsumer() {
 		// 获取到的消息是amqp.Delivery对象，从中可以获取消息信息
 		commentAction(string(msg.Body))
 		// 主动应答
-		err := msg.Ack(true)
-		if err != nil {
-			klog.Info("ack失败")
-			return
-		}
+		// TODO 主动应答会出现问题
+		// err := msg.Ack(true)
+		// if err != nil {
+		// 	klog.Info("ack失败")
+		// 	return
+		// }
+
 	}
 }
 
@@ -69,7 +72,7 @@ func commentAction(msg string) {
 	}
 	// 根据请求删除评论
 	if req.ActionType == 2 {
-		err := db.DeleteCommentById(nil, int(req.VideoId), int(*req.CommentId))
+		err := db.DeleteCommentById(context.Background(), int(req.VideoId), int(*req.CommentId))
 		if err != nil {
 			klog.Fatalf("rabbitmq 消费者在数据库中删除评论失败")
 			return

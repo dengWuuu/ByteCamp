@@ -24,11 +24,11 @@ func (s *CommentListService) CommentList(req *comment.DouyinCommentListRequest) 
 	vid_string := strconv.Itoa(int(video_id))
 	vid_cnt, err := db.CommentRedis.Exists(s.ctx, vid_string).Result()
 	if err != nil {
-		klog.Error("redis查找video对象出错")
+		klog.Fatalf("redis查找video对象出错")
 		panic(err)
 	}
 	if vid_cnt > 1 {
-		klog.Error("video对象不唯一")
+		klog.Fatalf("video对象不唯一")
 		panic(err)
 	}
 	if vid_cnt == 1 {
