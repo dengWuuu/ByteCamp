@@ -64,6 +64,7 @@ func commentAction(msg string) {
 			UserId:  int(req.UserId),
 			Content: *req.CommentText,
 		}
+		commentModel.ID = uint(*req.CommentId) // 一定要添加自定义的分布式ID
 		err := db.CreateComment(context.Background(), commentModel)
 		if err != nil {
 			klog.Fatalf("rabbitmq 消费者在数据库中创建评论失败")

@@ -75,6 +75,7 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 				return err
 			}
 			// 发送消息给MQ
+			req.CommentId = &comment_id
 			msg, err := json.Marshal(req)
 			if err != nil {
 				klog.Fatalf("序列化添加评论请求参数失败")
