@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-02 18:43:44
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-06 11:56:48
+ * @LastEditTime: 2023-02-06 13:46:24
  * @FilePath: \ByteCamp\cmd\relation\service\relation_friend_list.go
  * @Description:
  *
@@ -70,9 +70,14 @@ func (service RelationService) FriendListByRedis(req *relation.DouyinRelationFri
 	}
 	//3、根据followingId获取user
 	var FriendUsers []*user.User
-	uids := make([]uint, len(ids))
-	for i, id := range ids {
-		uids[i] = uint(id)
+	uids := make([]uint, len(ids)-1)
+	k := 0
+	for _, id := range ids {
+		if id == -1 {
+			continue
+		}
+		uids[k] = uint(id)
+		k++
 	}
 	dbUsers := redis.GetUsersFromRedis(ctx, uids)
 	if dbUsers == nil {

@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-01 16:41:53
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-06 11:50:12
+ * @LastEditTime: 2023-02-06 14:21:20
  * @FilePath: \ByteCamp\cmd\relation\service\relation_follow_list.go
  * @Description:
  *
@@ -67,9 +67,14 @@ func (service RelationService) FollowListByRedis(req *relation.DouyinRelationFol
 	}
 	//3、根据followingId获取user，先从redis中获取user,若redis中没有，则从mysql中获取
 	var followingUsers []*user.User
-	uids := make([]uint, len(ids))
-	for i, id := range ids {
-		uids[i] = uint(id)
+	uids := make([]uint, len(ids)-1)
+	k := 0
+	for _, id := range ids {
+		if id == -1 {
+			continue
+		}
+		uids[k] = uint(id)
+		k++
 	}
 	//从redis中获取user
 	dbUsers := redis.GetUsersFromRedis(ctx, uids)
