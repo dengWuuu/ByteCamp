@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-04 00:11:19
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-06 11:52:53
+ * @LastEditTime: 2023-02-06 15:48:33
  * @FilePath: \ByteCamp\cmd\relation\service\relation_follower_list.go
  * @Description:
  *
@@ -18,7 +18,6 @@ import (
 	"douyin/kitex_gen/relation"
 	"douyin/kitex_gen/user"
 	redis "douyin/pkg/redis"
-	"strconv"
 )
 
 //根据req获取RPC所需的粉丝user列表
@@ -36,19 +35,9 @@ func (service RelationService) FollowerList(req *relation.DouyinRelationFollower
 }
 
 func (service RelationService) FollowerListByRedis(req *relation.DouyinRelationFollowerListRequest) ([]*user.User, error) {
-	//1、查看follower redis中是否有对应的key,若没有，则从mysql中获取到redis中
+	//1、load
 	ctx := context.Background()
-	userIdStr := strconv.Itoa(int(req.UserId))
-	cnt, err := db.FollowersRedis.Exists(ctx, userIdStr).Result()
-	if err != nil {
-		return nil, err
-	}
-	if cnt == 0 {
-		loadFollowersListToRedis(ctx, req.UserId)
-	} else {
-		//更新过期时间
-		db.FollowersRedis.Expire(ctx, userIdStr, db.ExpireTime)
-	}
+	loadFollowersListToRedis(ctx, req.UserId)
 	//2、从redis中拿到所有的followerId
 	ids, err := getFollowersListFromRedis(ctx, req.UserId)
 	if err != nil {
@@ -83,6 +72,28 @@ func (service RelationService) FollowerListByRedis(req *relation.DouyinRelationF
 			}
 		}
 	}
-	//4、返回user
+
+	//4、补全users中的关注总数、粉丝总数、是否关注
+	for _, followerUser := range followerUsers {
+		// loadFollowersListToRedis(ctx, followerUser.Id)
+		// loadFollowingListToRedis(ctx, followerUser.Id)
+		// followcnt, err := getFollowingCountFromRedis(ctx, followerUser.Id)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		// followerUser.FollowCount = &followcnt
+
+		// followercnt, err := getFollowersCountFromRedis(ctx, followerUser.Id)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		// followerUser.FollowerCount = &followercnt
+		isFollow, err := redis.IsFollowing(ctx, req.UserId, followerUser.Id)
+		if err != nil {
+			return nil, err
+		}
+		followerUser.IsFollow = isFollow
+	}
+	//5、返回user
 	return followerUsers, nil
 }

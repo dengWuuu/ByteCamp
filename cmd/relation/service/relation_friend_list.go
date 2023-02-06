@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-02 18:43:44
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-06 13:46:24
+ * @LastEditTime: 2023-02-06 16:02:57
  * @FilePath: \ByteCamp\cmd\relation\service\relation_friend_list.go
  * @Description:
  *
@@ -28,7 +28,6 @@ import (
 	"douyin/kitex_gen/relation"
 	"douyin/kitex_gen/user"
 	redis "douyin/pkg/redis"
-	"strconv"
 )
 
 //根据req获取RPC所需的朋友userId列表
@@ -52,17 +51,7 @@ func (service RelationService) FriendList(req *relation.DouyinRelationFriendList
 func (service RelationService) FriendListByRedis(req *relation.DouyinRelationFriendListRequest) ([]*user.User, error) {
 	//1、查看Friend redis中是否有对应的key,若没有，则从mysql中获取到redis中
 	ctx := context.Background()
-	userIdStr := strconv.Itoa(int(req.UserId))
-	cnt, err := db.FriendsRedis.Exists(ctx, userIdStr).Result()
-	if err != nil {
-		return nil, err
-	}
-	if cnt == 0 {
-		loadFriendsListToRedis(ctx, req.UserId)
-	} else {
-		//更新过期时间
-		db.FriendsRedis.Expire(ctx, userIdStr, db.ExpireTime)
-	}
+	loadFriendsListToRedis(ctx, req.UserId)
 	//2、从redis中拿到所有的FriendId
 	ids, err := getFriendsListFromRedis(ctx, req.UserId)
 	if err != nil {
@@ -99,6 +88,27 @@ func (service RelationService) FriendListByRedis(req *relation.DouyinRelationFri
 	if err != nil {
 		return nil, err
 	}
-	//4、返回user
+	//4、补全信息
+	for _, friendUser := range FriendUsers {
+		// loadFollowersListToRedis(ctx, friendUser.Id)
+		// loadFollowingListToRedis(ctx, friendUser.Id)
+		// followcnt, err := getFollowingCountFromRedis(ctx, friendUser.Id)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		// friendUser.FollowCount = &followcnt
+
+		// followercnt, err := getFollowersCountFromRedis(ctx, friendUser.Id)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		// friendUser.FollowerCount = &followercnt
+		isFollow, err := redis.IsFollowing(ctx, req.UserId, friendUser.Id)
+		if err != nil {
+			return nil, err
+		}
+		friendUser.IsFollow = isFollow
+	}
+	//5、返回user
 	return FriendUsers, nil
 }

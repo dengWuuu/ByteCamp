@@ -29,3 +29,6 @@ cmd/favorite/output
 cmd/relation/output
 cmd/user/output
 cmd/video/output
+
+config/apiConfig.yaml
+config/app.yaml

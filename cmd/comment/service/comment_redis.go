@@ -175,12 +175,18 @@ func AddRedisCommentList(ctx context.Context, vid int64, ms []*comment.Comment) 
 		}
 	}
 	// 调用redis的API一次性写入
+	// ! 需要判断是否为空，否则会写入失败，直接宕机
+	if len(comment_map) == 0 {
+		return nil
+	}
 	vid_string := strconv.Itoa(int(vid))
 	err := db.CommentRedis.HMSet(ctx, vid_string, comment_map).Err()
 	if err != nil {
 		klog.Fatalf("评论列表写入redis失败")
 		return err
 	}
+	// 设置过期时间
+	db.CommentRedis.Expire(ctx, vid_string, db.ExpireTime)
 	return nil
 }
 
