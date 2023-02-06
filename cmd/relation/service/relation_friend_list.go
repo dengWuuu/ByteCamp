@@ -2,8 +2,8 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-02 18:43:44
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-04 13:24:46
- * @FilePath: /ByteCamp/cmd/relation/service/relation_friend_list.go
+ * @LastEditTime: 2023-02-06 11:56:48
+ * @FilePath: \ByteCamp\cmd\relation\service\relation_friend_list.go
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
@@ -27,6 +27,7 @@ import (
 	"douyin/dal/db"
 	"douyin/kitex_gen/relation"
 	"douyin/kitex_gen/user"
+	redis "douyin/pkg/redis"
 	"strconv"
 )
 
@@ -68,7 +69,28 @@ func (service RelationService) FriendListByRedis(req *relation.DouyinRelationFri
 		return nil, err
 	}
 	//3、根据followingId获取user
-	FriendUsers, err := pack.GetUsersByIds(ids)
+	var FriendUsers []*user.User
+	uids := make([]uint, len(ids))
+	for i, id := range ids {
+		uids[i] = uint(id)
+	}
+	dbUsers := redis.GetUsersFromRedis(ctx, uids)
+	if dbUsers == nil {
+		//从mysql中获取user
+		FriendUsers, err = pack.GetUsersByIds(ids)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		//否则直接pack为RPC所需的user
+		FriendUsers = make([]*user.User, len(dbUsers))
+		for i, dbUser := range dbUsers {
+			FriendUsers[i], err = userpack.User(ctx, dbUser)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
 	if err != nil {
 		return nil, err
 	}
