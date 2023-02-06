@@ -5,14 +5,15 @@ import (
 	user "douyin/kitex_gen/user/usersrv"
 	"douyin/pkg/nacos"
 	"fmt"
+	"log"
+	"net"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	kitexzap "github.com/kitex-contrib/obs-opentelemetry/logging/zap"
 	"github.com/kitex-contrib/registry-nacos/registry"
-	"log"
-	"net"
 )
 
 // Init User RPC Server 端配置初始化
