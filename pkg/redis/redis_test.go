@@ -1,11 +1,12 @@
-package reids
+package redis
 
 import (
 	"context"
 	"douyin/dal/db"
+	"testing"
+
 	"gorm.io/gorm"
 	"gorm.io/plugin/optimisticlock"
-	"testing"
 )
 
 func TestGetUserFromRedis(t *testing.T) {
