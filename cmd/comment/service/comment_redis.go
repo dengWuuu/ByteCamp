@@ -181,6 +181,8 @@ func AddRedisCommentList(ctx context.Context, vid int64, ms []*comment.Comment) 
 		klog.Fatalf("评论列表写入redis失败")
 		return err
 	}
+	// 设置过期时间
+	db.CommentRedis.Expire(ctx, vid_string, db.ExpireTime)
 	return nil
 }
 
