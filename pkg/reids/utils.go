@@ -31,6 +31,8 @@ func GetUsersFromRedis(ctx context.Context, userIds []uint) []*db.User {
 		bytes, err := cmd.Bytes()
 		if err != nil {
 			klog.Fatal("redis获取用户失败,获取字节码数组失败")
+			userList[index] = nil
+			continue
 		}
 		user := new(db.User)
 		err = json.Unmarshal(bytes, user)
