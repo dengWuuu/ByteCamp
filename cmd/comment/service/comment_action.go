@@ -80,8 +80,16 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 				return nil, err
 			}
 			// 发送消息给MQ
-			req.CommentId = &comment_id
-			msg, err := json.Marshal(req)
+			// * 这里要手动加上comment的ID和创建时间
+			commentMessage := commentMq.CommentRmqMessage{
+				UserId:     commentModel.UserId,
+				VideoId:    commentModel.VideoId,
+				Content:    commentModel.Content,
+				CreateTime: commentModel.CreatTime,
+				ActionType: int(req.ActionType),
+				CommentId:  int(comment_id),
+			}
+			msg, err := json.Marshal(commentMessage)
 			if err != nil {
 				klog.Fatalf("序列化添加评论请求参数失败")
 				return nil, err
@@ -132,7 +140,21 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 				return nil, err
 			}
 			// 发送消息给MQ
-			msg, err := json.Marshal(req)
+			// * 这里要手动加上comment的ID和创建时间
+			comment_time, err := time.ParseInLocation("2006-01-02 15:04:05", commentRedisInfo.CreateDate, time.Local)
+			if err != nil {
+				klog.Fatalf("删除评论过程中序列化时间失败")
+				return nil, err
+			}
+			commentMessage := commentMq.CommentRmqMessage{
+				UserId:     int(commentRedisInfo.User.UserId),
+				VideoId:    int(req.VideoId),
+				Content:    commentRedisInfo.Content,
+				CreateTime: comment_time,
+				ActionType: int(req.ActionType),
+				CommentId:  int(comment_id),
+			}
+			msg, err := json.Marshal(commentMessage)
 			if err != nil {
 				klog.Fatalf("序列化添加评论请求参数失败")
 				return nil, err

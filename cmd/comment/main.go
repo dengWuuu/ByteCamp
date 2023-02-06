@@ -41,7 +41,7 @@ func main() {
 	svr := comment.NewServer(new(CommentSrvImpl),
 		server.WithServiceAddr(addr),
 		server.WithRegistry(r),
-		server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 100}),
+		server.WithLimit(&limit.Option{MaxConnections: 1000000000, MaxQPS: 1000000000}),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: PSM}))
 	err := svr.Run()
 	if err != nil {
