@@ -1,13 +1,14 @@
-package reids
+package redis
 
 import (
 	"context"
 	"douyin/dal/db"
 	"encoding/json"
-	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/go-redis/redis/v8"
 	"strconv"
 	"time"
+
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/go-redis/redis/v8"
 )
 
 const prefix = "user:Id:"

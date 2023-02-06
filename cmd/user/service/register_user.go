@@ -6,7 +6,7 @@ import (
 	"douyin/kitex_gen/user"
 	"douyin/pkg/bcrypt"
 	"douyin/pkg/errno"
-	"douyin/pkg/reids"
+	"douyin/pkg/redis"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 )
@@ -37,7 +37,7 @@ func (registerService RegisterService) Register(req *user.DouyinUserRegisterRequ
 	//不存在该用户 直接插入该用户数据
 	insertUser := &db.User{Name: req.Username, Password: p}
 	//注册成功后user信息放入redis
-	reids.PutUserToRedis(registerService.ctx, insertUser)
+	redis.PutUserToRedis(registerService.ctx, insertUser)
 	err = db.CreateUser(insertUser)
 	if err != nil {
 		return nil, err
