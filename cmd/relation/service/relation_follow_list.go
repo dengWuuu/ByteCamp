@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-01 16:41:53
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-06 14:21:20
+ * @LastEditTime: 2023-02-06 15:43:26
  * @FilePath: \ByteCamp\cmd\relation\service\relation_follow_list.go
  * @Description:
  *
@@ -29,7 +29,6 @@ import (
 	"douyin/kitex_gen/relation"
 	"douyin/kitex_gen/user"
 	redis "douyin/pkg/redis"
-	"strconv"
 )
 
 // 根据req获取RPC所需的user列表
@@ -47,19 +46,9 @@ func (service RelationService) FollowList(req *relation.DouyinRelationFollowList
 }
 
 func (service RelationService) FollowListByRedis(req *relation.DouyinRelationFollowListRequest) ([]*user.User, error) {
-	//1、查看following redis中是否有对应的key,若没有，则从mysql中获取到redis中
+	//1、load
 	ctx := context.Background()
-	userIdStr := strconv.Itoa(int(req.UserId))
-	cnt, err := db.FollowingRedis.Exists(ctx, userIdStr).Result()
-	if err != nil {
-		return nil, err
-	}
-	if cnt == 0 {
-		loadFollowingListToRedis(ctx, req.UserId)
-	} else {
-		//更新过期时间
-		db.FollowingRedis.Expire(ctx, userIdStr, db.ExpireTime)
-	}
+	loadFollowingListToRedis(ctx, req.UserId)
 	//2、从redis中拿到所有的followingId
 	ids, err := getFollowingListFromRedis(ctx, req.UserId)
 	if err != nil {
@@ -94,7 +83,28 @@ func (service RelationService) FollowListByRedis(req *relation.DouyinRelationFol
 			}
 		}
 	}
+	//4、补全users中的关注总数、粉丝总数、是否关注
+	for _, followingUser := range followingUsers {
+		// loadFollowersListToRedis(ctx, followingUser.Id)
+		// loadFollowingListToRedis(ctx, followingUser.Id)
+		// followcnt, err := getFollowingCountFromRedis(ctx, followingUser.Id)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		// followingUser.FollowCount = &followcnt
 
-	//4、返回user
+		// followercnt, err := getFollowersCountFromRedis(ctx, followingUser.Id)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		// followingUser.FollowerCount = &followercnt
+		isFollow, err := redis.IsFollowing(ctx, req.UserId, followingUser.Id)
+		if err != nil {
+			return nil, err
+		}
+		followingUser.IsFollow = isFollow
+	}
+
+	//5、返回user
 	return followingUsers, nil
 }
