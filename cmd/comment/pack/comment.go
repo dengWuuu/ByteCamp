@@ -5,6 +5,7 @@ import (
 	"douyin/dal/db"
 	"douyin/kitex_gen/comment"
 	"douyin/kitex_gen/user"
+	Redis "douyin/pkg/redis"
 )
 
 // 包装db层数据结构到rpc通信数据结构
@@ -14,14 +15,23 @@ func Comment(ctx context.Context, m *db.Comment) (*comment.Comment, error) {
 		return &comment.Comment{Content: "no content"}, nil
 	}
 	// 获取对应的用户数据
-	u, err := db.GetUserById(int64(m.UserId))
-	if err != nil || u == nil {
-		return &comment.Comment{Content: "no user"}, nil
+	var u *db.User
+	uids := make([]uint, 0)
+	uids = append(uids, uint(m.UserId))
+	redis_user := Redis.GetUsersFromRedis(ctx, uids)
+	if redis_user == nil {
+		db_u, err := db.GetUserById(int64(m.UserId))
+		if err != nil {
+			return nil, err
+		}
+		u = db_u
+	} else {
+		u = redis_user[0]
 	}
 	// 转换用户的类型
 	followCount := int64(u.FollowingCount)
 	followerCount := int64(u.FollowerCount)
-	user := &user.User{
+	us := &user.User{
 		Id:            int64(u.ID),
 		Name:          u.Name,
 		FollowCount:   &followCount,
@@ -31,7 +41,7 @@ func Comment(ctx context.Context, m *db.Comment) (*comment.Comment, error) {
 	// 转换评论类型
 	return &comment.Comment{
 		Id:         int64(m.ID),
-		User:       user,
+		User:       us,
 		Content:    m.Content,
 		CreateDate: m.CreatTime.String(),
 	}, nil
