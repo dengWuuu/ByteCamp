@@ -56,9 +56,14 @@ func (service RelationService) FollowerListByRedis(req *relation.DouyinRelationF
 	}
 	//3、根据followingId获取user
 	var followerUsers []*user.User
-	uids := make([]uint, len(ids))
-	for i, id := range ids {
-		uids[i] = uint(id)
+	uids := make([]uint, len(ids)-1)
+	k := 0
+	for _, id := range ids {
+		if id == -1 {
+			continue
+		}
+		uids[k] = uint(id)
+		k++
 	}
 	//从redis中获取user
 	dbUsers := redis.GetUsersFromRedis(ctx, uids)
