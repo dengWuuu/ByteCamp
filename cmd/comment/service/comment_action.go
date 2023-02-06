@@ -55,14 +55,17 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 		}
 		if vid_cnt == 1 {
 			// 存在video对象
-			// TODO： 获取用户对象信息
-			var userInfo CommentUserInfo
 			// 配置评论对象信息
+			var userInfo CommentUserInfo
 			var commentInfo CommentRedisInfo
-			commentInfo.User = userInfo
-			commentInfo.CommentId = comment_id
-			commentInfo.Content = commentModel.Content
-			commentInfo.CreateDate = commentModel.CreatTime.String()
+			user_info, err := GetUserFromRedis(s.ctx, req.UserId)
+			if err != nil {
+				klog.Fatalf("创建评论过程中获取用户信息失败")
+				return err
+			}
+			// TODO 判断是否关注
+			userInfo = ToRedisUser(*user_info)
+			commentInfo = ToRedisComment(userInfo, *commentModel)
 			comment_binary, err := commentInfo.MarshalBinary()
 			if err != nil {
 				klog.Fatalf("评论信息序列化失败")

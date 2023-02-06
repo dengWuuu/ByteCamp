@@ -5,8 +5,10 @@ import (
 	"douyin/dal/db"
 	"douyin/kitex_gen/comment"
 	"douyin/kitex_gen/user"
+	Redis "douyin/pkg/redis"
 	"encoding/json"
 	"strconv"
+	"time"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/go-redis/redis/v8"
@@ -38,6 +40,47 @@ func (c *CommentRedisInfo) MarshalBinary() ([]byte, error) {
 }
 func (c *CommentRedisInfo) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, c)
+}
+
+// 结构体转换
+func ToDbUser(u CommentUserInfo) db.User {
+	var dbUser db.User
+	dbUser.ID = uint(u.UserId)
+	dbUser.Name = u.Name
+	dbUser.FollowerCount = int(u.FollowerCount)
+	dbUser.FollowingCount = int(u.FollowCount)
+	return dbUser
+}
+func ToRedisUser(u db.User) CommentUserInfo {
+	var userInfo CommentUserInfo
+	userInfo.UserId = int64(u.ID)
+	userInfo.Name = u.Name
+	userInfo.FollowCount = int64(u.FollowingCount)
+	userInfo.FollowerCount = int64(u.FollowerCount)
+	userInfo.IsFollow = false
+	return userInfo
+}
+func ToRedisComment(u CommentUserInfo, c db.Comment) CommentRedisInfo {
+	var commentInfo CommentRedisInfo
+	commentInfo.User = u
+	commentInfo.CommentId = int64(c.ID)
+	commentInfo.Content = c.Content
+	commentInfo.CreateDate = c.CreatTime.String()
+	return commentInfo
+}
+func ToDbComment(c CommentRedisInfo, vid int64) (db.Comment, error) {
+	var dbComment db.Comment
+	dbComment.ID = uint(c.CommentId)
+	dbComment.Content = c.Content
+	dbComment.VideoId = int(vid)
+	dbComment.UserId = int(c.User.UserId)
+	t, err := time.ParseInLocation("2006-01-02 15:04:05", c.CreateDate, time.Local)
+	if err != nil {
+		klog.Fatalf("时间字符串转换类型失败")
+		return dbComment, err
+	}
+	dbComment.CreatTime = t
+	return dbComment, nil
 }
 
 func getIdCacheName(idType string) string {
@@ -139,4 +182,21 @@ func AddRedisCommentList(ctx context.Context, vid int64, ms []*comment.Comment) 
 		return err
 	}
 	return nil
+}
+
+// 获取单个用户的信息
+func GetUserFromRedis(ctx context.Context, user_id int64) (*db.User, error) {
+	// 查询redis缓存是否有用户数据
+	uids := make([]uint, 0)
+	uids = append(uids, uint(user_id))
+	user := Redis.GetUsersFromRedis(ctx, uids)
+	if user == nil {
+		// 从MySQL中获取消息
+		user, err := db.GetUserById(user_id)
+		if err != nil {
+			return nil, err
+		}
+		return user, nil
+	}
+	return user[0], nil
 }
