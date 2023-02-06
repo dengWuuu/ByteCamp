@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-01 16:41:53
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-06 13:46:02
+ * @LastEditTime: 2023-02-06 14:01:40
  * @FilePath: \ByteCamp\cmd\relation\service\relation_follow_list.go
  * @Description:
  *
@@ -97,4 +97,24 @@ func (service RelationService) FollowListByRedis(req *relation.DouyinRelationFol
 
 	//4、返回user
 	return followingUsers, nil
+}
+
+//判断一个用户是否关注了另一个用户
+func IsFollowing(ctx context.Context, userId, otherId int64) (bool, error) {
+	//1.查看redis中是否有缓存
+	userIdStr := strconv.Itoa(int(userId))
+	cnt, err := db.FollowingRedis.Exists(ctx, userIdStr).Result()
+	if err != nil {
+		return false, err
+	}
+	if cnt == 0 {
+		loadFollowingListToRedis(ctx, userId)
+	}
+	//2.判断redis缓存中是否有otherId
+	otherIdStr := strconv.Itoa(int(otherId))
+	exists, err := db.FollowingRedis.SIsMember(ctx, userIdStr, otherIdStr).Result()
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
 }

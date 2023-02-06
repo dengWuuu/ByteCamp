@@ -2,8 +2,8 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-03 22:16:48
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-04 14:31:27
- * @FilePath: /ByteCamp/cmd/relation/service/relation_redis.go
+ * @LastEditTime: 2023-02-06 13:58:10
+ * @FilePath: \ByteCamp\cmd\relation\service\relation_redis.go
  * @Description: relation微服务对redis的操作封装
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
