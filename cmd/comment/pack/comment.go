@@ -39,11 +39,12 @@ func Comment(ctx context.Context, m *db.Comment) (*comment.Comment, error) {
 		IsFollow:      false,
 	}
 	// 转换评论类型
+	// * 记得将时间格式化
 	return &comment.Comment{
 		Id:         int64(m.ID),
 		User:       us,
 		Content:    m.Content,
-		CreateDate: m.CreatTime.String(),
+		CreateDate: m.CreatTime.Format("2006-01-02 15:04:05"),
 	}, nil
 }
 
