@@ -81,12 +81,12 @@ func InitHertz() *server.Hertz {
 
 	//Nacos
 	cli := InitNacos()
-	addr := "81.70.207.243:8848"
 	r := nacos.NewNacosRegistry(cli)
-	opts := []config.Option{server.WithHostPorts(viper.GetString("Server.address") + ":" + viper.GetString("Server.Port")),
+	opts := []config.Option{
+		server.WithHostPorts(viper.GetString("Server.address") + ":" + viper.GetString("Server.Port")),
 		server.WithRegistry(r, &registry.Info{
 			ServiceName: "API",
-			Addr:        utils.NewNetAddr("tcp", addr),
+			Addr:        utils.NewNetAddr("tcp", viper.GetString("Server.address")+":"+viper.GetString("Server.Port")),
 			Weight:      10,
 			Tags:        nil,
 		})}
