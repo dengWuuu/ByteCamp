@@ -7,14 +7,15 @@ import (
 	"douyin/pkg/nacos"
 	"douyin/pkg/rabbitmq"
 	"fmt"
+	"log"
+	"net"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	kitexzap "github.com/kitex-contrib/obs-opentelemetry/logging/zap"
 	"github.com/kitex-contrib/registry-nacos/registry"
-	"log"
-	"net"
 )
 
 // Init Relation RPC Server 端配置初始化
