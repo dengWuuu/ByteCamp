@@ -1,3 +1,13 @@
+/*
+ * @Author: zy 953725892@qq.com
+ * @Date: 2023-02-06 12:00:53
+ * @LastEditors: zy 953725892@qq.com
+ * @LastEditTime: 2023-02-06 12:27:06
+ * @FilePath: \ByteCamp\cmd\user\service\register_user.go
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
 package service
 
 import (
@@ -6,7 +16,7 @@ import (
 	"douyin/kitex_gen/user"
 	"douyin/pkg/bcrypt"
 	"douyin/pkg/errno"
-	"douyin/pkg/reids"
+	"douyin/pkg/redis"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 )
