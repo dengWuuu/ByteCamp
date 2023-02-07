@@ -29,7 +29,7 @@ type Favorite struct {
 
 // 获取用户ID获取所有的点赞视频
 func GetFavoritesByUserId(user_id int64) (resp []*Favorite, err error) {
-	err = DB.Where("user_id = ? and cancel = ", user_id, false).Find(&resp).Error
+	err = DB.Where("user_id = ? and cancel = ?", user_id, false).Find(&resp).Error
 	return resp, err
 }
 

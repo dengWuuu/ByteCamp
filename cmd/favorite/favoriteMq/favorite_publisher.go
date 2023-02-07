@@ -1,8 +1,8 @@
 package FavoriteMq
 
 import (
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/streadway/amqp"
-	"github.com/u2takey/go-utils/klog"
 )
 
 func FavoriteActionSend(message []byte) {
