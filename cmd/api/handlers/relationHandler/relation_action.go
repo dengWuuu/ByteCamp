@@ -2,8 +2,8 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-01 14:46:43
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-02 17:10:23
- * @FilePath: /ByteCamp/cmd/api/handlers/relationHandler/relation_action.go
+ * @LastEditTime: 2023-02-07 22:13:36
+ * @FilePath: \ByteCamp\cmd\api\handlers\relationHandler\relation_action.go
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
@@ -33,13 +33,17 @@ func RelationAction(ctx context.Context, c *app.RequestContext) {
 	var param handlers.RelationActionParam
 	err := c.Bind(&param)
 	if err != nil {
-		hlog.Fatalf("参数绑定失败")
+		hlog.Infof("参数绑定失败")
 		panic(err)
 	}
 
 	// 2、入参校验
 	if param.ToUserId == 0 || param.ActionType == 0 {
-		handlers.SendResponse(c, pack.BuildRelationActionResponse(errno.ErrBind))
+		resp := pack.BuildRelationActionResponse(errno.ErrBind)
+		c.JSON(200, utils.H{
+			"status_code": resp.StatusCode, // 状态码，0-成功，其他值-失败
+			"status_msg":  resp.StatusMsg,  // 返回状态描述
+		})
 		return
 	}
 
@@ -53,8 +57,11 @@ func RelationAction(ctx context.Context, c *app.RequestContext) {
 		ActionType: param.ActionType,
 	})
 	if err != nil {
-		handlers.SendResponse(c, pack.BuildRelationActionResponse(errno.ConvertErr(err)))
-		return
+		resp := pack.BuildRelationActionResponse(err)
+		c.JSON(200, utils.H{
+			"status_code": resp.StatusCode, // 状态码，0-成功，其他值-失败
+			"status_msg":  resp.StatusMsg,  // 返回状态描述
+		})
 	}
 	c.JSON(200, utils.H{
 		"status_code": resp.StatusCode, // 状态码，0-成功，其他值-失败

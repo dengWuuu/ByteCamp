@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-03 22:16:48
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-06 15:50:17
+ * @LastEditTime: 2023-02-07 12:33:08
  * @FilePath: \ByteCamp\cmd\relation\service\relation_redis.go
  * @Description: relation微服务对redis的操作封装
  *
@@ -133,7 +133,7 @@ func loadFollowingListToRedis(ctx context.Context, userId int64) error {
 	userIdStr := strconv.Itoa(int(userId))
 	cnt, err := db.FollowingRedis.Exists(ctx, userIdStr).Result()
 	if err != nil {
-		hlog.Fatal("加载关注列表到redis失败")
+		hlog.Infof("加载关注列表到redis失败")
 		return err
 	}
 	if cnt != 0 {
@@ -204,7 +204,7 @@ func loadFriendsListToRedis(ctx context.Context, userId int64) error {
 	userIdStr := strconv.Itoa(int(userId))
 	cnt, err := db.FriendsRedis.Exists(ctx, userIdStr).Result()
 	if err != nil {
-		hlog.Fatal("加载好友列表到redis失败")
+		hlog.Infof("加载好友列表到redis失败")
 		return err
 	}
 	if cnt != 0 {

@@ -19,13 +19,17 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 	// 1、绑定http参数
 	err := c.Bind(&param)
 	if err != nil {
-		hlog.Fatal("序列化朋友列表请求参数失败")
+		hlog.Infof("序列化朋友列表请求参数失败")
 		panic(err)
 	}
 	// 2、入参校验
 	if param.UserId == 0 {
-		handlers.SendResponse(c, pack.BuildRelationFollowerListResp(nil, errno.ErrBind))
-		return
+		resp := pack.BuildRelationFollowerListResp(nil, errno.ErrBind)
+		c.JSON(200, utils.H{
+			"status_code": resp.StatusCode, // 状态码，0-成功，其他值-失败
+			"status_msg":  resp.StatusMsg,  // 返回状态描述
+			"user_list":   nil,
+		})
 	}
 
 	// 3、调用rpc
@@ -34,8 +38,12 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 		Token:  param.Token,
 	})
 	if err != nil {
-		handlers.SendResponse(c, pack.BuildRelationFollowerListResp(nil, errno.ErrBind))
-		return
+		resp := pack.BuildRelationFollowerListResp(nil, err)
+		c.JSON(200, utils.H{
+			"status_code": resp.StatusCode, // 状态码，0-成功，其他值-失败
+			"status_msg":  resp.StatusMsg,  // 返回状态描述
+			"user_list":   nil,
+		})
 	}
 	c.JSON(200, utils.H{
 		"status_code": resp.StatusCode, // 状态码，0-成功，其他值-失败
