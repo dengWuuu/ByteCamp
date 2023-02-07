@@ -55,7 +55,11 @@ func PutUserToRedis(ctx context.Context, user *db.User) {
 
 	result := db.UserRedis.Set(ctx, prefix+strconv.Itoa(int(user.ID)), marshal, time.Hour*24*180)
 	s, err := result.Result()
-	klog.Info("redis放入user信息" + s)
+	if err != nil {
+		klog.Error("redis放入user信息" + s + "失败")
+	} else {
+		klog.Info("redis放入user信息" + s + "成功")
+	}
 }
 
 func LoadUserFromMysqlToRedis(ctx context.Context) {

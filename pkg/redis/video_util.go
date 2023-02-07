@@ -59,8 +59,8 @@ func PutVideoInRedis(ctx context.Context, video *db.Video) {
 	vid_key := video_prefix + strconv.Itoa(int(video.ID))
 	res, err := db.VideoRedis.Set(ctx, vid_key, video_binary, time.Hour*48).Result()
 	if err != nil {
-		klog.Fatalf("Redis放进视频" + res + "失败")
+		klog.Error("Redis放进视频" + res + "失败")
 	} else {
-		klog.Fatalf("Redis放进视频" + res + "成功")
+		klog.Info("Redis放进视频" + res + "成功")
 	}
 }
