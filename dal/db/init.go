@@ -17,15 +17,19 @@ import (
 
 var ExpireTime time.Duration
 
-var DB *gorm.DB
-var dbErr error
+var (
+	DB    *gorm.DB
+	dbErr error
+)
 
 // FollowingRedis relation部分redis客户端
-var FollowingRedis *redis.Client
-var FollowersRedis *redis.Client
-var FriendsRedis *redis.Client
-var UserRedis *redis.Client
-var CommentRedis *redis.Client
+var (
+	FollowingRedis *redis.Client
+	FollowersRedis *redis.Client
+	FriendsRedis   *redis.Client
+	UserRedis      *redis.Client
+	CommentRedis   *redis.Client
+)
 
 func Init(configPath string) {
 	viper.SetConfigName("app")

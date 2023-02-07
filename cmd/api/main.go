@@ -9,6 +9,8 @@ package main
 
 import (
 	"crypto/tls"
+	"os"
+
 	"douyin/cmd/api/handlers/commentHandler"
 	"douyin/cmd/api/handlers/favoriteHandler"
 	"douyin/cmd/api/handlers/relationHandler"
@@ -17,7 +19,6 @@ import (
 	"douyin/cmd/api/rpc"
 	"douyin/dal"
 	"douyin/pkg/middleware"
-	"os"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/app/server/registry"
@@ -35,11 +36,11 @@ import (
 )
 
 func Init() {
-	rpc.InitRpc() //初始化rpc客户端
+	rpc.InitRpc() // 初始化rpc客户端
 }
 
 func InitNacos() naming_client.INamingClient {
-	//nacos
+	// nacos
 	sc := []constant.ServerConfig{
 		*constant.NewServerConfig("81.70.207.243", 8848),
 	}
@@ -79,7 +80,7 @@ func InitHertz() *server.Hertz {
 		return nil
 	}
 
-	//Nacos
+	// Nacos
 	cli := InitNacos()
 	r := nacos.NewNacosRegistry(cli)
 	opts := []config.Option{
@@ -89,7 +90,8 @@ func InitHertz() *server.Hertz {
 			Addr:        utils.NewNetAddr("tcp", viper.GetString("Server.address")+":"+viper.GetString("Server.Port")),
 			Weight:      10,
 			Tags:        nil,
-		})}
+		}),
+	}
 
 	// TLS & Http2
 	tlsEnable := viper.GetBool("Hertz.Tls.Enable")
@@ -121,7 +123,7 @@ func InitHertz() *server.Hertz {
 	// Hertz
 	h := server.Default(opts...)
 
-	//JWT中间键初始化
+	// JWT中间键初始化
 	middleware.InitJwt()
 	err = middleware.JwtMiddleware.MiddlewareInit()
 	if err != nil {
@@ -137,18 +139,18 @@ func registerGroup(h *server.Hertz) {
 
 	user := douyin.Group("/user")
 	{
-		//user模块下无需权限认证的接口
+		// user模块下无需权限认证的接口
 		user.POST("/register/", userHandler.Register)
 		user.POST("/login/", userHandler.Login)
 
-		//user模块下需要认证权限的接口
+		// user模块下需要认证权限的接口
 		user.Use(middleware.JwtMiddlewareFunc())
 		{
 			user.GET("/", userHandler.GetUserById)
 		}
 	}
 
-	//relation模块接口
+	// relation模块接口
 	relation := douyin.Group("/relation")
 	relation.Use(middleware.JwtMiddleware.MiddlewareFunc())
 	{
@@ -185,9 +187,9 @@ func registerGroup(h *server.Hertz) {
 
 // 初始化 Hertz服务器和路由组（Router）
 func main() {
-	//数据库初始化
+	// 数据库初始化
 	dal.Init()
-	//设置系统日志框架 使用zap
+	// 设置系统日志框架 使用zap
 	logger := hertzzap.NewLogger()
 	hlog.SetLogger(logger)
 	hlog.SetSystemLogger(logger)

@@ -11,13 +11,14 @@
 package main
 
 import (
+	"fmt"
+	"log"
+	"net"
+
 	"douyin/cmd/relation/relationMq"
 	"douyin/dal"
 	relation "douyin/kitex_gen/relation/relationsrv"
 	"douyin/pkg/nacos"
-	"fmt"
-	"log"
-	"net"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
@@ -30,8 +31,9 @@ import (
 // Init Relation RPC Server 端配置初始化
 func Init() {
 	dal.Init()
-	relationMq.InitRelationMq() //初始化mq
+	relationMq.InitRelationMq() // 初始化mq
 }
+
 func main() {
 	Init()
 
@@ -44,15 +46,15 @@ func main() {
 	//}
 	klog.SetLogger(kitexzap.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
-	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port)) //nacos
+	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port)) // nacos
 
-	//nacos
+	// nacos
 	r := registry.NewNacosRegistry(nacos.InitNacos())
 	svr := relation.NewServer(
 		new(RelationSrvImpl),
 		server.WithServiceAddr(addr),
 		server.WithRegistry(r),
-		server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 100}),
+		server.WithLimit(&limit.Option{MaxConnections: 100000000000000, MaxQPS: 1000000000}),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: PSM}))
 
 	err := svr.Run()

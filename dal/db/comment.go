@@ -100,7 +100,7 @@ func CreateComment(ctx context.Context, comment *Comment) error {
 }
 
 // 删除评论，因此还要在对应的视频将评论数减一（根据ID删除）
-func DeleteCommentById(ctx context.Context, videoId int, commentId int) error {
+func DeleteCommentById(ctx context.Context, videoId, commentId int) error {
 	// 需要在事务中处理
 	err := DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// 在事务中执行一些 db 操作（从这里开始，您应该使用 'tx' 而不是 'db'）

@@ -2,21 +2,22 @@ package redis
 
 import (
 	"context"
-	"douyin/dal/db"
 	"strconv"
+
+	"douyin/dal/db"
 )
 
-//判断一个用户是否关注了另一个用户
+// 判断一个用户是否关注了另一个用户
 func IsFollowing(ctx context.Context, userId, otherId int64) (bool, error) {
-	//1.查看redis中是否有缓存
+	// 1.查看redis中是否有缓存
 	userIdStr := strconv.Itoa(int(userId))
 	cnt, err := db.FollowingRedis.Exists(ctx, userIdStr).Result()
 	if err != nil {
 		return false, err
 	}
 	if cnt == 0 {
-		//loadFollowingListToRedis(ctx, userId)
-		//copy of loadFollowingListToRedis,防止循环引用
+		// loadFollowingListToRedis(ctx, userId)
+		// copy of loadFollowingListToRedis,防止循环引用
 		err := db.FollowingRedis.SAdd(ctx, strconv.Itoa(int(userId)), -1).Err()
 		if err != nil {
 			return false, err
@@ -38,7 +39,7 @@ func IsFollowing(ctx context.Context, userId, otherId int64) (bool, error) {
 			return false, err
 		}
 	}
-	//2.判断redis缓存中是否有otherId
+	// 2.判断redis缓存中是否有otherId
 	otherIdStr := strconv.Itoa(int(otherId))
 	exists, err := db.FollowingRedis.SIsMember(ctx, userIdStr, otherIdStr).Result()
 	if err != nil {

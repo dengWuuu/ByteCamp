@@ -2,10 +2,11 @@ package redis
 
 import (
 	"context"
-	"douyin/dal/db"
 	"encoding/json"
 	"strconv"
 	"time"
+
+	"douyin/dal/db"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/go-redis/redis/v8"
@@ -14,8 +15,8 @@ import (
 const prefix = "user:Id:"
 
 func GetUsersFromRedis(ctx context.Context, userIds []uint) []*db.User {
-	var userList = make([]*db.User, len(userIds))
-	//使用管道命令
+	userList := make([]*db.User, len(userIds))
+	// 使用管道命令
 	pipelined := db.UserRedis.Pipeline()
 	for i := 0; i < len(userIds); i++ {
 		pipelined.Get(ctx, prefix+strconv.Itoa(int(userIds[i])))

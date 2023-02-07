@@ -1,14 +1,15 @@
 package main
 
 import (
+	"fmt"
+	"log"
+	"net"
+
 	"douyin/cmd/comment/commentMq"
 	"douyin/dal"
 	comment "douyin/kitex_gen/comment/commentsrv"
 	"douyin/pkg/nacos"
 	"douyin/pkg/rabbitmq"
-	"fmt"
-	"log"
-	"net"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
@@ -24,6 +25,7 @@ func Init() {
 	commentMq.InitCommentMq()
 	go commentMq.CommentConsumer()
 }
+
 func main() {
 	Init()
 	PSM := "bytecamp.douyin.comment"
@@ -36,7 +38,7 @@ func main() {
 	klog.SetLogger(kitexzap.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
 	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port))
-	//nacos
+	// nacos
 	r := registry.NewNacosRegistry(nacos.InitNacos())
 	svr := comment.NewServer(new(CommentSrvImpl),
 		server.WithServiceAddr(addr),

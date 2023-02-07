@@ -12,13 +12,14 @@
 package rpc
 
 import (
+	"os"
+
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 	"github.com/spf13/viper"
-	"os"
 )
 
 var (

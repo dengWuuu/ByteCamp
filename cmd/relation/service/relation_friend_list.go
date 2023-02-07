@@ -22,6 +22,7 @@ package service
 
 import (
 	"context"
+
 	"douyin/cmd/relation/pack"
 	userpack "douyin/cmd/user/pack"
 	"douyin/dal/db"
@@ -30,9 +31,9 @@ import (
 	redis "douyin/pkg/redis"
 )
 
-//根据req获取RPC所需的朋友userId列表
+// 根据req获取RPC所需的朋友userId列表
 func (service RelationService) FriendList(req *relation.DouyinRelationFriendListRequest) ([]*user.User, error) {
-	//1、根据userId获取该user的所有follow列表
+	// 1、根据userId获取该user的所有follow列表
 	ids, err := db.GetFriendsByUserId(int(req.UserId))
 	if err != nil {
 		return nil, err
@@ -49,15 +50,15 @@ func (service RelationService) FriendList(req *relation.DouyinRelationFriendList
 }
 
 func (service RelationService) FriendListByRedis(req *relation.DouyinRelationFriendListRequest) ([]*user.User, error) {
-	//1、查看Friend redis中是否有对应的key,若没有，则从mysql中获取到redis中
+	// 1、查看Friend redis中是否有对应的key,若没有，则从mysql中获取到redis中
 	ctx := context.Background()
 	loadFriendsListToRedis(ctx, req.UserId)
-	//2、从redis中拿到所有的FriendId
+	// 2、从redis中拿到所有的FriendId
 	ids, err := getFriendsListFromRedis(ctx, req.UserId)
 	if err != nil {
 		return nil, err
 	}
-	//3、根据followingId获取user
+	// 3、根据followingId获取user
 	var FriendUsers []*user.User
 	uids := make([]uint, len(ids)-1)
 	k := 0
@@ -70,13 +71,13 @@ func (service RelationService) FriendListByRedis(req *relation.DouyinRelationFri
 	}
 	dbUsers := redis.GetUsersFromRedis(ctx, uids)
 	if dbUsers == nil {
-		//从mysql中获取user
+		// 从mysql中获取user
 		FriendUsers, err = pack.GetUsersByIds(ids)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		//否则直接pack为RPC所需的user
+		// 否则直接pack为RPC所需的user
 		FriendUsers = make([]*user.User, len(dbUsers))
 		for i, dbUser := range dbUsers {
 			FriendUsers[i], err = userpack.User(ctx, dbUser)
@@ -88,7 +89,7 @@ func (service RelationService) FriendListByRedis(req *relation.DouyinRelationFri
 	if err != nil {
 		return nil, err
 	}
-	//4、补全信息
+	// 4、补全信息
 	for _, friendUser := range FriendUsers {
 		// loadFollowersListToRedis(ctx, friendUser.Id)
 		// loadFollowingListToRedis(ctx, friendUser.Id)
@@ -109,6 +110,6 @@ func (service RelationService) FriendListByRedis(req *relation.DouyinRelationFri
 		}
 		friendUser.IsFollow = isFollow
 	}
-	//5、返回user
+	// 5、返回user
 	return FriendUsers, nil
 }

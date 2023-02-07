@@ -2,6 +2,7 @@ package relationHandler
 
 import (
 	"context"
+
 	"douyin/cmd/api/handlers"
 	"douyin/cmd/api/rpc"
 	"douyin/cmd/relation/pack"
@@ -15,19 +16,19 @@ import (
 
 func FriendList(ctx context.Context, c *app.RequestContext) {
 	var param handlers.FriendListParam
-	//1、绑定http参数
+	// 1、绑定http参数
 	err := c.Bind(&param)
 	if err != nil {
 		hlog.Fatal("序列化朋友列表请求参数失败")
 		panic(err)
 	}
-	//2、入参校验
+	// 2、入参校验
 	if param.UserId == 0 {
 		handlers.SendResponse(c, pack.BuildRelationFollowerListResp(nil, errno.ErrBind))
 		return
 	}
 
-	//3、调用rpc
+	// 3、调用rpc
 	resp, err := rpc.FriendList(ctx, &relation.DouyinRelationFriendListRequest{
 		UserId: param.UserId,
 		Token:  param.Token,

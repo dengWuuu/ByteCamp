@@ -2,12 +2,13 @@ package rpc
 
 import (
 	"context"
+	"time"
+
 	"douyin/kitex_gen/video"
 	"douyin/kitex_gen/video/videosrv"
 	"douyin/pkg/errno"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/kitex-contrib/registry-nacos/resolver"
-	"time"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"

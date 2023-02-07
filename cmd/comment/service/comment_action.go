@@ -2,14 +2,15 @@ package service
 
 import (
 	"context"
+	"encoding/json"
+	"strconv"
+	"time"
+
 	"douyin/cmd/comment/commentMq"
 	"douyin/cmd/comment/pack"
 	"douyin/dal/db"
 	"douyin/kitex_gen/comment"
 	"douyin/pkg/errno"
-	"encoding/json"
-	"strconv"
-	"time"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 )
@@ -94,7 +95,7 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 				klog.Fatalf("序列化添加评论请求参数失败")
 				return nil, err
 			}
-			commentMq.CommentActionMqSend([]byte(msg))
+			commentMq.CommentActionMqSend(msg)
 			return pack.Comment(s.ctx, commentModel)
 		}
 		// 直接修改数据库

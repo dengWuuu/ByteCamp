@@ -12,8 +12,9 @@
 package dal
 
 import (
-	"douyin/dal/db"
 	"os"
+
+	"douyin/dal/db"
 )
 
 func Init() {

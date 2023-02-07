@@ -2,15 +2,16 @@ package middleware
 
 import (
 	"context"
-	"douyin/cmd/api/handlers"
-	"douyin/cmd/user/pack"
-	"douyin/dal/db"
-	"douyin/pkg/errno"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
 	"time"
+
+	"douyin/cmd/api/handlers"
+	"douyin/cmd/user/pack"
+	"douyin/dal/db"
+	"douyin/pkg/errno"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -45,13 +46,13 @@ func unauthorized(ctx context.Context, c *app.RequestContext, code int, message 
 
 func JwtMiddlewareFunc() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
-		//验证服务端token有么有过期
+		// 验证服务端token有么有过期
 		userId := GetUserIdFromJwtToken(ctx, c)
 		isNil := db.UserRedis.Get(ctx, "user:"+strconv.Itoa(int(userId)))
 		if isNil.Val() == "" {
 			unauthorized(ctx, c, http.StatusUnauthorized, JwtMiddleware.HTTPStatusMessageFunc(jwt.ErrExpiredToken, ctx, c))
 		}
-		//验证客户端token有没有过期
+		// 验证客户端token有没有过期
 		claims, err := JwtMiddleware.GetClaimsFromJWT(ctx, c)
 		if err != nil {
 			unauthorized(ctx, c, http.StatusUnauthorized, JwtMiddleware.HTTPStatusMessageFunc(err, ctx, c))
@@ -108,13 +109,13 @@ func InitJwt() {
 		TokenLookup:      "header: Authorization, query: token, cookie: jwt, param: token, form: token",
 		TokenHeadName:    "Bearer",
 
-		//构造登录成功的返回请求
+		// 构造登录成功的返回请求
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
-			//从token中获取用户id
+			// 从token中获取用户id
 			Token, err := JwtMiddleware.ParseTokenString(token)
 			claims := jwt.ExtractClaimsFromToken(Token)
 			userMap, _ := claims[IdentityKey].(map[string]interface{})
-			//将token同时存进redis
+			// 将token同时存进redis
 			userId := uint(userMap["ID"].(float64))
 
 			db.UserRedis.Set(ctx, "user"+":"+strconv.Itoa(int(userId)), token, time.Hour*24)
@@ -153,12 +154,12 @@ func InitJwt() {
 			return users[0], nil
 		},
 		IdentityKey: IdentityKey,
-		//登录成功后获取请求中jwt中存储用户的id
+		// 登录成功后获取请求中jwt中存储用户的id
 		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
 			claims := jwt.ExtractClaims(ctx, c)
 			return claims[IdentityKey].(map[string]interface{})
 		},
-		//登录成功 token中放入userId信息
+		// 登录成功 token中放入userId信息
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*db.User); ok {
 				return jwt.MapClaims{

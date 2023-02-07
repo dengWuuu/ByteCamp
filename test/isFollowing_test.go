@@ -12,9 +12,10 @@ package test
 
 import (
 	"context"
+	"testing"
+
 	"douyin/dal/db"
 	"douyin/pkg/redis"
-	"testing"
 )
 
 func TestIsFollowing(t *testing.T) {
