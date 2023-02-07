@@ -6,7 +6,7 @@ import (
 	"douyin/kitex_gen/favorite"
 	"encoding/json"
 
-	"github.com/u2takey/go-utils/klog"
+	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 func FavoriteConsumer() {
@@ -52,8 +52,9 @@ func FavoriteConsumer() {
 
 func FavoriteAction(msg string) {
 	var req *favorite.DouyinFavoriteActionRequest
-	err := json.Unmarshal([]byte(msg), req)
+	err := json.Unmarshal([]byte(msg), &req)
 	if err != nil {
+		klog.Error(err)
 		klog.Fatalf("favoriteMq序列化消费信息失败")
 		return
 	}

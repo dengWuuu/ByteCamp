@@ -24,7 +24,8 @@ func GetVideoFromRedis(ctx context.Context, videoIds []int64) []*db.Video {
 	}
 	res, err := video_pip.Exec(ctx)
 	if err != nil {
-		klog.Fatalf("Redis 执行命令失败")
+		// 没有找到，返回nil
+		klog.Error("Redis 执行命令失败")
 		return nil
 	}
 	for index, cmdRes := range res {
