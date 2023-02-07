@@ -2,10 +2,8 @@ package commentMq
 
 import (
 	"context"
-	"encoding/json"
-
 	"douyin/dal/db"
-	"douyin/kitex_gen/comment"
+	"encoding/json"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 )
@@ -17,18 +15,18 @@ func CommentConsumer() {
 		panic(err)
 	}
 
-	// 2、接收消息
+	//2、接收消息
 	msgChanel, err := commentMq.Channel.Consume(
 		commentMq.QueueName,
-		// 用来区分多个消费者
+		//用来区分多个消费者
 		"",
-		// 是否自动应答
+		//是否自动应答
 		true,
-		// 是否具有排他性
+		//是否具有排他性
 		false,
-		// 如果设置为true，表示不能将同一个connection中发送的消息传递给这个connection中的消费者
+		//如果设置为true，表示不能将同一个connection中发送的消息传递给这个connection中的消费者
 		false,
-		// 消息队列是否阻塞
+		//消息队列是否阻塞
 		false,
 		nil,
 	)
@@ -47,11 +45,12 @@ func CommentConsumer() {
 		// 	klog.Info("ack失败")
 		// 	return
 		// }
+
 	}
 }
 
 func commentAction(msg string) {
-	var req *comment.DouyinCommentActionRequest
+	var req *CommentRmqMessage
 	err := json.Unmarshal([]byte(msg), &req)
 	if err != nil {
 		klog.Fatalf("rabbitMq commentAdd消费时序列化失败")
@@ -60,11 +59,13 @@ func commentAction(msg string) {
 	// 根据请求创建新的评论
 	if req.ActionType == 1 {
 		commentModel := &db.Comment{
-			VideoId: int(req.VideoId),
-			UserId:  int(req.UserId),
-			Content: *req.CommentText,
+			UserId:    req.UserId,
+			VideoId:   req.VideoId,
+			Content:   req.Content,
+			CreatTime: req.CreateTime,
 		}
-		commentModel.ID = uint(*req.CommentId) // 一定要添加自定义的分布式ID
+		// * 一定要记得加上ID和时间
+		commentModel.ID = uint(req.CommentId)
 		err := db.CreateComment(context.Background(), commentModel)
 		if err != nil {
 			klog.Fatalf("rabbitmq 消费者在数据库中创建评论失败")
@@ -73,7 +74,7 @@ func commentAction(msg string) {
 	}
 	// 根据请求删除评论
 	if req.ActionType == 2 {
-		err := db.DeleteCommentById(context.Background(), int(req.VideoId), int(*req.CommentId))
+		err := db.DeleteCommentById(context.Background(), req.VideoId, req.CommentId)
 		if err != nil {
 			klog.Fatalf("rabbitmq 消费者在数据库中删除评论失败")
 			return

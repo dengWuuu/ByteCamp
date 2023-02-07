@@ -81,8 +81,16 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 				return nil, err
 			}
 			// 发送消息给MQ
-			req.CommentId = &comment_id
-			msg, err := json.Marshal(req)
+			// * 这里要手动加上comment的ID和创建时间
+			commentMessage := commentMq.CommentRmqMessage{
+				UserId:     commentModel.UserId,
+				VideoId:    commentModel.VideoId,
+				Content:    commentModel.Content,
+				CreateTime: commentModel.CreatTime,
+				ActionType: int(req.ActionType),
+				CommentId:  int(comment_id),
+			}
+			msg, err := json.Marshal(commentMessage)
 			if err != nil {
 				klog.Fatalf("序列化添加评论请求参数失败")
 				return nil, err
@@ -133,7 +141,13 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 				return nil, err
 			}
 			// 发送消息给MQ
-			msg, err := json.Marshal(req)
+			commentMessage := commentMq.CommentRmqMessage{
+				UserId:     int(commentRedisInfo.User.UserId),
+				VideoId:    int(req.VideoId),
+				ActionType: int(req.ActionType),
+				CommentId:  int(comment_id),
+			}
+			msg, err := json.Marshal(commentMessage)
 			if err != nil {
 				klog.Fatalf("序列化添加评论请求参数失败")
 				return nil, err

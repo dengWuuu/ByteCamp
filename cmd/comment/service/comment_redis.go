@@ -71,7 +71,7 @@ func ToRedisComment(u CommentUserInfo, c db.Comment) CommentRedisInfo {
 	commentInfo.User = u
 	commentInfo.CommentId = int64(c.ID)
 	commentInfo.Content = c.Content
-	commentInfo.CreateDate = c.CreatTime.String()
+	commentInfo.CreateDate = c.CreatTime.Format("2006-01-02 15:04:05")
 	return commentInfo
 }
 
