@@ -15,11 +15,9 @@ func Comment(ctx context.Context, m *db.Comment) (*comment.Comment, error) {
 	if m == nil {
 		return &comment.Comment{Content: "no content"}, nil
 	}
-	// 获取对应的用户数据
+	// 获取对应的评论用户数据
 	var u *db.User
-	uids := make([]uint, 0)
-	uids = append(uids, uint(m.UserId))
-	redis_user := Redis.GetUsersFromRedis(ctx, uids)
+	redis_user := Redis.GetUsersFromRedis(ctx, []uint{uint(m.UserId)})
 	if redis_user == nil {
 		db_u, err := db.GetUserById(int64(m.UserId))
 		if err != nil {
@@ -29,7 +27,7 @@ func Comment(ctx context.Context, m *db.Comment) (*comment.Comment, error) {
 	} else {
 		u = redis_user[0]
 	}
-	// 转换用户的类型
+	// 转换用户字段数据的类型
 	followCount := int64(u.FollowingCount)
 	followerCount := int64(u.FollowerCount)
 	us := &user.User{

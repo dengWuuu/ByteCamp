@@ -12,6 +12,7 @@ import (
 	"douyin/pkg/middleware"
 
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 )
 
 // FavoriteAction 传递请求上下文到favorite服务的rpc客户端并获取对应的响应
@@ -60,5 +61,8 @@ func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 		handlers.SendResponse(c, pack.BuildFavoriteActionResp(errno.ConvertErr(err)))
 		return
 	}
-	handlers.SendResponse(c, rpcResp)
+	c.JSON(200, utils.H{
+		"status_code": rpcResp.StatusCode,
+		"status_msg":  rpcResp.StatusMsg,
+	})
 }

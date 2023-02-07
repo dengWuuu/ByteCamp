@@ -61,7 +61,7 @@ func (s *FavoriteActionService) FavoriteAction(req *favorite.DouyinFavoriteActio
 				dbVideo = video_redis[0]
 			}
 			// 打包成rpc格式数据
-			rpcVideo, err := pack.Video(s.ctx, dbVideo)
+			rpcVideo, err := pack.Video(s.ctx, user_id, dbVideo)
 			if err != nil {
 				klog.Fatalf("视频数据打包成RPC格式出错")
 				return err

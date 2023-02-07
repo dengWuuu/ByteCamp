@@ -11,6 +11,7 @@ import (
 	"douyin/pkg/errno"
 
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 )
 
 // FavoriteList 传送http请求上下文到rpc客户端，并且获得客户端的响应
@@ -36,5 +37,9 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 		handlers.SendResponse(c, pack.BuildFavoriteListResp(errno.ConvertErr(err)))
 		return
 	}
-	handlers.SendResponse(c, rpcResp)
+	c.JSON(200, utils.H{
+		"status_code": rpcResp.StatusCode,
+		"status_msg":  rpcResp.StatusMsg,
+		"video_list":  rpcResp.VideoList,
+	})
 }
