@@ -5,9 +5,11 @@ import (
 	"log"
 	"net"
 
+	FavoriteMq "douyin/cmd/favorite/favoriteMq"
 	"douyin/dal"
 	"douyin/kitex_gen/favorite/favoritesrv"
 	"douyin/pkg/nacos"
+	"douyin/pkg/rabbitmq"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
@@ -20,6 +22,8 @@ import (
 // Init Relation RPC Server 端配置初始化
 func Init() {
 	dal.Init()
+	FavoriteMq.InitFavoriteMq()
+	go FavoriteMq.FavoriteConsumer()
 }
 
 func main() {
@@ -44,4 +48,5 @@ func main() {
 	if err != nil {
 		log.Println(err.Error())
 	}
+	defer rabbitmq.Rmq.ReleaseRes()
 }
