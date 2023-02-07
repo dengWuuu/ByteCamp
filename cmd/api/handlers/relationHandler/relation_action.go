@@ -13,6 +13,7 @@ package relationHandler
 
 import (
 	"context"
+
 	"douyin/cmd/api/handlers"
 	"douyin/cmd/api/rpc"
 	"douyin/cmd/relation/pack"
@@ -26,9 +27,9 @@ import (
 )
 
 func RelationAction(ctx context.Context, c *app.RequestContext) {
-	//TODO:修改参数请求方式(Done)
+	// TODO:修改参数请求方式(Done)
 
-	//1、绑定http参数
+	// 1、绑定http参数
 	var param handlers.RelationActionParam
 	err := c.Bind(&param)
 	if err != nil {
@@ -36,14 +37,14 @@ func RelationAction(ctx context.Context, c *app.RequestContext) {
 		panic(err)
 	}
 
-	//2、入参校验
+	// 2、入参校验
 	if param.ToUserId == 0 || param.ActionType == 0 {
 		handlers.SendResponse(c, pack.BuildRelationActionResponse(errno.ErrBind))
 		return
 	}
 
-	//3、调用rpc
-	//TODO:从token中解析出userId,这里暂时先将userId写死为1(Done)
+	// 3、调用rpc
+	// TODO:从token中解析出userId,这里暂时先将userId写死为1(Done)
 	userId := middleware.GetUserIdFromJwtToken(ctx, c)
 	resp, err := rpc.RelationAction(ctx, &relation.DouyinRelationActionRequest{
 		UserId:     int64(userId),

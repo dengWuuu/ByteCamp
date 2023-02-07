@@ -11,7 +11,7 @@
 
 package db
 
-//TODO:为高频字段添加索引
+// TODO:为高频字段添加索引
 
 import (
 	"errors"
@@ -28,7 +28,7 @@ type Follow struct {
 	Cancel   bool
 }
 
-//添加关注关系
+// 添加关注关系
 func AddRelation(userId, followId int) error {
 	follow := Follow{
 		UserId:   userId,
@@ -39,9 +39,9 @@ func AddRelation(userId, followId int) error {
 	return err
 }
 
-//取消关注关系
+// 取消关注关系
 func DeleteRelation(userId, followId int) error {
-	//查询是否存在关注关系
+	// 查询是否存在关注关系
 	var follow Follow
 	result := DB.Where("user_id = ? and follow_id = ?", userId, followId).First(&follow)
 	if result.Error != nil {
@@ -50,7 +50,7 @@ func DeleteRelation(userId, followId int) error {
 	if result.RowsAffected == 0 {
 		return errors.New("关注关系不存在")
 	}
-	//更新关注关系
+	// 更新关注关系
 	err := DB.Model(&follow).Update("cancel", true).Error
 	return err
 }
@@ -61,16 +61,16 @@ func GetFollowByUserAndTarget(userId, toUserId int64) (*Follow, error) {
 	return follow, err
 }
 
-//TODO:这里查询了follow的所有字段，而实际上我们只需要follow_id，这会导致无法索引覆盖，需要优化(Done)
-//根据用户id查询关注列表
+// TODO:这里查询了follow的所有字段，而实际上我们只需要follow_id，这会导致无法索引覆盖，需要优化(Done)
+// 根据用户id查询关注列表
 func GetFollowingByUserId(userId int) ([]int64, error) {
 	var followers []int64
 	err := DB.Model(&Follow{}).Select("follow_id").Where("user_id = ? and cancel = ?", userId, false).Distinct("follow_id").Find(&followers).Error
 	return followers, err
 }
 
-//TODO:这里查询了follow的所有字段，而实际上我们只需要user_id，这会导致无法索引覆盖，需要优化(Done)
-//根据用户id查询粉丝列表
+// TODO:这里查询了follow的所有字段，而实际上我们只需要user_id，这会导致无法索引覆盖，需要优化(Done)
+// 根据用户id查询粉丝列表
 func GetFansByUserId(userId int) ([]int64, error) {
 	var followings []int64
 	err := DB.Model(&Follow{}).Select("user_id").Where("follow_id = ? and cancel = ?", userId, false).Distinct("user_id").Find(&followings).Error

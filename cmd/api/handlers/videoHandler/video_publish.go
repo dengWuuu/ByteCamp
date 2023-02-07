@@ -2,6 +2,9 @@ package videoHandler
 
 import (
 	"context"
+	"io"
+	"strconv"
+
 	"douyin/cmd/api/handlers"
 	"douyin/cmd/api/rpc"
 	"douyin/cmd/favorite/pack"
@@ -10,8 +13,6 @@ import (
 	"douyin/pkg/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"io"
-	"strconv"
 )
 
 func PublishAction(ctx context.Context, c *app.RequestContext) {
@@ -55,7 +56,6 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 		Token:  param.Token,
 		UserId: param.UserId,
 	})
-
 	if err != nil {
 		handlers.SendResponse(c, pack.BuildFavoriteListResp(errno.ConvertErr(err)))
 		return

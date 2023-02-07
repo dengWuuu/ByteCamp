@@ -1,8 +1,9 @@
 package test
 
 import (
-	"douyin/pkg/bcrypt"
 	"testing"
+
+	"douyin/pkg/bcrypt"
 )
 
 func TestPasswordHash(t *testing.T) {

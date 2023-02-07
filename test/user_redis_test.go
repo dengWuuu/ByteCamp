@@ -2,9 +2,10 @@ package test
 
 import (
 	"context"
-	"douyin/dal/db"
 	"testing"
 	"time"
+
+	"douyin/dal/db"
 )
 
 func TestUserRedis(t *testing.T) {

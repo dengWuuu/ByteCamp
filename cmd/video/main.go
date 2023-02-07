@@ -23,6 +23,7 @@ import (
 func Init() {
 	dal.Init()
 }
+
 func main() {
 	Init()
 

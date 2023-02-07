@@ -1,12 +1,13 @@
 package main
 
 import (
-	"douyin/dal"
-	user "douyin/kitex_gen/user/usersrv"
-	"douyin/pkg/nacos"
 	"fmt"
 	"log"
 	"net"
+
+	"douyin/dal"
+	user "douyin/kitex_gen/user/usersrv"
+	"douyin/pkg/nacos"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
@@ -20,6 +21,7 @@ import (
 func Init() {
 	dal.Init()
 }
+
 func main() {
 	Init()
 
@@ -32,8 +34,8 @@ func main() {
 	//}
 	klog.SetLogger(kitexzap.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
-	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port)) //nacos
-	//nacos
+	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port)) // nacos
+	// nacos
 	r := registry.NewNacosRegistry(nacos.InitNacos())
 	svr := user.NewServer(
 		new(UserSrvImpl),

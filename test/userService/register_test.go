@@ -2,14 +2,16 @@ package userService
 
 import (
 	"context"
-	"douyin/kitex_gen/user"
-	"douyin/kitex_gen/user/usersrv"
 	"fmt"
-	"github.com/cloudwego/kitex/client"
 	"log"
 	"path"
 	"runtime"
 	"testing"
+
+	"douyin/kitex_gen/user"
+	"douyin/kitex_gen/user/usersrv"
+
+	"github.com/cloudwego/kitex/client"
 )
 
 func TestRpcRegistry(t *testing.T) {

@@ -2,9 +2,10 @@ package commentMq
 
 import (
 	"context"
+	"encoding/json"
+
 	"douyin/dal/db"
 	"douyin/kitex_gen/comment"
-	"encoding/json"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 )
@@ -16,18 +17,18 @@ func CommentConsumer() {
 		panic(err)
 	}
 
-	//2、接收消息
+	// 2、接收消息
 	msgChanel, err := commentMq.Channel.Consume(
 		commentMq.QueueName,
-		//用来区分多个消费者
+		// 用来区分多个消费者
 		"",
-		//是否自动应答
+		// 是否自动应答
 		true,
-		//是否具有排他性
+		// 是否具有排他性
 		false,
-		//如果设置为true，表示不能将同一个connection中发送的消息传递给这个connection中的消费者
+		// 如果设置为true，表示不能将同一个connection中发送的消息传递给这个connection中的消费者
 		false,
-		//消息队列是否阻塞
+		// 消息队列是否阻塞
 		false,
 		nil,
 	)
@@ -46,7 +47,6 @@ func CommentConsumer() {
 		// 	klog.Info("ack失败")
 		// 	return
 		// }
-
 	}
 }
 

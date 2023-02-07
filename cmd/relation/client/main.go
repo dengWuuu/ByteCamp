@@ -12,9 +12,10 @@ package main
 
 import (
 	"context"
+	"fmt"
+
 	"douyin/kitex_gen/relation"
 	"douyin/kitex_gen/relation/relationsrv"
-	"fmt"
 
 	"github.com/cloudwego/kitex/client"
 )

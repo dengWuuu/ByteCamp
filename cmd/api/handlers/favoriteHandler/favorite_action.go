@@ -2,13 +2,14 @@ package favoriteHandler
 
 import (
 	"context"
+	"strconv"
+
 	"douyin/cmd/api/handlers"
 	"douyin/cmd/api/rpc"
 	"douyin/cmd/favorite/pack"
 	"douyin/kitex_gen/favorite"
 	"douyin/pkg/errno"
 	"douyin/pkg/middleware"
-	"strconv"
 
 	"github.com/cloudwego/hertz/pkg/app"
 )

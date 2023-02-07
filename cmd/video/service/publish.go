@@ -2,20 +2,20 @@ package service
 
 import (
 	"context"
+	"strconv"
+	"time"
+
 	"douyin/cmd/video/dal/db"
 	"douyin/cmd/video/dal/oss"
 	"douyin/cmd/video/pack"
 	"douyin/kitex_gen/video"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"strconv"
-	"time"
 )
 
 var SuccessMsg = "Success"
 
 // PublishAction implements the VideoSrvImpl interface.
 func PublishAction(ctx context.Context, req *video.DouyinPublishActionRequest) (resp *video.DouyinPublishActionResponse, err error) {
-
 	videoTable := &db.Video{}
 	playUrl, coverUrl, err := oss.UploadVideo(&req.Data)
 	if err != nil {

@@ -35,10 +35,10 @@ func GetVideosByLastTime(lastTime time.Time) ([]*Video, error) {
 // GetPublishListByAuthorId 获取用户发布列表
 func GetPublishListByAuthorId(authorId int64) ([]*Video, error) {
 	var data []*Video
-	//初始化db
-	//Init()
+	// 初始化db
+	// Init()
 	result := DB.Where(&Video{AuthorId: authorId}).Find(&data)
-	//如果出现问题，返回对应到空，并且返回error
+	// 如果出现问题，返回对应到空，并且返回error
 	if result.Error != nil {
 		return nil, result.Error
 	}

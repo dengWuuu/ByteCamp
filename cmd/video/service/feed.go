@@ -11,7 +11,6 @@ import (
 
 // GetUserFeed implements the VideoSrvImpl interface.
 func GetUserFeed(ctx context.Context, req *video.DouyinFeedRequest) (resp *video.DouyinFeedResponse, err error) {
-
 	dbVideos, err := db.GetVideosByLastTime(time.Unix(req.GetLatestTime(), 0))
 	if err != nil {
 		return nil, err

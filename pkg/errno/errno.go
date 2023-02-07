@@ -26,7 +26,7 @@ func NewErrNo(code int, msg string) ErrNo {
 	return ErrNo{code, msg}
 }
 
-func NewHttpErr(code int, httpcode int, msg string) HttpErr {
+func NewHttpErr(code, httpcode int, msg string) HttpErr {
 	return HttpErr{
 		StatusCode: httpcode,
 		ErrNo:      ErrNo{ErrCode: code, ErrMsg: msg},
@@ -47,13 +47,13 @@ func NewErr(errno *ErrNo, err error) *Err {
 }
 
 func (err *Err) Add(message string) error {
-	//err.ErrMsg = fmt.Sprintf("%s %s", err.ErrMsg, message)
+	// err.ErrMsg = fmt.Sprintf("%s %s", err.ErrMsg, message)
 	err.ErrMsg += " " + message
 	return err
 }
 
 func (err *Err) Addf(format string, args ...interface{}) error {
-	//return err.ErrMsg = fmt.Sprintf("%s %s", err.ErrMsg, fmt.Sprintf(format, args...))
+	// return err.ErrMsg = fmt.Sprintf("%s %s", err.ErrMsg, fmt.Sprintf(format, args...))
 	err.ErrMsg += " " + fmt.Sprintf(format, args...)
 	return err
 }

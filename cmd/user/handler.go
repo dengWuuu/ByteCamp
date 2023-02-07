@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	"douyin/cmd/user/pack"
 	"douyin/cmd/user/service"
 	user "douyin/kitex_gen/user"
@@ -24,7 +25,7 @@ func (s *UserSrvImpl) Register(ctx context.Context, req *user.DouyinUserRegister
 		return resp, nil
 	}
 
-	//包装成功响应
+	// 包装成功响应
 	resp = pack.BuildUserRegisterResp(errno.Success)
 	resp.UserId = int64(insertUser.ID)
 	return resp, nil
@@ -32,7 +33,6 @@ func (s *UserSrvImpl) Register(ctx context.Context, req *user.DouyinUserRegister
 
 // Login implements the UserSrvImpl interface.
 func (s *UserSrvImpl) Login(ctx context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
-
 	return
 }
 

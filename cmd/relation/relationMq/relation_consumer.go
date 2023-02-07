@@ -11,27 +11,28 @@
 package relationMq
 
 import (
-	"douyin/dal/db"
-	"douyin/kitex_gen/relation"
 	"encoding/json"
 	"errors"
+
+	"douyin/dal/db"
+	"douyin/kitex_gen/relation"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 func relationConsumer() {
-	//1.声明队列
+	// 1.声明队列
 	_, err := relationMq.Channel.QueueDeclare(
 		relationMq.QueueName,
-		//是否持久化
+		// 是否持久化
 		true,
-		//是否为自动删除
+		// 是否为自动删除
 		false,
-		//是否具有排他性
+		// 是否具有排他性
 		false,
-		//是否阻塞
+		// 是否阻塞
 		false,
-		//额外属性
+		// 额外属性
 		nil,
 	)
 	if err != nil {
@@ -39,27 +40,27 @@ func relationConsumer() {
 		panic(err)
 	}
 
-	//2.接收消息
+	// 2.接收消息
 	msgChannel, err := relationMq.Channel.Consume(
 		relationMq.QueueName,
 		"",
-		//是否自动应答
+		// 是否自动应答
 		true,
-		//是否具有排他性
+		// 是否具有排他性
 		false,
-		//如果设置为true，表示不能将同一个connection中发送的消息传递给这个connection中的消费者
+		// 如果设置为true，表示不能将同一个connection中发送的消息传递给这个connection中的消费者
 		false,
-		//消息队列是否阻塞
+		// 消息队列是否阻塞
 		false,
 		nil,
 	)
 	if err != nil {
 		klog.Info("relation模块接收消息失败")
 	}
-	//3.处理消息
+	// 3.处理消息
 	for msg := range msgChannel {
 		klog.Info("relation模块接收到消息:", string(msg.Body))
-		//TODO:根据消息内容进行处理
+		// TODO:根据消息内容进行处理
 		var req *relation.DouyinRelationActionRequest
 		err := json.Unmarshal(msg.Body, &req)
 		if err != nil {
@@ -79,9 +80,9 @@ func relationConsumer() {
 
 func relationActionHandle(req *relation.DouyinRelationActionRequest) error {
 	if req.ActionType == 1 {
-		//首先判断之前是否已经关注过
-		//如果已经关注过，直接将其cancel字段重置为0即可
-		//如果没有关注过，直接插入一条新的关注记录
+		// 首先判断之前是否已经关注过
+		// 如果已经关注过，直接将其cancel字段重置为0即可
+		// 如果没有关注过，直接插入一条新的关注记录
 		follow, _ := db.GetFollowByUserAndTarget(req.UserId, req.ToUserId)
 		if follow.ID != 0 {
 			err := db.UpdateFollow(req.UserId, req.ToUserId, int(req.ActionType))

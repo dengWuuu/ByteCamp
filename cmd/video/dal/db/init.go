@@ -15,8 +15,10 @@ import (
 	"gorm.io/plugin/dbresolver"
 )
 
-var DB *gorm.DB
-var dbErr error
+var (
+	DB    *gorm.DB
+	dbErr error
+)
 
 func Init() {
 	newLogger := logger.New(

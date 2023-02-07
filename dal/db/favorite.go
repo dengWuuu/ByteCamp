@@ -34,7 +34,7 @@ func GetFavoritesByUserId(user_id int64) (resp []*Favorite, err error) {
 }
 
 // 点赞操作，同时要将点赞的视频点赞数量加一
-func AddFavorite(ctx context.Context, user_id int64, video_id int64) error {
+func AddFavorite(ctx context.Context, user_id, video_id int64) error {
 	// 需要在事务里面进行操作
 	err := DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// 检查用户
@@ -75,7 +75,7 @@ func AddFavorite(ctx context.Context, user_id int64, video_id int64) error {
 }
 
 // 取消点赞操作，同时需要将取消点赞的视频点赞数量减一
-func DeleteFavorite(ctx context.Context, user_id int64, video_id int64) error {
+func DeleteFavorite(ctx context.Context, user_id, video_id int64) error {
 	// 需要在事务里面进行操作
 	err := DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// 检查用户

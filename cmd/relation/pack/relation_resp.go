@@ -12,14 +12,15 @@
 package pack
 
 import (
+	"errors"
+
 	relation "douyin/kitex_gen/relation"
 	"douyin/kitex_gen/user"
 	"douyin/pkg/errno"
-	"errors"
 )
 
-//构造关注或取消关注RPC response
-//根据error，判断其属于那种errno.ErrNo,调用GetRelationActionResp返回对应的relation.DouyinRelationActionResponse
+// 构造关注或取消关注RPC response
+// 根据error，判断其属于那种errno.ErrNo,调用GetRelationActionResp返回对应的relation.DouyinRelationActionResponse
 func BuildRelationActionResponse(err error) *relation.DouyinRelationActionResponse {
 	if err == nil {
 		return getRelationActionResp(errno.Success)
@@ -32,10 +33,9 @@ func BuildRelationActionResponse(err error) *relation.DouyinRelationActionRespon
 		s := errno.ErrUnknown.WithMessage(err.Error())
 		return getRelationActionResp(s)
 	}
-
 }
 
-//根据传入的errno.ErrNo，返回对应的relation.DouyinRelationActionResponse
+// 根据传入的errno.ErrNo，返回对应的relation.DouyinRelationActionResponse
 func getRelationActionResp(err errno.ErrNo) *relation.DouyinRelationActionResponse {
 	return &relation.DouyinRelationActionResponse{
 		StatusCode: int32(err.ErrCode),
@@ -43,7 +43,7 @@ func getRelationActionResp(err errno.ErrNo) *relation.DouyinRelationActionRespon
 	}
 }
 
-//构造关注列表RPC response
+// 构造关注列表RPC response
 func BuildRelationFollowingListResp(users []*user.User, err error) *relation.DouyinRelationFollowListResponse {
 	if err == nil {
 		return getRelationFollowingListResp(users, errno.Success)
@@ -66,7 +66,7 @@ func getRelationFollowingListResp(users []*user.User, err errno.ErrNo) *relation
 	}
 }
 
-//构造粉丝列表RPC response
+// 构造粉丝列表RPC response
 func BuildRelationFollowerListResp(users []*user.User, err error) *relation.DouyinRelationFollowerListResponse {
 	if err == nil {
 		return getRelationFollowerListResp(users, errno.Success)
@@ -89,7 +89,7 @@ func getRelationFollowerListResp(users []*user.User, err errno.ErrNo) *relation.
 	}
 }
 
-//构造朋友列表RPC response
+// 构造朋友列表RPC response
 func BuildRelationFriendListResp(users []*user.User, err error) *relation.DouyinRelationFriendListResponse {
 	if err == nil {
 		return getRelationFriendListResp(users, errno.Success)
