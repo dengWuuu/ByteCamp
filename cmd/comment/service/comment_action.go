@@ -95,7 +95,7 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 				klog.Fatalf("序列化添加评论请求参数失败")
 				return nil, err
 			}
-			commentMq.CommentActionMqSend([]byte(msg))
+			commentMq.CommentActionMqSend(msg)
 			return pack.Comment(s.ctx, commentModel)
 		}
 		// 直接修改数据库
