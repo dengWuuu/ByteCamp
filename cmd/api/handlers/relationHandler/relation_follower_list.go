@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-02 16:44:03
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-06 21:38:57
+ * @LastEditTime: 2023-02-07 22:12:28
  * @FilePath: \ByteCamp\cmd\api\handlers\relationHandler\relation_follower_list.go
  * @Description:
  *
@@ -34,7 +34,12 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 	}
 	// 2、入参校验
 	if param.UserId == 0 {
-		handlers.SendResponse(c, pack.BuildRelationFollowerListResp(nil, errno.ErrBind))
+		resp := pack.BuildRelationFollowerListResp(nil, errno.ErrBind)
+		c.JSON(200, utils.H{
+			"status_code": resp.StatusCode, // 状态码，0-成功，其他值-失败
+			"status_msg":  resp.StatusMsg,  // 返回状态描述
+			"user_list":   nil,
+		})
 		return
 	}
 
@@ -46,7 +51,12 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		hlog.Infof("调用粉丝列表rpc失败")
 		hlog.Infof("err:%v", err.Error())
-		handlers.SendResponse(c, pack.BuildRelationFollowerListResp(nil, errno.ErrBind))
+		resp := pack.BuildRelationFollowerListResp(nil, err)
+		c.JSON(200, utils.H{
+			"status_code": resp.StatusCode, // 状态码，0-成功，其他值-失败
+			"status_msg":  resp.StatusMsg,  // 返回状态描述
+			"user_list":   nil,
+		})
 		return
 	}
 	c.JSON(200, utils.H{
