@@ -30,6 +30,7 @@ var (
 	UserRedis      *redis.Client
 	CommentRedis   *redis.Client
 	VideoRedis     *redis.Client
+	FavoriteRedis  *redis.Client
 )
 
 func Init(configPath string) {
@@ -128,5 +129,13 @@ func InitRedis() {
 		PoolSize:     poolSize,
 		MinIdleConns: minConns,
 		DB:           viper.GetInt("redis.videodb"),
+	})
+
+	FavoriteRedis = redis.NewClient(&redis.Options{
+		Addr:         addr,
+		Password:     password,
+		PoolSize:     poolSize,
+		MinIdleConns: minConns,
+		DB:           viper.GetInt("redis.favoritedb"),
 	})
 }
