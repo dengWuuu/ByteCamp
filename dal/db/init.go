@@ -29,6 +29,7 @@ var (
 	FriendsRedis   *redis.Client
 	UserRedis      *redis.Client
 	CommentRedis   *redis.Client
+	VideoRedis     *redis.Client
 )
 
 func Init(configPath string) {
@@ -104,6 +105,7 @@ func InitRedis() {
 		MinIdleConns: minConns,
 		DB:           viper.GetInt("redis.friendsdb"),
 	})
+
 	UserRedis = redis.NewClient(&redis.Options{
 		Addr:         addr,
 		Password:     password,
@@ -111,11 +113,20 @@ func InitRedis() {
 		MinIdleConns: minConns,
 		DB:           viper.GetInt("redis.userdb"),
 	})
+
 	CommentRedis = redis.NewClient(&redis.Options{
 		Addr:         addr,
 		Password:     password,
 		PoolSize:     poolSize,
 		MinIdleConns: minConns,
 		DB:           viper.GetInt("redis.commentdb"),
+	})
+
+	VideoRedis = redis.NewClient(&redis.Options{
+		Addr:         addr,
+		Password:     password,
+		PoolSize:     poolSize,
+		MinIdleConns: minConns,
+		DB:           viper.GetInt("redis.videodb"),
 	})
 }
