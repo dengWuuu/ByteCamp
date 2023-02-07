@@ -2,14 +2,16 @@ package commentHandler
 
 import (
 	"context"
+	"strconv"
+
 	"douyin/cmd/api/handlers"
 	"douyin/cmd/api/rpc"
 	"douyin/cmd/comment/pack"
 	"douyin/kitex_gen/comment"
 	"douyin/pkg/errno"
-	"strconv"
 
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 )
 
 // CommentList 传送http请求上下文到rpc客户端，并且获得客户端的响应
@@ -40,5 +42,10 @@ func CommentList(ctx context.Context, c *app.RequestContext) {
 		handlers.SendResponse(c, pack.BuildCommentListResp(errno.ConvertErr(err)))
 		return
 	}
-	handlers.SendResponse(c, rpcResp)
+	// 修改返回响应的格式
+	c.JSON(200, utils.H{
+		"status_code":  rpcResp.StatusCode,
+		"status_msg":   rpcResp.StatusMsg,
+		"comment_list": rpcResp.CommentList,
+	})
 }

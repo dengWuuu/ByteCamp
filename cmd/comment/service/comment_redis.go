@@ -2,13 +2,14 @@ package service
 
 import (
 	"context"
+	"encoding/json"
+	"strconv"
+	"time"
+
 	"douyin/dal/db"
 	"douyin/kitex_gen/comment"
 	"douyin/kitex_gen/user"
 	Redis "douyin/pkg/redis"
-	"encoding/json"
-	"strconv"
-	"time"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/go-redis/redis/v8"
@@ -32,12 +33,15 @@ type CommentRedisInfo struct {
 func (u *CommentUserInfo) MarshalBinary() ([]byte, error) {
 	return json.Marshal(u)
 }
+
 func (u *CommentUserInfo) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, u)
 }
+
 func (c *CommentRedisInfo) MarshalBinary() ([]byte, error) {
 	return json.Marshal(c)
 }
+
 func (c *CommentRedisInfo) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, c)
 }
@@ -51,6 +55,7 @@ func ToDbUser(u CommentUserInfo) db.User {
 	dbUser.FollowingCount = int(u.FollowCount)
 	return dbUser
 }
+
 func ToRedisUser(u db.User) CommentUserInfo {
 	var userInfo CommentUserInfo
 	userInfo.UserId = int64(u.ID)
@@ -60,14 +65,16 @@ func ToRedisUser(u db.User) CommentUserInfo {
 	userInfo.IsFollow = false
 	return userInfo
 }
+
 func ToRedisComment(u CommentUserInfo, c db.Comment) CommentRedisInfo {
 	var commentInfo CommentRedisInfo
 	commentInfo.User = u
 	commentInfo.CommentId = int64(c.ID)
 	commentInfo.Content = c.Content
-	commentInfo.CreateDate = c.CreatTime.String()
+	commentInfo.CreateDate = c.CreatTime.Format("2006-01-02 15:04:05")
 	return commentInfo
 }
+
 func ToDbComment(c CommentRedisInfo, vid int64) (db.Comment, error) {
 	var dbComment db.Comment
 	dbComment.ID = uint(c.CommentId)
@@ -175,12 +182,18 @@ func AddRedisCommentList(ctx context.Context, vid int64, ms []*comment.Comment) 
 		}
 	}
 	// 调用redis的API一次性写入
+	// ! 需要判断是否为空，否则会写入失败，直接宕机
+	if len(comment_map) == 0 {
+		return nil
+	}
 	vid_string := strconv.Itoa(int(vid))
 	err := db.CommentRedis.HMSet(ctx, vid_string, comment_map).Err()
 	if err != nil {
 		klog.Fatalf("评论列表写入redis失败")
 		return err
 	}
+	// 设置过期时间
+	db.CommentRedis.Expire(ctx, vid_string, db.ExpireTime)
 	return nil
 }
 

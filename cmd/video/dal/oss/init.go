@@ -9,10 +9,12 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
-var VideoBucket *oss.Bucket
-var ImageBucket *oss.Bucket
-var VideoBucketLinkPrefix string
-var ImageBucketLinkPrefix string
+var (
+	VideoBucket           *oss.Bucket
+	ImageBucket           *oss.Bucket
+	VideoBucketLinkPrefix string
+	ImageBucketLinkPrefix string
+)
 
 func Init() {
 	ossClient, err := oss.New(config.OSSEndPoint, config.OSSAK, config.OSSSK)

@@ -1,9 +1,10 @@
 package pack
 
 import (
+	"errors"
+
 	"douyin/kitex_gen/comment"
 	"douyin/pkg/errno"
-	"errors"
 )
 
 // 根据错误信息包装RPC返回数据结构体
@@ -20,6 +21,7 @@ func BuildCommentActionResp(err error) *comment.DouyinCommentActionResponse {
 	e = errno.ErrUnknown.WithMessage(err.Error())
 	return commentActionResp(e)
 }
+
 func BuildCommentListResp(err error) *comment.DouyinCommentListResponse {
 	if err == nil {
 		return commentListResp(errno.Success)
@@ -39,6 +41,7 @@ func commentActionResp(err errno.ErrNo) *comment.DouyinCommentActionResponse {
 		StatusMsg:  &err.ErrMsg,
 	}
 }
+
 func commentListResp(err errno.ErrNo) *comment.DouyinCommentListResponse {
 	return &comment.DouyinCommentListResponse{
 		StatusCode: int32(err.ErrCode),

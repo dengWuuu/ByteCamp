@@ -1,24 +1,27 @@
 package main
 
 import (
+	"fmt"
+	"log"
+	"net"
+
 	"douyin/dal"
 	user "douyin/kitex_gen/user/usersrv"
 	"douyin/pkg/nacos"
-	"fmt"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	kitexzap "github.com/kitex-contrib/obs-opentelemetry/logging/zap"
 	"github.com/kitex-contrib/registry-nacos/registry"
-	"log"
-	"net"
 )
 
 // Init User RPC Server 端配置初始化
 func Init() {
 	dal.Init()
 }
+
 func main() {
 	Init()
 
@@ -31,8 +34,8 @@ func main() {
 	//}
 	klog.SetLogger(kitexzap.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
-	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port)) //nacos
-	//nacos
+	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port)) // nacos
+	// nacos
 	r := registry.NewNacosRegistry(nacos.InitNacos())
 	svr := user.NewServer(
 		new(UserSrvImpl),

@@ -2,6 +2,7 @@ package userHandler
 
 import (
 	"context"
+
 	"douyin/cmd/api/handlers"
 	"douyin/cmd/api/rpc"
 	"douyin/cmd/user/pack"
@@ -26,7 +27,6 @@ func GetUserById(ctx context.Context, c *app.RequestContext) {
 	resp, err := rpc.GetUserById(ctx, &user.DouyinUserRequest{
 		UserId: userParam.UserId,
 	})
-
 	if err != nil {
 		handlers.SendResponse(c, pack.BuildGetUserResp(errno.ConvertErr(err)))
 		return

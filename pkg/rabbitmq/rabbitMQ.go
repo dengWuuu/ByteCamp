@@ -2,6 +2,7 @@ package rabbitmq
 
 import (
 	"fmt"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/streadway/amqp"
 )
@@ -31,6 +32,7 @@ func InitRabbitMQ() {
 	}
 	Rmq.conn = dial
 }
+
 func NewRabbitMq(queueName, exchange, routingKey string) *RabbitMQ {
 	rabbitMQ := RabbitMQ{
 		QueueName:  queueName,
@@ -40,7 +42,7 @@ func NewRabbitMq(queueName, exchange, routingKey string) *RabbitMQ {
 		mqurl:      MQURL,
 	}
 	var err error
-	//创建Channel
+	// 创建Channel
 	rabbitMQ.Channel, err = rabbitMQ.conn.Channel()
 	if err != nil {
 		Rmq.failOnErr(err, "创建channel失败")

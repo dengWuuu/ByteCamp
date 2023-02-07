@@ -2,13 +2,15 @@ package service
 
 import (
 	"context"
-	"douyin/cmd/comment/commentMq"
-	"douyin/dal/db"
-	"douyin/kitex_gen/comment"
-	"douyin/pkg/errno"
 	"encoding/json"
 	"strconv"
 	"time"
+
+	"douyin/cmd/comment/commentMq"
+	"douyin/cmd/comment/pack"
+	"douyin/dal/db"
+	"douyin/kitex_gen/comment"
+	"douyin/pkg/errno"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 )
@@ -23,7 +25,7 @@ func NewCommentActionService(ctx context.Context) *CommentActionService {
 }
 
 // 评论服务实现
-func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionRequest) error {
+func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionRequest) (*comment.Comment, error) {
 	// 根据请求创建新的评论
 	if req.ActionType == 1 {
 		commentModel := &db.Comment{
@@ -39,19 +41,20 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 		cid_string := strconv.Itoa(int(comment_id))
 		if err != nil {
 			klog.Fatalf("获取自增ID错误")
-			return err
+			return nil, err
 		}
+		commentModel.ID = uint(comment_id)
 		// 查找redis里面是否存在对应的video对象
 		vid_string := strconv.Itoa(int(req.VideoId))
 		vid_cnt, err := db.CommentRedis.Exists(s.ctx, vid_string).Result()
 		// 下面都是严重的错误
 		if err != nil {
 			klog.Fatalf("查询redis视频对象出错")
-			panic(err)
+			return nil, err
 		}
 		if vid_cnt > 1 {
 			klog.Fatalf("video对象不唯一")
-			panic(err)
+			return nil, err
 		}
 		if vid_cnt == 1 {
 			// 存在video对象
@@ -61,7 +64,7 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 			user_info, err := GetUserFromRedis(s.ctx, req.UserId)
 			if err != nil {
 				klog.Fatalf("创建评论过程中获取用户信息失败")
-				return err
+				return nil, err
 			}
 			// TODO 判断是否关注
 			userInfo = ToRedisUser(*user_info)
@@ -69,27 +72,40 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 			comment_binary, err := commentInfo.MarshalBinary()
 			if err != nil {
 				klog.Fatalf("评论信息序列化失败")
-				return err
+				return nil, err
 			}
 			// 修改video的键值对
 			err = db.CommentRedis.HSet(s.ctx, vid_string, cid_string, comment_binary).Err()
 			if err != nil {
 				klog.Fatalf("redis修改video对象失败")
-				return err
+				return nil, err
 			}
 			// 发送消息给MQ
-			req.CommentId = &comment_id
-			msg, err := json.Marshal(req)
+			// * 这里要手动加上comment的ID和创建时间
+			commentMessage := commentMq.CommentRmqMessage{
+				UserId:     commentModel.UserId,
+				VideoId:    commentModel.VideoId,
+				Content:    commentModel.Content,
+				CreateTime: commentModel.CreatTime,
+				ActionType: int(req.ActionType),
+				CommentId:  int(comment_id),
+			}
+			msg, err := json.Marshal(commentMessage)
 			if err != nil {
 				klog.Fatalf("序列化添加评论请求参数失败")
-				return err
+				return nil, err
 			}
-			commentMq.CommentActionMqSend([]byte(msg))
-			return nil
+			commentMq.CommentActionMqSend(msg)
+			return pack.Comment(s.ctx, commentModel)
 		}
 		// 直接修改数据库
 		commentModel.ID = uint(comment_id) // 添加ID
-		return db.CreateComment(s.ctx, commentModel)
+		err = db.CreateComment(s.ctx, commentModel)
+		if err != nil {
+			klog.Fatalf("评论数据直接写入数据库失败")
+			return nil, err
+		}
+		return pack.Comment(s.ctx, commentModel)
 	}
 	// 根据请求删除评论
 	if req.ActionType == 2 {
@@ -102,31 +118,61 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 		// 下面都是严重的错误
 		if err != nil {
 			klog.Fatalf("查询redis video对象出错")
-			panic(err)
+			return nil, err
 		}
 		if vid_cnt > 1 {
 			klog.Fatalf("video对象不唯一")
-			panic(err)
+			return nil, err
 		}
 		if vid_cnt == 1 {
 			// 存在vidoe对象
-			err := db.CommentRedis.HDel(s.ctx, vid_string, cid_string).Err()
+			// 首先获取对象
+			comment_binary, err := db.CommentRedis.HGet(s.ctx, vid_string, cid_string).Result()
+			if err != nil {
+				klog.Fatalf("删除评论过程中获取评论信息出错")
+				return nil, err
+			}
+			var commentRedisInfo CommentRedisInfo
+			commentRedisInfo.UnmarshalBinary([]byte(comment_binary))
+			// 删除对象
+			err = db.CommentRedis.HDel(s.ctx, vid_string, cid_string).Err()
 			if err != nil {
 				klog.Fatalf("redis修改video对象失败")
-				return err
+				return nil, err
 			}
 			// 发送消息给MQ
-			msg, err := json.Marshal(req)
+			commentMessage := commentMq.CommentRmqMessage{
+				UserId:     int(commentRedisInfo.User.UserId),
+				VideoId:    int(req.VideoId),
+				ActionType: int(req.ActionType),
+				CommentId:  int(comment_id),
+			}
+			msg, err := json.Marshal(commentMessage)
 			if err != nil {
 				klog.Fatalf("序列化添加评论请求参数失败")
-				return err
+				return nil, err
 			}
 			commentMq.CommentActionMqSend([]byte(msg))
-			return nil
+			dbComment, err := ToDbComment(commentRedisInfo, req.VideoId)
+			if err != nil {
+				klog.Fatalf("评论转换格式失败")
+				return nil, err
+			}
+			return pack.Comment(s.ctx, &dbComment)
 		}
 		// 直接修改数据库
-		return db.DeleteCommentById(s.ctx, video_id, comment_id)
+		// 首先还要获取对应的comment信息
+		dbComment, err := db.GetCommentByCommentId(s.ctx, []int{comment_id})
+		if dbComment == nil {
+			return nil, err
+		}
+		err = db.DeleteCommentById(s.ctx, video_id, comment_id)
+		if err != nil {
+			klog.Fatalf("删除评论直接删除出现错误")
+			return nil, err
+		}
+		return pack.Comment(s.ctx, dbComment[0])
 	}
 	// 参数不合法
-	return errno.ErrBind
+	return nil, errno.ErrBind
 }

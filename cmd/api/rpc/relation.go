@@ -13,15 +13,16 @@ package rpc
 
 import (
 	"context"
+	"time"
+
 	"douyin/kitex_gen/relation"
 	"douyin/kitex_gen/relation/relationsrv"
 	"douyin/pkg/errno"
+	"github.com/cloudwego/kitex/pkg/retry"
 	"github.com/kitex-contrib/registry-nacos/resolver"
-	"time"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"
-	"github.com/cloudwego/kitex/pkg/retry"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 )
 
@@ -49,12 +50,12 @@ func initRelationRpc() {
 
 // RelationAction 用户关注或取消关注
 func RelationAction(ctx context.Context, req *relation.DouyinRelationActionRequest) (resp *relation.DouyinRelationActionResponse, err error) {
-	//1、调用rpc接口完成操作,注意需要判断RPC调用是否成功
+	// 1、调用rpc接口完成操作,注意需要判断RPC调用是否成功
 	resp, err = relationClient.RelationAction(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-	//2、检查resp是否合法
+	// 2、检查resp是否合法
 	if resp.StatusCode != 0 {
 		return nil, errno.NewErrNo(int(resp.StatusCode), *resp.StatusMsg)
 	}

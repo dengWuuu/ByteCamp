@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	"douyin/cmd/comment/pack"
 	"douyin/cmd/comment/service"
 	comment "douyin/kitex_gen/comment"
@@ -20,8 +21,13 @@ func (s *CommentSrvImpl) CommentAction(ctx context.Context, req *comment.DouyinC
 	if req.UserId <= 0 || req.VideoId <= 0 || (req.ActionType != 1 && req.ActionType != 2) {
 		return pack.BuildCommentActionResp(errno.ErrBind), nil
 	}
-	err = commentSrv.CommentAction(req)
-	return pack.BuildCommentActionResp(err), nil
+	comment, err := commentSrv.CommentAction(req)
+	if err != nil {
+		return pack.BuildCommentActionResp(err), nil
+	}
+	resp = pack.BuildCommentActionResp(err)
+	resp.Comment = comment
+	return resp, nil
 }
 
 // CommentList implements the CommentSrvImpl interface.

@@ -1,19 +1,20 @@
 package test
 
 import (
-	"douyin/cmd/comment/commentMq"
-	"douyin/dal/db"
-	"douyin/kitex_gen/comment"
 	"encoding/json"
 	"fmt"
 	"testing"
+
+	"douyin/cmd/comment/commentMq"
+	"douyin/dal/db"
+	"douyin/kitex_gen/comment"
 )
 
 func TestCommentMq_Publish(t *testing.T) {
 	var id int64 = 12
 	for i := 1; i < 5; i++ {
 		commentMq.InitCommentMq()
-		var text = "kadhfkadshf"
+		text := "kadhfkadshf"
 		request := comment.DouyinCommentActionRequest{
 			UserId:      0,
 			Token:       "",
@@ -31,7 +32,6 @@ func TestCommentMq_Publish(t *testing.T) {
 }
 
 func TestCommentMq_Consumer(t *testing.T) {
-
 	db.Init("D:\\GolandProjects\\Douyin\\config")
 	commentMq.InitCommentMq()
 	commentMq.CommentConsumer()

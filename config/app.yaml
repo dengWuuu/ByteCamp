@@ -11,6 +11,8 @@ redis:
   friendsdb: 2
   userdb: 3
   commentdb: 4
+  videodb: 5
+  favoritedb: 6
   exipretime: "48h"
 
 rpc:

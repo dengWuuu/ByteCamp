@@ -12,6 +12,7 @@ package relationHandler
 
 import (
 	"context"
+
 	"douyin/cmd/api/handlers"
 	"douyin/cmd/api/rpc"
 	"douyin/cmd/relation/pack"
@@ -25,19 +26,19 @@ import (
 
 func FollowList(ctx context.Context, c *app.RequestContext) {
 	var param handlers.FollowListParam
-	//1、绑定http参数
+	// 1、绑定http参数
 	err := c.Bind(&param)
 	if err != nil {
 		hlog.Infof("获取请求体失败")
 		panic(err)
 	}
-	//2、入参校验
+	// 2、入参校验
 	if param.UserId == 0 {
 		handlers.SendResponse(c, pack.BuildRelationFollowingListResp(nil, errno.ErrBind))
 		return
 	}
 
-	//3、调用rpc
+	// 3、调用rpc
 	resp, err := rpc.FollowList(ctx, &relation.DouyinRelationFollowListRequest{
 		UserId: param.UserId,
 		Token:  param.Token,

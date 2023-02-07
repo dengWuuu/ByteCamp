@@ -3,7 +3,6 @@ package commentMq
 import (
 	"context"
 	"douyin/dal/db"
-	"douyin/kitex_gen/comment"
 	"encoding/json"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -51,7 +50,7 @@ func CommentConsumer() {
 }
 
 func commentAction(msg string) {
-	var req *comment.DouyinCommentActionRequest
+	var req *CommentRmqMessage
 	err := json.Unmarshal([]byte(msg), &req)
 	if err != nil {
 		klog.Fatalf("rabbitMq commentAdd消费时序列化失败")
@@ -60,11 +59,13 @@ func commentAction(msg string) {
 	// 根据请求创建新的评论
 	if req.ActionType == 1 {
 		commentModel := &db.Comment{
-			VideoId: int(req.VideoId),
-			UserId:  int(req.UserId),
-			Content: *req.CommentText,
+			UserId:    req.UserId,
+			VideoId:   req.VideoId,
+			Content:   req.Content,
+			CreatTime: req.CreateTime,
 		}
-		commentModel.ID = uint(*req.CommentId) // 一定要添加自定义的分布式ID
+		// * 一定要记得加上ID和时间
+		commentModel.ID = uint(req.CommentId)
 		err := db.CreateComment(context.Background(), commentModel)
 		if err != nil {
 			klog.Fatalf("rabbitmq 消费者在数据库中创建评论失败")
@@ -73,7 +74,7 @@ func commentAction(msg string) {
 	}
 	// 根据请求删除评论
 	if req.ActionType == 2 {
-		err := db.DeleteCommentById(context.Background(), int(req.VideoId), int(*req.CommentId))
+		err := db.DeleteCommentById(context.Background(), req.VideoId, req.CommentId)
 		if err != nil {
 			klog.Fatalf("rabbitmq 消费者在数据库中删除评论失败")
 			return

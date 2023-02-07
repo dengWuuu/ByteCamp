@@ -23,6 +23,7 @@ import (
 func Init() {
 	dal.Init()
 }
+
 func main() {
 	Init()
 
@@ -34,7 +35,7 @@ func main() {
 		new(VideoSrvImpl),
 		server.WithServiceAddr(addr),
 		server.WithRegistry(registry.NewNacosRegistry(nacos.InitNacos())),
-		server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 100}),
+		server.WithLimit(&limit.Option{MaxConnections: 1000000000, MaxQPS: 1000000000}),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.PSM}))
 
 	err := svr.Run()

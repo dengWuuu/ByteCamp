@@ -11,11 +11,11 @@ import (
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
-func UploadVideo(video *[]byte) (playUrl string, coverUrl string, err error) {
+func UploadVideo(video *[]byte) (playUrl, coverUrl string, err error) {
 	videoName := uuid.NewV4().String() + ".mp4"
 	imageName := uuid.NewV4().String() + ".jpeg"
 
-	err = os.WriteFile(videoName, *video, 0666)
+	err = os.WriteFile(videoName, *video, 0o666)
 	if err != nil {
 		return "", "", err
 	}

@@ -12,21 +12,22 @@ package test
 
 import (
 	"context"
-	"douyin/dal/db"
 	"fmt"
 	"testing"
 	"time"
+
+	"douyin/dal/db"
 )
 
 func TestInit(t *testing.T) {
 	db.Init("../config")
-	//测试redis
+	// 测试redis
 	ids, err := db.GetFriendsByUserId(23)
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Printf("%v", ids)
-	//迁移数据库
+	// 迁移数据库
 	// db.DB.AutoMigrate(&db.Video{})
 }
 

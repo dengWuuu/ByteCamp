@@ -2,8 +2,9 @@ package redis
 
 import (
 	"context"
-	"douyin/dal/db"
 	"testing"
+
+	"douyin/dal/db"
 
 	"gorm.io/gorm"
 	"gorm.io/plugin/optimisticlock"

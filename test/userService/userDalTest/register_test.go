@@ -1,9 +1,10 @@
 package userService
 
 import (
-	"douyin/dal/db"
 	"fmt"
 	"testing"
+
+	"douyin/dal/db"
 )
 
 func TestRpcRegistry(t *testing.T) {
