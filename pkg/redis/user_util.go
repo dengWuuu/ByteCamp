@@ -1,3 +1,13 @@
+/*
+ * @Author: zy 953725892@qq.com
+ * @Date: 2023-02-07 20:58:26
+ * @LastEditors: zy 953725892@qq.com
+ * @LastEditTime: 2023-02-07 21:57:39
+ * @FilePath: \ByteCamp\pkg\redis\user_util.go
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
 package redis
 
 import (
@@ -23,7 +33,7 @@ func GetUsersFromRedis(ctx context.Context, userIds []uint) []*db.User {
 	}
 	res, err := pipelined.Exec(ctx)
 	if err != nil {
-		klog.Fatal("管道命令失败")
+		klog.Infof("管道命令失败")
 	}
 	for index, cmdRes := range res {
 		cmd, ok := cmdRes.(*redis.StringCmd)
