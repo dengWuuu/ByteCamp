@@ -12,6 +12,7 @@ package service
 
 import (
 	"context"
+
 	"douyin/cmd/relation/pack"
 	userpack "douyin/cmd/user/pack"
 	"douyin/dal/db"
@@ -20,9 +21,9 @@ import (
 	redis "douyin/pkg/redis"
 )
 
-//根据req获取RPC所需的粉丝user列表
+// 根据req获取RPC所需的粉丝user列表
 func (service RelationService) FollowerList(req *relation.DouyinRelationFollowerListRequest) ([]*user.User, error) {
-	//1、根据userId获取该user的所有follow列表
+	// 1、根据userId获取该user的所有follow列表
 	fans, err := db.GetFansByUserId(int(req.UserId))
 	if err != nil {
 		return nil, err
@@ -35,15 +36,15 @@ func (service RelationService) FollowerList(req *relation.DouyinRelationFollower
 }
 
 func (service RelationService) FollowerListByRedis(req *relation.DouyinRelationFollowerListRequest) ([]*user.User, error) {
-	//1、load
+	// 1、load
 	ctx := context.Background()
 	loadFollowersListToRedis(ctx, req.UserId)
-	//2、从redis中拿到所有的followerId
+	// 2、从redis中拿到所有的followerId
 	ids, err := getFollowersListFromRedis(ctx, req.UserId)
 	if err != nil {
 		return nil, err
 	}
-	//3、根据followingId获取user
+	// 3、根据followingId获取user
 	var followerUsers []*user.User
 	uids := make([]uint, len(ids)-1)
 	k := 0
@@ -54,16 +55,16 @@ func (service RelationService) FollowerListByRedis(req *relation.DouyinRelationF
 		uids[k] = uint(id)
 		k++
 	}
-	//从redis中获取user
+	// 从redis中获取user
 	dbUsers := redis.GetUsersFromRedis(ctx, uids)
 	if dbUsers == nil {
-		//从mysql中获取user
+		// 从mysql中获取user
 		followerUsers, err = pack.GetUsersByIds(ids)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		//否则直接pack为RPC所需的user
+		// 否则直接pack为RPC所需的user
 		followerUsers = make([]*user.User, len(dbUsers))
 		for i, dbUser := range dbUsers {
 			followerUsers[i], err = userpack.User(ctx, dbUser)
@@ -73,7 +74,7 @@ func (service RelationService) FollowerListByRedis(req *relation.DouyinRelationF
 		}
 	}
 
-	//4、补全users中的关注总数、粉丝总数、是否关注
+	// 4、补全users中的关注总数、粉丝总数、是否关注
 	for _, followerUser := range followerUsers {
 		// loadFollowersListToRedis(ctx, followerUser.Id)
 		// loadFollowingListToRedis(ctx, followerUser.Id)
@@ -94,6 +95,6 @@ func (service RelationService) FollowerListByRedis(req *relation.DouyinRelationF
 		}
 		followerUser.IsFollow = isFollow
 	}
-	//5、返回user
+	// 5、返回user
 	return followerUsers, nil
 }

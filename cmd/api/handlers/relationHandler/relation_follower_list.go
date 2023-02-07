@@ -2,8 +2,8 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-02 16:44:03
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-02 17:14:24
- * @FilePath: /ByteCamp/cmd/api/handlers/relationHandler/relation_follower_list.go
+ * @LastEditTime: 2023-02-06 21:38:57
+ * @FilePath: \ByteCamp\cmd\api\handlers\relationHandler\relation_follower_list.go
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
@@ -43,6 +43,8 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 		Token:  param.Token,
 	})
 	if err != nil {
+		hlog.Infof("调用粉丝列表rpc失败")
+		hlog.Infof("err:%v", err.Error())
 		handlers.SendResponse(c, pack.BuildRelationFollowerListResp(nil, errno.ErrBind))
 		return
 	}

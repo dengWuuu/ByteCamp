@@ -12,6 +12,7 @@ package main
 
 import (
 	"context"
+
 	"douyin/cmd/relation/pack"
 	"douyin/cmd/relation/service"
 	relation "douyin/kitex_gen/relation"
@@ -21,31 +22,29 @@ import (
 // RelationSrvImpl implements the last service interface defined in the IDL.
 type RelationSrvImpl struct{}
 
-var (
-	relationService = service.NewRelationService(context.Background())
-)
+var relationService = service.NewRelationService(context.Background())
 
 // RelationAction 登录用户对其他用户进行关注或取消关注。
 func (s *RelationSrvImpl) RelationAction(ctx context.Context, req *relation.DouyinRelationActionRequest) (resp *relation.DouyinRelationActionResponse, err error) {
-	//1、入参校验
-	//2、调用service层，完成关注或取消关注
+	// 1、入参校验
+	// 2、调用service层，完成关注或取消关注
 	err = relationService.RelationActionByRedis(req)
 	if err != nil {
 		resp = pack.BuildRelationActionResponse(err)
 		return resp, nil
 	}
-	//4、返回结果
+	// 4、返回结果
 	return pack.BuildRelationActionResponse(err), nil
 }
 
 // 登录用户关注的所有用户列表。
 func (s *RelationSrvImpl) RelationFollowList(ctx context.Context, req *relation.DouyinRelationFollowListRequest) (resp *relation.DouyinRelationFollowListResponse, err error) {
-	//1、入参校验
+	// 1、入参校验
 	if req.UserId <= 0 {
 		resp = pack.BuildRelationFollowingListResp(nil, errno.ErrBind)
 		return resp, nil
 	}
-	//2、调用service
+	// 2、调用service
 	users, err := relationService.FollowListByRedis(req)
 	if err != nil {
 		resp = pack.BuildRelationFollowingListResp(nil, err)
@@ -57,12 +56,12 @@ func (s *RelationSrvImpl) RelationFollowList(ctx context.Context, req *relation.
 
 // 所有关注登录用户的粉丝列表。
 func (s *RelationSrvImpl) RelationFollowerList(ctx context.Context, req *relation.DouyinRelationFollowerListRequest) (resp *relation.DouyinRelationFollowerListResponse, err error) {
-	//1、入参校验
+	// 1、入参校验
 	if req.UserId <= 0 {
 		resp = pack.BuildRelationFollowerListResp(nil, errno.ErrBind)
 		return resp, nil
 	}
-	//2、调用service
+	// 2、调用service
 	users, err := relationService.FollowerListByRedis(req)
 	if err != nil {
 		resp = pack.BuildRelationFollowerListResp(nil, err)

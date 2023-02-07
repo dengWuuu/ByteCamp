@@ -18,7 +18,7 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 	//1、绑定http参数
 	err := c.Bind(&param)
 	if err != nil {
-		hlog.Fatal("序列化朋友列表请求参数失败")
+		hlog.Infof("序列化朋友列表请求参数失败")
 		panic(err)
 	}
 	//2、入参校验

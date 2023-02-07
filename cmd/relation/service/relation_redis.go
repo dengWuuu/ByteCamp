@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-03 22:16:48
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-06 15:50:17
+ * @LastEditTime: 2023-02-07 12:33:08
  * @FilePath: \ByteCamp\cmd\relation\service\relation_redis.go
  * @Description: relation微服务对redis的操作封装
  *
@@ -12,13 +12,14 @@ package service
 
 import (
 	"context"
-	"douyin/dal/db"
 	"strconv"
+
+	"douyin/dal/db"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
-//向redis的following set中添加关注
+// 向redis的following set中添加关注
 func addRedisFollowList(ctx context.Context, userId, toUserId int64) error {
 	userIdStr := strconv.Itoa(int(userId))
 	loadFollowingListToRedis(ctx, userId)
@@ -33,7 +34,7 @@ func addRedisFollowList(ctx context.Context, userId, toUserId int64) error {
 	return nil
 }
 
-//向redis的follower set中添加粉丝
+// 向redis的follower set中添加粉丝
 func addRedisFollowerList(ctx context.Context, userId, toUserId int64) error {
 	toUserIdStr := strconv.Itoa(int(toUserId))
 	loadFollowersListToRedis(ctx, toUserId)
@@ -48,21 +49,21 @@ func addRedisFollowerList(ctx context.Context, userId, toUserId int64) error {
 	return nil
 }
 
-//向redis的friends set中添加朋友
+// 向redis的friends set中添加朋友
 func addRedisFriendsList(ctx context.Context, userId, toUserId int64) error {
 	userIdStr := strconv.Itoa(int(userId))
 	loadFriendsListToRedis(ctx, userId)
-	//如果redis中不存在该用户的关注列表，那么不对redis进行操作
-	//TODO:如果要添加朋友关系，首先必须将toUser的following set添加进来(Done)
-	//1、将toUser的following set添加进来
+	// 如果redis中不存在该用户的关注列表，那么不对redis进行操作
+	// TODO:如果要添加朋友关系，首先必须将toUser的following set添加进来(Done)
+	// 1、将toUser的following set添加进来
 	toUserIdStr := strconv.Itoa(int(toUserId))
 	loadFollowingListToRedis(ctx, toUserId)
-	//2、判断其中是否存在userId
+	// 2、判断其中是否存在userId
 	isMember, err := db.FollowingRedis.SIsMember(ctx, toUserIdStr, userId).Result()
 	if err != nil {
 		return err
 	}
-	//3、如果存在，则说明添加完当前的关注关系后，两者之间存在朋友关系，需要更新当前user和toUser在redis中的friends set
+	// 3、如果存在，则说明添加完当前的关注关系后，两者之间存在朋友关系，需要更新当前user和toUser在redis中的friends set
 	if isMember {
 		err = db.FriendsRedis.SAdd(ctx, userIdStr, toUserId).Err()
 		if err != nil {
@@ -80,11 +81,11 @@ func addRedisFriendsList(ctx context.Context, userId, toUserId int64) error {
 	return nil
 }
 
-//向redis的following set中移除关注
+// 向redis的following set中移除关注
 func remRedisFollowList(ctx context.Context, userId, toUserId int64) error {
 	userIdStr := strconv.Itoa(int(userId))
 	loadFollowingListToRedis(ctx, userId)
-	//如果redis中不存在该用户的关注列表，那么不对redis进行操作
+	// 如果redis中不存在该用户的关注列表，那么不对redis进行操作
 	err := db.FollowingRedis.SRem(ctx, userIdStr, toUserId).Err()
 	if err != nil {
 		return err
@@ -96,7 +97,7 @@ func remRedisFollowList(ctx context.Context, userId, toUserId int64) error {
 	return nil
 }
 
-//向redis的follower set中移除粉丝
+// 向redis的follower set中移除粉丝
 func remRedisFollowerList(ctx context.Context, userId, toUserId int64) error {
 	toUserIdStr := strconv.Itoa(int(toUserId))
 	loadFollowersListToRedis(ctx, toUserId)
@@ -111,7 +112,7 @@ func remRedisFollowerList(ctx context.Context, userId, toUserId int64) error {
 	return nil
 }
 
-//向redis的friends set中添加朋友
+// 向redis的friends set中添加朋友
 func remRedisFriendsList(ctx context.Context, userId, toUserId int64) error {
 	userIdStr := strconv.Itoa(int(userId))
 	loadFriendsListToRedis(ctx, userId)
@@ -126,20 +127,20 @@ func remRedisFriendsList(ctx context.Context, userId, toUserId int64) error {
 	return nil
 }
 
-//从数据库中加载关注列表,并将其存入redis
+// 从数据库中加载关注列表,并将其存入redis
 func loadFollowingListToRedis(ctx context.Context, userId int64) error {
-	//首先判断该用户的缓存是否已经存在，如果存在，则不需要再次加载
+	// 首先判断该用户的缓存是否已经存在，如果存在，则不需要再次加载
 	userIdStr := strconv.Itoa(int(userId))
 	cnt, err := db.FollowingRedis.Exists(ctx, userIdStr).Result()
 	if err != nil {
-		hlog.Fatal("加载关注列表到redis失败")
+		hlog.Infof("加载关注列表到redis失败")
 		return err
 	}
 	if cnt != 0 {
 		db.FollowingRedis.Expire(ctx, strconv.Itoa(int(userId)), db.ExpireTime)
 		return nil
 	}
-	//从数据库load时需要首先添加一个-1的key，防止读脏
+	// 从数据库load时需要首先添加一个-1的key，防止读脏
 	err = db.FollowingRedis.SAdd(ctx, strconv.Itoa(int(userId)), -1).Err()
 	if err != nil {
 		return err
@@ -163,7 +164,7 @@ func loadFollowingListToRedis(ctx context.Context, userId int64) error {
 	return nil
 }
 
-//从数据库中加载粉丝列表,并将其存入redis
+// 从数据库中加载粉丝列表,并将其存入redis
 func loadFollowersListToRedis(ctx context.Context, userId int64) error {
 	userIdStr := strconv.Itoa(int(userId))
 	cnt, err := db.FollowersRedis.Exists(ctx, userIdStr).Result()
@@ -198,12 +199,12 @@ func loadFollowersListToRedis(ctx context.Context, userId int64) error {
 	return nil
 }
 
-//从数据库中加载朋友列表,并将其存入redis
+// 从数据库中加载朋友列表,并将其存入redis
 func loadFriendsListToRedis(ctx context.Context, userId int64) error {
 	userIdStr := strconv.Itoa(int(userId))
 	cnt, err := db.FriendsRedis.Exists(ctx, userIdStr).Result()
 	if err != nil {
-		hlog.Fatal("加载好友列表到redis失败")
+		hlog.Infof("加载好友列表到redis失败")
 		return err
 	}
 	if cnt != 0 {
@@ -233,7 +234,7 @@ func loadFriendsListToRedis(ctx context.Context, userId int64) error {
 	return nil
 }
 
-//从redis中获取关注列表
+// 从redis中获取关注列表
 func getFollowingListFromRedis(ctx context.Context, userId int64) ([]int64, error) {
 	ids, err := db.FollowingRedis.SMembers(ctx, strconv.Itoa(int(userId))).Result()
 	if err != nil {
@@ -250,7 +251,7 @@ func getFollowingListFromRedis(ctx context.Context, userId int64) ([]int64, erro
 	return res, nil
 }
 
-//从redis中获取粉丝列表
+// 从redis中获取粉丝列表
 func getFollowersListFromRedis(ctx context.Context, userId int64) ([]int64, error) {
 	ids, err := db.FollowersRedis.SMembers(ctx, strconv.Itoa(int(userId))).Result()
 	if err != nil {
@@ -267,7 +268,7 @@ func getFollowersListFromRedis(ctx context.Context, userId int64) ([]int64, erro
 	return res, nil
 }
 
-//从redis中获取朋友列表
+// 从redis中获取朋友列表
 func getFriendsListFromRedis(ctx context.Context, userId int64) ([]int64, error) {
 	ids, err := db.FriendsRedis.SMembers(ctx, strconv.Itoa(int(userId))).Result()
 	if err != nil {
@@ -284,7 +285,7 @@ func getFriendsListFromRedis(ctx context.Context, userId int64) ([]int64, error)
 	return res, nil
 }
 
-//从redis中获取用户的关注数
+// 从redis中获取用户的关注数
 func getFollowingCountFromRedis(ctx context.Context, userId int64) (int64, error) {
 	count, err := db.FollowingRedis.SCard(ctx, strconv.Itoa(int(userId))).Result()
 	if err != nil {
@@ -293,7 +294,7 @@ func getFollowingCountFromRedis(ctx context.Context, userId int64) (int64, error
 	return count, nil
 }
 
-//从redis中获取用户的粉丝数
+// 从redis中获取用户的粉丝数
 func getFollowersCountFromRedis(ctx context.Context, userId int64) (int64, error) {
 	count, err := db.FollowersRedis.SCard(ctx, strconv.Itoa(int(userId))).Result()
 	if err != nil {
