@@ -76,7 +76,7 @@ func (s *FavoriteListService) FavoriteList(req *favorite.DouyinFavoriteListReque
 			klog.Fatalf("mysql 获取视频信息出错")
 			panic(err)
 		}
-		video_data, err := pack.Videos(s.ctx, video_mysql)
+		video_data, err := pack.Videos(s.ctx, user_id, video_mysql)
 		if err != nil {
 			klog.Fatalf("将数据库打包成rpc数据格式出错")
 			panic(err)
@@ -113,7 +113,7 @@ func (s *FavoriteListService) FavoriteList(req *favorite.DouyinFavoriteListReque
 		// 重新查一遍
 		video_redis = Redis.GetVideoFromRedis(s.ctx, vids)
 	}
-	video_data, err := pack.Videos(s.ctx, video_redis)
+	video_data, err := pack.Videos(s.ctx, user_id, video_redis)
 	if err != nil {
 		klog.Fatalf("将数据库打包成rpc数据格式出错")
 		panic(err)

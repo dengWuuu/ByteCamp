@@ -2,29 +2,37 @@ package pack
 
 import (
 	"context"
-	"errors"
 
 	"douyin/dal/db"
 	"douyin/kitex_gen/video"
-
-	"gorm.io/gorm"
+	Redis "douyin/pkg/redis"
 )
 
 // Video 封装db层数据结构为rpc使用的数据结构
-func Video(ctx context.Context, m *db.Video) (*video.Video, error) {
+func Video(ctx context.Context, user_id int64, m *db.Video) (*video.Video, error) {
 	// 检查非空
 	if m == nil {
 		return nil, nil
 	}
-	user, err := db.GetUserById(m.AuthorId)
-	// 检查用户
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
+	var u *db.User
+	redis_user := Redis.GetUsersFromRedis(ctx, []uint{uint(m.AuthorId)})
+	if redis_user == nil {
+		db_u, err := db.GetUserById(m.AuthorId)
+		if err != nil {
+			return nil, err
+		}
+		u = db_u
+	} else {
+		u = redis_user[0]
 	}
-	author, err := User(ctx, user)
+	// 打包用户的数据
+	// * 重点在于检查是否关注
+	author, err := User(ctx, user_id, u)
 	if err != nil {
 		return nil, err
 	}
+	// * 检查是否已经点赞
+
 	return &video.Video{
 		Id:            int64(m.ID),
 		Author:        author,
@@ -36,10 +44,10 @@ func Video(ctx context.Context, m *db.Video) (*video.Video, error) {
 	}, nil
 }
 
-func Videos(ctx context.Context, ms []*db.Video) ([]*video.Video, error) {
+func Videos(ctx context.Context, user_id int64, ms []*db.Video) ([]*video.Video, error) {
 	videos := make([]*video.Video, 0)
 	for _, m := range ms {
-		if n, err := Video(ctx, m); err == nil && n != nil {
+		if n, err := Video(ctx, user_id, m); err == nil && n != nil {
 			videos = append(videos, n)
 		}
 	}
