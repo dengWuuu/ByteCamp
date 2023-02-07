@@ -32,6 +32,7 @@ func Video(ctx context.Context, user_id int64, m *db.Video) (*video.Video, error
 		return nil, err
 	}
 	// * 检查是否已经点赞
+	isFavorite := Redis.IsFavorite(ctx, user_id, int64(m.ID))
 
 	return &video.Video{
 		Id:            int64(m.ID),
@@ -41,6 +42,7 @@ func Video(ctx context.Context, user_id int64, m *db.Video) (*video.Video, error
 		FavoriteCount: m.FavoriteCount,
 		CommentCount:  m.CommentCount,
 		Title:         m.Title,
+		IsFavorite:    isFavorite,
 	}, nil
 }
 
