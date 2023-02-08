@@ -8,6 +8,7 @@ import (
 	FavoriteMq "douyin/cmd/favorite/favoriteMq"
 	"douyin/dal"
 	"douyin/kitex_gen/favorite/favoritesrv"
+	"douyin/pkg/jaeger"
 	"douyin/pkg/nacos"
 	"douyin/pkg/rabbitmq"
 
@@ -39,11 +40,18 @@ func main() {
 	klog.SetLevel(klog.LevelDebug)
 	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port)) // nacos
 	r := registry.NewNacosRegistry(nacos.InitNacos())
+
+	//jaeger
+	tracerSuite, closer := jaeger.InitJaegerServer("favorite-server")
+	defer closer.Close()
+
 	svr := favoritesrv.NewServer(new(FavoriteSrvImpl),
 		server.WithServiceAddr(addr),
 		server.WithRegistry(r),
 		server.WithLimit(&limit.Option{MaxConnections: 10000000000, MaxQPS: 1000000000}),
-		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: PSM}))
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: PSM}),
+		server.WithSuite(tracerSuite),
+	)
 	err := svr.Run()
 	if err != nil {
 		log.Println(err.Error())
