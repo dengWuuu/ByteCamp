@@ -7,6 +7,8 @@ import (
 	"douyin/kitex_gen/comment"
 	"douyin/kitex_gen/comment/commentsrv"
 	"douyin/pkg/errno"
+	"douyin/pkg/jaeger"
+
 	"github.com/kitex-contrib/registry-nacos/resolver"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -21,6 +23,8 @@ var commentClient commentsrv.Client
 func initCommentRpc() {
 	hlog.Info("Comment Client PSM:" + CommentRPCPSM)
 
+	tracerSuite, _ := jaeger.InitJaegerClient("comment-client")
+
 	c, err := commentsrv.NewClient(
 		CommentRPCPSM,
 		client.WithResolver(resolver.NewNacosResolver(NacosInit())),
@@ -29,6 +33,7 @@ func initCommentRpc() {
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
 		// Please keep the same as provider.WithServiceName
 		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: CommentRPCPSM}),
+		client.WithSuite(tracerSuite),
 	)
 	if err != nil {
 		hlog.Fatal("客户端启动失败")

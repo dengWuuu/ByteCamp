@@ -7,6 +7,8 @@ import (
 	"douyin/kitex_gen/user"
 	"douyin/kitex_gen/user/usersrv"
 	"douyin/pkg/errno"
+	"douyin/pkg/jaeger"
+
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/kitex-contrib/registry-nacos/resolver"
 
@@ -21,6 +23,8 @@ var userClient usersrv.Client
 func initUserRpc() {
 	hlog.Info("User Client PSM:" + UserRPCPSM)
 
+	tracerSuite, _ := jaeger.InitJaegerClient("user-client")
+
 	c, err := usersrv.NewClient(
 		UserRPCPSM,
 		client.WithResolver(resolver.NewNacosResolver(NacosInit())),
@@ -29,6 +33,7 @@ func initUserRpc() {
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
 		// Please keep the same as provider.WithServiceName
 		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: UserRPCPSM}),
+		client.WithSuite(tracerSuite),
 	)
 	if err != nil {
 		hlog.Fatal("客户端启动失败")
