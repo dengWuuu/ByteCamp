@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-08 13:39:58
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-08 13:40:22
+ * @LastEditTime: 2023-02-08 14:56:01
  * @FilePath: /ByteCamp/pkg/jaeger/jaeger_init.go
  * @Description:
  *
@@ -26,6 +26,7 @@ import (
 // InitJaeger ...
 func InitJaegerServer(service string) (server.Suite, io.Closer) {
 	cfg, _ := jaegercfg.FromEnv()
+	// klog.Infof("获取到service%s的jaeger配置", cfg.ServiceName)
 	cfg.ServiceName = service
 	tracer, closer, err := cfg.NewTracer(jaegercfg.Logger(jaeger.StdLogger))
 	if err != nil {
