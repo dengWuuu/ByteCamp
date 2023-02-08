@@ -2,8 +2,8 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-29 21:58:00
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-07 12:05:31
- * @FilePath: \ByteCamp\cmd\relation\main.go
+ * @LastEditTime: 2023-02-08 14:27:20
+ * @FilePath: /ByteCamp/cmd/relation/main.go
  * @Description: relation rpc server 启动入口
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
@@ -40,10 +40,6 @@ func main() {
 	PSM := "bytecamp.douyin.relation"
 	Address := "127.0.0.1"
 	Port := 8082
-	//Port, err := nacos.GetFreePort()
-	//if err != nil{
-	//	panic(err)
-	//}
 	klog.SetLogger(kitexzap.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
 	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port)) // nacos
