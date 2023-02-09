@@ -32,3 +32,8 @@ message douyin_relation_action_response {
   int32 status_code = 1; // 状态码，0-成功，其他值-失败
   optional string status_msg = 2; // 返回状态描述
 }
+
+service MessageSrv{
+  rpc MessageChat(douyin_message_chat_request) returns (douyin_message_chat_response); //发布视频操作
+  rpc MessageAction(douyin_relation_action_request) returns (douyin_relation_action_response);// 获取用户已发布视频的列表
+}
