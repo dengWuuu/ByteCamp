@@ -2,8 +2,8 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-29 21:58:00
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-07 12:05:31
- * @FilePath: \ByteCamp\cmd\relation\main.go
+ * @LastEditTime: 2023-02-08 14:41:59
+ * @FilePath: /ByteCamp/cmd/relation/main.go
  * @Description: relation rpc server 启动入口
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
@@ -19,6 +19,8 @@ import (
 	"douyin/dal"
 	relation "douyin/kitex_gen/relation/relationsrv"
 	"douyin/pkg/nacos"
+
+	"douyin/pkg/jaeger"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
@@ -40,22 +42,24 @@ func main() {
 	PSM := "bytecamp.douyin.relation"
 	Address := "127.0.0.1"
 	Port := 8082
-	//Port, err := nacos.GetFreePort()
-	//if err != nil{
-	//	panic(err)
-	//}
 	klog.SetLogger(kitexzap.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
 	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port)) // nacos
 
 	// nacos
 	r := registry.NewNacosRegistry(nacos.InitNacos())
+
+	//jaeger
+	tracerSuite, closer := jaeger.InitJaegerServer("relation-server")
+	defer closer.Close()
 	svr := relation.NewServer(
 		new(RelationSrvImpl),
 		server.WithServiceAddr(addr),
 		server.WithRegistry(r),
 		server.WithLimit(&limit.Option{MaxConnections: 100000000000000, MaxQPS: 1000000000}),
-		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: PSM}))
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: PSM}),
+		server.WithSuite(tracerSuite),
+	)
 
 	err := svr.Run()
 	if err != nil {

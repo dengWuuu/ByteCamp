@@ -7,6 +7,7 @@ import (
 
 	"douyin/dal"
 	user "douyin/kitex_gen/user/usersrv"
+	"douyin/pkg/jaeger"
 	"douyin/pkg/nacos"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -37,12 +38,18 @@ func main() {
 	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port)) // nacos
 	// nacos
 	r := registry.NewNacosRegistry(nacos.InitNacos())
+
+	//jaeger
+	tracerSuite, closer := jaeger.InitJaegerServer("user-server")
+	defer closer.Close()
+
 	svr := user.NewServer(
 		new(UserSrvImpl),
 		server.WithRegistry(r),
 		server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 100}),
 		server.WithServiceAddr(addr),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: PSM}),
+		server.WithSuite(tracerSuite),
 	)
 
 	err := svr.Run()

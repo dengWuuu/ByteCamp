@@ -7,6 +7,8 @@ import (
 	"douyin/kitex_gen/favorite"
 	"douyin/kitex_gen/favorite/favoritesrv"
 	"douyin/pkg/errno"
+	"douyin/pkg/jaeger"
+
 	"github.com/kitex-contrib/registry-nacos/resolver"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -21,6 +23,8 @@ var favoriteClient favoritesrv.Client
 func initFavoriteRpc() {
 	hlog.Info("Favorite Client PSM:" + FavoriteRPCPSM)
 
+	tracerSuite, _ := jaeger.InitJaegerClient("favorite-client")
+
 	c, err := favoritesrv.NewClient(
 		FavoriteRPCPSM,
 		client.WithResolver(resolver.NewNacosResolver(NacosInit())),
@@ -29,6 +33,7 @@ func initFavoriteRpc() {
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
 		// Please keep the same as provider.WithServiceName
 		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: FavoriteRPCPSM}),
+		client.WithSuite(tracerSuite),
 	)
 	if err != nil {
 		hlog.Fatal("客户端启动失败")

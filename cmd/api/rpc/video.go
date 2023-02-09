@@ -7,6 +7,8 @@ import (
 	"douyin/kitex_gen/video"
 	"douyin/kitex_gen/video/videosrv"
 	"douyin/pkg/errno"
+	"douyin/pkg/jaeger"
+
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/kitex-contrib/registry-nacos/resolver"
 
@@ -20,6 +22,7 @@ var videoClient videosrv.Client
 // init 初始化用户 rpc 客户端
 func initVideoRpc() {
 	hlog.Info("Video Client PSM:" + VideoRPCPSM)
+	tracerSuite, _ := jaeger.InitJaegerClient("video-client")
 
 	c, err := videosrv.NewClient(
 		VideoRPCPSM,
@@ -29,6 +32,7 @@ func initVideoRpc() {
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
 		// Please keep the same as provider.WithServiceName
 		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: VideoRPCPSM}),
+		client.WithSuite(tracerSuite),
 	)
 	if err != nil {
 		hlog.Fatal("客户端启动失败")

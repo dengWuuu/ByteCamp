@@ -15,11 +15,14 @@ require (
 	github.com/hertz-contrib/registry/nacos v0.0.0-20221226122036-3c451682dc72
 	github.com/kitex-contrib/obs-opentelemetry/logging/zap v0.0.0-20221109071748-a433b0b57972
 	github.com/kitex-contrib/registry-nacos v0.0.1
+	github.com/kitex-contrib/tracer-opentracing v0.0.2
 	github.com/nacos-group/nacos-sdk-go v1.1.2
+	github.com/opentracing/opentracing-go v1.2.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/viper v1.14.0
 	github.com/streadway/amqp v1.0.0
 	github.com/u2takey/ffmpeg-go v0.4.1
+	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 	google.golang.org/protobuf v1.28.1
 	gorm.io/driver/mysql v1.4.4
@@ -87,6 +90,7 @@ require (
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/u2takey/go-utils v0.3.1 // indirect
+	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/goleak v1.1.12 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
