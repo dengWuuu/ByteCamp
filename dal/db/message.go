@@ -21,6 +21,10 @@ func GetUserMessageChat(toUserId uint) (messages []*Message, err error) {
 	return messages, nil
 }
 
-func MessageAction(message Message) {
-
+func CreateMessage(message *Message) (err error) {
+	err = DB.Create(message).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
