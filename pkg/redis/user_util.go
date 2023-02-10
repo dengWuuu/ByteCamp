@@ -34,6 +34,7 @@ func GetUsersFromRedis(ctx context.Context, userIds []uint) []*db.User {
 	res, err := pipelined.Exec(ctx)
 	if err != nil {
 		klog.Infof("管道命令失败")
+		return nil
 	}
 	for index, cmdRes := range res {
 		cmd, ok := cmdRes.(*redis.StringCmd)
