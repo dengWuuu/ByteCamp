@@ -2,8 +2,8 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-03 22:16:48
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-07 12:33:08
- * @FilePath: \ByteCamp\cmd\relation\service\relation_redis.go
+ * @LastEditTime: 2023-02-10 14:32:42
+ * @FilePath: /ByteCamp/cmd/relation/service/relation_redis.go
  * @Description: relation微服务对redis的操作封装
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
@@ -149,13 +149,15 @@ func loadFollowingListToRedis(ctx context.Context, userId int64) error {
 	if err != nil {
 		return err
 	}
-	var idsStr []string
-	for _, id := range ids {
-		idsStr = append(idsStr, strconv.Itoa(int(id)))
-	}
-	err = db.FollowingRedis.SAdd(ctx, strconv.Itoa(int(userId)), idsStr).Err()
-	if err != nil {
-		return err
+	if len(ids) > 0 {
+		var idsStr []string
+		for _, id := range ids {
+			idsStr = append(idsStr, strconv.Itoa(int(id)))
+		}
+		err = db.FollowingRedis.SAdd(ctx, strconv.Itoa(int(userId)), idsStr).Err()
+		if err != nil {
+			return err
+		}
 	}
 	err = db.FollowingRedis.Expire(ctx, strconv.Itoa(int(userId)), db.ExpireTime).Err()
 	if err != nil {
@@ -184,13 +186,15 @@ func loadFollowersListToRedis(ctx context.Context, userId int64) error {
 	if err != nil {
 		return err
 	}
-	var idsStr []string
-	for _, id := range ids {
-		idsStr = append(idsStr, strconv.Itoa(int(id)))
-	}
-	err = db.FollowersRedis.SAdd(ctx, strconv.Itoa(int(userId)), idsStr).Err()
-	if err != nil {
-		return err
+	if len(ids) > 0 {
+		var idsStr []string
+		for _, id := range ids {
+			idsStr = append(idsStr, strconv.Itoa(int(id)))
+		}
+		err = db.FollowersRedis.SAdd(ctx, strconv.Itoa(int(userId)), idsStr).Err()
+		if err != nil {
+			return err
+		}
 	}
 	err = db.FollowersRedis.Expire(ctx, strconv.Itoa(int(userId)), db.ExpireTime).Err()
 	if err != nil {
@@ -219,13 +223,15 @@ func loadFriendsListToRedis(ctx context.Context, userId int64) error {
 	if err != nil {
 		return err
 	}
-	var idsStr []string
-	for _, id := range ids {
-		idsStr = append(idsStr, strconv.Itoa(int(id)))
-	}
-	err = db.FriendsRedis.SAdd(ctx, strconv.Itoa(int(userId)), idsStr).Err()
-	if err != nil {
-		return err
+	if len(ids) > 0 {
+		var idsStr []string
+		for _, id := range ids {
+			idsStr = append(idsStr, strconv.Itoa(int(id)))
+		}
+		err = db.FriendsRedis.SAdd(ctx, strconv.Itoa(int(userId)), idsStr).Err()
+		if err != nil {
+			return err
+		}
 	}
 	err = db.FriendsRedis.Expire(ctx, strconv.Itoa(int(userId)), db.ExpireTime).Err()
 	if err != nil {
