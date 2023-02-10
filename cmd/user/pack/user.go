@@ -42,10 +42,10 @@ func User(ctx context.Context, u *db.User, fromId int64) (*user.User, error) {
 }
 
 // Users pack list of userHandler info
-func Users(ctx context.Context, us []*db.User) ([]*user.User, error) {
+func Users(ctx context.Context, us []*db.User, fromId int64) ([]*user.User, error) {
 	users := make([]*user.User, 0)
 	for _, u := range us {
-		user2, err := User(ctx, u, fromID)
+		user2, err := User(ctx, u, fromId)
 		if err != nil {
 			return nil, err
 		}
