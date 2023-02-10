@@ -21,7 +21,7 @@ func User(ctx context.Context, u *db.User, fromId int64) (*user.User, error) {
 
 	// true->fromID已关注u.ID，false-fromID未关注u.ID
 	// isFollow := false
-	isFollow, err := redis.IsFollowing(ctx, int64(u.ID), fromId)
+	isFollow, err := redis.IsFollowing(ctx, fromId, int64(u.ID))
 	if err != nil {
 		return nil, err
 	}

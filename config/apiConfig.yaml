@@ -1,6 +1,6 @@
 Server:
   Name: "DouYinAPIServer"
-  Address: "127.0.0.1"
+  Address: "172.26.75.199"
   Port: 8088
 
 Hertz:
