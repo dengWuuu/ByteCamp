@@ -2,8 +2,8 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-04 00:11:19
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-06 15:48:33
- * @FilePath: \ByteCamp\cmd\relation\service\relation_follower_list.go
+ * @LastEditTime: 2023-02-10 13:44:38
+ * @FilePath: /ByteCamp/cmd/relation/service/relation_follower_list.go
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
@@ -28,7 +28,7 @@ func (service RelationService) FollowerList(req *relation.DouyinRelationFollower
 	if err != nil {
 		return nil, err
 	}
-	fansUsers, err := pack.GetUsersByIds(fans)
+	fansUsers, err := pack.GetUsersByIds(fans, req.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (service RelationService) FollowerListByRedis(req *relation.DouyinRelationF
 	dbUsers := redis.GetUsersFromRedis(ctx, uids)
 	if dbUsers == nil {
 		// 从mysql中获取user
-		followerUsers, err = pack.GetUsersByIds(ids)
+		followerUsers, err = pack.GetUsersByIds(ids, req.UserId)
 		if err != nil {
 			return nil, err
 		}
@@ -67,7 +67,7 @@ func (service RelationService) FollowerListByRedis(req *relation.DouyinRelationF
 		// 否则直接pack为RPC所需的user
 		followerUsers = make([]*user.User, len(dbUsers))
 		for i, dbUser := range dbUsers {
-			followerUsers[i], err = userpack.User(ctx, dbUser)
+			followerUsers[i], err = userpack.User(ctx, dbUser, req.UserId)
 			if err != nil {
 				return nil, err
 			}

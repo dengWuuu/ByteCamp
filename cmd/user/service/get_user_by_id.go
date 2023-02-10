@@ -21,7 +21,7 @@ func (getUserService GetUserService) GetUserById(req *user.DouyinUserRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	rpcUser, err := pack.User(getUserService.ctx, model)
+	rpcUser, err := pack.User(getUserService.ctx, model, req.FromId)
 	if err != nil {
 		return nil, err
 	}

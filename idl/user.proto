@@ -29,6 +29,7 @@ message douyin_user_login_response {
 message douyin_user_request {
     int64 user_id = 1; // 用户id
     string token = 2; // 用户鉴权token
+    int64 from_id =3; //发起请求的用户id
 }
 
 message douyin_user_response {

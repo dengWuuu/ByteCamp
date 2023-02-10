@@ -8,6 +8,8 @@ import (
 	"douyin/cmd/user/pack"
 	"douyin/kitex_gen/user"
 	"douyin/pkg/errno"
+	"douyin/pkg/middleware"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -24,8 +26,11 @@ func GetUserById(ctx context.Context, c *app.RequestContext) {
 		handlers.SendResponse(c, pack.BuildGetUserResp(errno.ErrBind))
 		return
 	}
+	//从token中解析出fromuserId
+	userId := middleware.GetUserIdFromJwtToken(ctx, c)
 	resp, err := rpc.GetUserById(ctx, &user.DouyinUserRequest{
 		UserId: userParam.UserId,
+		FromId: int64(userId),
 	})
 	if err != nil {
 		handlers.SendResponse(c, pack.BuildGetUserResp(errno.ConvertErr(err)))

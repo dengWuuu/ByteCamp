@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-19 14:13:42
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-02 22:41:18
+ * @LastEditTime: 2023-02-10 14:10:03
  * @FilePath: /ByteCamp/test/db_test.go
  * @Description:
  *
@@ -59,4 +59,13 @@ func TestRedis(t *testing.T) {
 	res, err = db.FriendsRedis.Get(ctx, "test3").Result()
 
 	fmt.Printf("%v,%v", res, err)
+}
+
+func TestSAdd(t *testing.T) {
+	db.Init("../config")
+	ctx := context.Background()
+	err := db.FollowingRedis.SAdd(ctx, "hhhhcccc", -1).Err()
+	if err != nil {
+		fmt.Println(err)
+	}
 }

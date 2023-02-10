@@ -26,13 +26,16 @@ func IsFollowing(ctx context.Context, userId, otherId int64) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		var idsStr []string
-		for _, id := range ids {
-			idsStr = append(idsStr, strconv.Itoa(int(id)))
-		}
-		err = db.FollowingRedis.SAdd(ctx, strconv.Itoa(int(userId)), idsStr).Err()
-		if err != nil {
-			return false, err
+		if len(ids) > 0 {
+			//如果有关注的人，则将关注的人的id添加到redis中
+			var idsStr []string
+			for _, id := range ids {
+				idsStr = append(idsStr, strconv.Itoa(int(id)))
+			}
+			err = db.FollowingRedis.SAdd(ctx, strconv.Itoa(int(userId)), idsStr).Err()
+			if err != nil {
+				return false, err
+			}
 		}
 		err = db.FollowingRedis.Expire(ctx, strconv.Itoa(int(userId)), db.ExpireTime).Err()
 		if err != nil {
