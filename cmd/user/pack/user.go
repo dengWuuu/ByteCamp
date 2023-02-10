@@ -5,10 +5,11 @@ import (
 
 	"douyin/dal/db"
 	"douyin/kitex_gen/user"
+	"douyin/pkg/redis"
 )
 
 // User 包装数据库的数据成为rpc中用的数据
-func User(ctx context.Context, u *db.User) (*user.User, error) {
+func User(ctx context.Context, u *db.User, fromId int64) (*user.User, error) {
 	if u == nil {
 		return &user.User{
 			Name: "无此用户",
@@ -19,7 +20,11 @@ func User(ctx context.Context, u *db.User) (*user.User, error) {
 	followerCount := int64(u.FollowerCount)
 
 	// true->fromID已关注u.ID，false-fromID未关注u.ID
-	isFollow := false
+	// isFollow := false
+	isFollow, err := redis.IsFollowing(ctx, int64(u.ID), fromId)
+	if err != nil {
+		return nil, err
+	}
 	//relation, err := db.GetRelation(ctx, fromID, int64(u.ID))
 	//if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 	//	return nil, err
@@ -41,7 +46,7 @@ func User(ctx context.Context, u *db.User) (*user.User, error) {
 func Users(ctx context.Context, us []*db.User, fromID int64) ([]*user.User, error) {
 	users := make([]*user.User, 0)
 	for _, u := range us {
-		user2, err := User(ctx, u)
+		user2, err := User(ctx, u, fromID)
 		if err != nil {
 			return nil, err
 		}

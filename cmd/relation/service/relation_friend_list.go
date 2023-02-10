@@ -2,8 +2,8 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-02-02 18:43:44
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-06 16:02:57
- * @FilePath: \ByteCamp\cmd\relation\service\relation_friend_list.go
+ * @LastEditTime: 2023-02-10 13:45:05
+ * @FilePath: /ByteCamp/cmd/relation/service/relation_friend_list.go
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
@@ -42,7 +42,7 @@ func (service RelationService) FriendList(req *relation.DouyinRelationFriendList
 	if err != nil {
 		return nil, err
 	}
-	users, err := userpack.Users(context.Background(), dbusers, 0)
+	users, err := userpack.Users(context.Background(), dbusers, req.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (service RelationService) FriendListByRedis(req *relation.DouyinRelationFri
 	dbUsers := redis.GetUsersFromRedis(ctx, uids)
 	if dbUsers == nil {
 		// 从mysql中获取user
-		FriendUsers, err = pack.GetUsersByIds(ids)
+		FriendUsers, err = pack.GetUsersByIds(ids, req.UserId)
 		if err != nil {
 			return nil, err
 		}
@@ -80,7 +80,7 @@ func (service RelationService) FriendListByRedis(req *relation.DouyinRelationFri
 		// 否则直接pack为RPC所需的user
 		FriendUsers = make([]*user.User, len(dbUsers))
 		for i, dbUser := range dbUsers {
-			FriendUsers[i], err = userpack.User(ctx, dbUser)
+			FriendUsers[i], err = userpack.User(ctx, dbUser, req.UserId)
 			if err != nil {
 				return nil, err
 			}
@@ -90,26 +90,26 @@ func (service RelationService) FriendListByRedis(req *relation.DouyinRelationFri
 		return nil, err
 	}
 	// 4、补全信息
-	for _, friendUser := range FriendUsers {
-		// loadFollowersListToRedis(ctx, friendUser.Id)
-		// loadFollowingListToRedis(ctx, friendUser.Id)
-		// followcnt, err := getFollowingCountFromRedis(ctx, friendUser.Id)
-		// if err != nil {
-		// 	return nil, err
-		// }
-		// friendUser.FollowCount = &followcnt
+	// for _, friendUser := range FriendUsers {
+	// 	// loadFollowersListToRedis(ctx, friendUser.Id)
+	// 	// loadFollowingListToRedis(ctx, friendUser.Id)
+	// 	// followcnt, err := getFollowingCountFromRedis(ctx, friendUser.Id)
+	// 	// if err != nil {
+	// 	// 	return nil, err
+	// 	// }
+	// 	// friendUser.FollowCount = &followcnt
 
-		// followercnt, err := getFollowersCountFromRedis(ctx, friendUser.Id)
-		// if err != nil {
-		// 	return nil, err
-		// }
-		// friendUser.FollowerCount = &followercnt
-		isFollow, err := redis.IsFollowing(ctx, req.UserId, friendUser.Id)
-		if err != nil {
-			return nil, err
-		}
-		friendUser.IsFollow = isFollow
-	}
+	// 	// followercnt, err := getFollowersCountFromRedis(ctx, friendUser.Id)
+	// 	// if err != nil {
+	// 	// 	return nil, err
+	// 	// }
+	// 	// friendUser.FollowerCount = &followercnt
+	// 	isFollow, err := redis.IsFollowing(ctx, req.UserId, friendUser.Id)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// 	friendUser.IsFollow = isFollow
+	// }
 	// 5、返回user
 	return FriendUsers, nil
 }

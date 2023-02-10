@@ -2,7 +2,7 @@
  * @Author: zy 953725892@qq.com
  * @Date: 2023-01-31 14:46:35
  * @LastEditors: zy 953725892@qq.com
- * @LastEditTime: 2023-02-03 23:33:14
+ * @LastEditTime: 2023-02-10 13:42:32
  * @FilePath: /ByteCamp/cmd/relation/pack/relation.go
  * @Description:
  *
@@ -19,12 +19,12 @@ import (
 	"douyin/kitex_gen/user"
 )
 
-func GetUsersByIds(ids []int64) ([]*user.User, error) {
+func GetUsersByIds(ids []int64, fromId int64) ([]*user.User, error) {
 	dbusers, err := db.GetUsersByIds(ids)
 	if err != nil {
 		return nil, err
 	}
-	users, err := userpack.Users(context.Background(), dbusers, 0)
+	users, err := userpack.Users(context.Background(), dbusers, fromId)
 	if err != nil {
 		return nil, err
 	}
