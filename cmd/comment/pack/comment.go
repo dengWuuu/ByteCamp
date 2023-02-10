@@ -43,7 +43,7 @@ func Comment(ctx context.Context, m *db.Comment) (*comment.Comment, error) {
 		Id:         int64(m.ID),
 		User:       us,
 		Content:    m.Content,
-		CreateDate: m.CreatTime.Format("2006-01-02 15:04:05"),
+		CreateDate: m.CreatedAt.Format("2006-01-02 15:04:05"),
 	}, nil
 }
 

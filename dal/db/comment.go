@@ -14,7 +14,6 @@ package db
 import (
 	"context"
 	"errors"
-	"time"
 
 	"gorm.io/plugin/optimisticlock"
 
@@ -23,12 +22,10 @@ import (
 
 type Comment struct {
 	gorm.Model
-	VideoId   int
-	UserId    int
-	Content   string
-	CreatTime time.Time
-	Version   optimisticlock.Version
-	Cancel    bool
+	VideoId int
+	UserId  int
+	Content string
+	Version optimisticlock.Version
 }
 
 // 根据视频的ID来查询到相对应的评论，返回评论列表和信息

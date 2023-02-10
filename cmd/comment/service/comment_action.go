@@ -29,10 +29,9 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 	// 根据请求创建新的评论
 	if req.ActionType == 1 {
 		commentModel := &db.Comment{
-			VideoId:   int(req.VideoId),
-			UserId:    int(req.UserId),
-			Content:   *req.CommentText,
-			CreatTime: time.Now(),
+			VideoId: int(req.VideoId),
+			UserId:  int(req.UserId),
+			Content: *req.CommentText,
 		}
 		// 从redis获取唯一的自增ID
 		// TODO 加入到配置文件里面
@@ -43,7 +42,9 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 			klog.Fatalf("获取自增ID错误")
 			return nil, err
 		}
+		// * 手动添加ID和创建时间
 		commentModel.ID = uint(comment_id)
+		commentModel.CreatedAt = time.Now()
 		// 查找redis里面是否存在对应的video对象
 		vid_string := strconv.Itoa(int(req.VideoId))
 		vid_cnt, err := db.CommentRedis.Exists(s.ctx, vid_string).Result()
@@ -86,7 +87,7 @@ func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionReq
 				UserId:     commentModel.UserId,
 				VideoId:    commentModel.VideoId,
 				Content:    commentModel.Content,
-				CreateTime: commentModel.CreatTime,
+				CreateTime: commentModel.CreatedAt,
 				ActionType: int(req.ActionType),
 				CommentId:  int(comment_id),
 			}
