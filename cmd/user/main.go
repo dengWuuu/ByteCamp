@@ -29,10 +29,6 @@ func main() {
 	PSM := "bytecamp.douyin.user"
 	Address := "127.0.0.1"
 	Port := 8081
-	//Port, err := nacos.GetFreePort()
-	//if err != nil{
-	//	panic(err)
-	//}
 	klog.SetLogger(kitexzap.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
 	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port)) // nacos
