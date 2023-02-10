@@ -101,3 +101,8 @@ type VideoPublishListParam struct {
 	UserId int64  `query:"user_id,omitempty"` // 用户id
 	Token  string `query:"token,omitempty"`   // 用户鉴权token
 }
+
+type MessageChatParam struct {
+	ToUserId int64  `query:"to_user_id,omitempty"`
+	Token    string `query:"token,omitempty"` // 用户鉴权token
+}

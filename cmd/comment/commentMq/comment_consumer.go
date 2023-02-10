@@ -59,12 +59,12 @@ func commentAction(msg string) {
 	// 根据请求创建新的评论
 	if req.ActionType == 1 {
 		commentModel := &db.Comment{
-			UserId:    req.UserId,
-			VideoId:   req.VideoId,
-			Content:   req.Content,
-			CreatTime: req.CreateTime,
+			UserId:  req.UserId,
+			VideoId: req.VideoId,
+			Content: req.Content,
 		}
 		// * 一定要记得加上ID和时间
+		commentModel.CreatedAt = req.CreateTime
 		commentModel.ID = uint(req.CommentId)
 		err := db.CreateComment(context.Background(), commentModel)
 		if err != nil {

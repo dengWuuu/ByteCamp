@@ -28,6 +28,7 @@ var (
 	CommentRPCPSM  string
 	RelationRPCPSM string
 	UserRPCPSM     string
+	MessageRPCPSM  string
 )
 
 func InitRpc() {
@@ -37,6 +38,7 @@ func InitRpc() {
 	initCommentRpc()
 	initFavoriteRpc()
 	initVideoRpc()
+	initMessageRpc()
 }
 
 func ReadConfig() {
@@ -58,6 +60,7 @@ func ReadConfig() {
 	CommentRPCPSM = viper.GetString("rpc.comment.psm")
 	FavoriteRPCPSM = viper.GetString("rpc.favorite.psm")
 	VideoRPCPSM = viper.GetString("rpc.video.psm")
+	MessageRPCPSM = viper.GetString("rpc.message.psm")
 }
 
 func NacosInit() naming_client.INamingClient {

@@ -71,7 +71,7 @@ func ToRedisComment(u CommentUserInfo, c db.Comment) CommentRedisInfo {
 	commentInfo.User = u
 	commentInfo.CommentId = int64(c.ID)
 	commentInfo.Content = c.Content
-	commentInfo.CreateDate = c.CreatTime.Format("2006-01-02 15:04:05")
+	commentInfo.CreateDate = c.CreatedAt.Format("2006-01-02 15:04:05")
 	return commentInfo
 }
 
@@ -86,7 +86,7 @@ func ToDbComment(c CommentRedisInfo, vid int64) (db.Comment, error) {
 		klog.Fatalf("时间字符串转换类型失败")
 		return dbComment, err
 	}
-	dbComment.CreatTime = t
+	dbComment.CreatedAt = t
 	return dbComment, nil
 }
 

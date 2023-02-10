@@ -26,3 +26,5 @@ rpc:
     psm: "bytecamp.douyin.user"
   video:
     psm: "bytecamp.douyin.video"
+  message:
+    psm: "bytecamp.douyin.message"
