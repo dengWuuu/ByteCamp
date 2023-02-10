@@ -81,8 +81,6 @@ func InitRedis() {
 
 	ExpireTime = viper.GetDuration("redis.exipretime")
 
-	hlog.Info("followingdb:%v,followerdb:%v,friendsdb:%v\n", viper.GetInt("redis.followingdb"), viper.GetInt("redis.followersdb"), viper.GetInt("redis.friendsdb"))
-
 	FollowingRedis = redis.NewClient(&redis.Options{
 		Addr:         addr,
 		Password:     password,
