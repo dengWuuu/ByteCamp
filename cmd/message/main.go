@@ -1,20 +1,22 @@
 package main
 
 import (
+	"fmt"
+	"log"
+	"net"
+
 	"douyin/cmd/message/config"
 	"douyin/dal"
 	message "douyin/kitex_gen/message/messagesrv"
 	"douyin/pkg/jaeger"
 	"douyin/pkg/nacos"
-	"fmt"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	kitexzap "github.com/kitex-contrib/obs-opentelemetry/logging/zap"
 	"github.com/kitex-contrib/registry-nacos/registry"
-	"log"
-	"net"
 )
 
 // Init Relation RPC Server 端配置初始化
@@ -28,7 +30,7 @@ func main() {
 	klog.SetLevel(klog.LevelDebug)
 	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", config.Address, config.Port))
 
-	//jaeger
+	// jaeger
 	tracerSuite, closer := jaeger.InitJaegerServer("message-server")
 	defer closer.Close()
 
@@ -41,7 +43,6 @@ func main() {
 	)
 
 	err := svr.Run()
-
 	if err != nil {
 		log.Println(err.Error())
 	}
