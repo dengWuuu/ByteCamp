@@ -1,6 +1,7 @@
 package main
 
 import (
+	"douyin/pkg/jaeger"
 	"fmt"
 	"log"
 	"net"
@@ -8,7 +9,6 @@ import (
 	"douyin/cmd/message/config"
 	"douyin/dal"
 	message "douyin/kitex_gen/message/messagesrv"
-	"douyin/pkg/jaeger"
 	"douyin/pkg/nacos"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -37,7 +37,7 @@ func main() {
 	svr := message.NewServer(new(MessageSrvImpl),
 		server.WithServiceAddr(addr),
 		server.WithRegistry(registry.NewNacosRegistry(nacos.InitNacos())),
-		server.WithLimit(&limit.Option{MaxConnections: 100000, MaxQPS: 100000}),
+		server.WithLimit(&limit.Option{MaxConnections: 100000000, MaxQPS: 1000000000}),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.PSM}),
 		server.WithSuite(tracerSuite),
 	)
