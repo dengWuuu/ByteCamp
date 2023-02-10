@@ -9,6 +9,7 @@ package main
 
 import (
 	"crypto/tls"
+	"douyin/cmd/api/handlers/messageHandler"
 	"os"
 
 	"douyin/cmd/api/handlers/commentHandler"
@@ -182,6 +183,12 @@ func registerGroup(h *server.Hertz) {
 	{
 		publish.POST("/action/", videoHandler.PublishAction)
 		publish.GET("/list/", videoHandler.PublishList)
+	}
+	// message模块接口
+	message := douyin.Group("/message")
+	message.Use(middleware.JwtMiddlewareFunc())
+	{
+		message.GET("/chat/", messageHandler.MessageChat)
 	}
 }
 
