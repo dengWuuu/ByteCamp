@@ -60,6 +60,8 @@ func (s *CommentListService) CommentList(req *comment.DouyinCommentListRequest) 
 	if err != nil {
 		return nil, err
 	}
+	// * 这里需要额外做判断isFollow
+	// TODO 怎样可以获取userId
 	// 将数据存储到redis里面
 	err = AddRedisCommentList(s.ctx, video_id, comments)
 	if err != nil {
