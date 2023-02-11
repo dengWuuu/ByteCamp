@@ -19,6 +19,7 @@ import (
 	"douyin/kitex_gen/relation/relationsrv"
 	"douyin/pkg/errno"
 	"douyin/pkg/jaeger"
+	"douyin/pkg/prometheus"
 
 	"github.com/cloudwego/kitex/pkg/retry"
 	"github.com/kitex-contrib/registry-nacos/resolver"
@@ -39,6 +40,7 @@ func initRelationRpc() {
 
 	c, err := relationsrv.NewClient(
 		RelationRPCPSM,
+		client.WithTracer(prometheus.KitexClientTracer),
 		client.WithResolver(resolver.NewNacosResolver(NacosInit())),
 		client.WithRPCTimeout(30*time.Second),             // rpc timeout
 		client.WithConnectTimeout(30000*time.Millisecond), // conn timeout

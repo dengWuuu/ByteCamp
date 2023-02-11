@@ -14,6 +14,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	prometheus "github.com/kitex-contrib/monitor-prometheus"
 	kitexzap "github.com/kitex-contrib/obs-opentelemetry/logging/zap"
 	"github.com/kitex-contrib/registry-nacos/registry"
 )
@@ -41,6 +42,7 @@ func main() {
 
 	svr := user.NewServer(
 		new(UserSrvImpl),
+		server.WithTracer(prometheus.NewServerTracer(":9094", "/metrics")),
 		server.WithRegistry(r),
 		server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 100}),
 		server.WithServiceAddr(addr),

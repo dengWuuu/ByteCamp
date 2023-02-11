@@ -8,6 +8,7 @@ import (
 	"douyin/kitex_gen/user/usersrv"
 	"douyin/pkg/errno"
 	"douyin/pkg/jaeger"
+	"douyin/pkg/prometheus"
 
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/kitex-contrib/registry-nacos/resolver"
@@ -27,6 +28,7 @@ func initUserRpc() {
 
 	c, err := usersrv.NewClient(
 		UserRPCPSM,
+		client.WithTracer(prometheus.KitexClientTracer),
 		client.WithResolver(resolver.NewNacosResolver(NacosInit())),
 		client.WithRPCTimeout(30*time.Second),             // rpc timeout
 		client.WithConnectTimeout(30000*time.Millisecond), // conn timeout

@@ -18,14 +18,14 @@ import (
 	"douyin/cmd/relation/relationMq"
 	"douyin/dal"
 	relation "douyin/kitex_gen/relation/relationsrv"
-	"douyin/pkg/nacos"
-
 	"douyin/pkg/jaeger"
+	"douyin/pkg/nacos"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	prometheus "github.com/kitex-contrib/monitor-prometheus"
 	kitexzap "github.com/kitex-contrib/obs-opentelemetry/logging/zap"
 	"github.com/kitex-contrib/registry-nacos/registry"
 )
@@ -54,6 +54,7 @@ func main() {
 	defer closer.Close()
 	svr := relation.NewServer(
 		new(RelationSrvImpl),
+		server.WithTracer(prometheus.NewServerTracer(":9093", "/metrics")),
 		server.WithServiceAddr(addr),
 		server.WithRegistry(r),
 		server.WithLimit(&limit.Option{MaxConnections: 100000000000000, MaxQPS: 1000000000}),

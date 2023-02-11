@@ -8,6 +8,7 @@ import (
 	"douyin/kitex_gen/favorite/favoritesrv"
 	"douyin/pkg/errno"
 	"douyin/pkg/jaeger"
+	"douyin/pkg/prometheus"
 
 	"github.com/kitex-contrib/registry-nacos/resolver"
 
@@ -27,6 +28,7 @@ func initFavoriteRpc() {
 
 	c, err := favoritesrv.NewClient(
 		FavoriteRPCPSM,
+		client.WithTracer(prometheus.KitexClientTracer),
 		client.WithResolver(resolver.NewNacosResolver(NacosInit())),
 		client.WithRPCTimeout(30*time.Second),             // rpc timeout
 		client.WithConnectTimeout(30000*time.Millisecond), // conn timeout
