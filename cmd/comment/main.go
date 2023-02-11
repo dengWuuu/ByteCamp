@@ -16,6 +16,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	prometheus "github.com/kitex-contrib/monitor-prometheus"
 	kitexzap "github.com/kitex-contrib/obs-opentelemetry/logging/zap"
 	"github.com/kitex-contrib/registry-nacos/registry"
 )
@@ -47,6 +48,7 @@ func main() {
 	defer closer.Close()
 
 	svr := comment.NewServer(new(CommentSrvImpl),
+		server.WithTracer(prometheus.NewServerTracer(":9091", "/metrics")),
 		server.WithServiceAddr(addr),
 		server.WithRegistry(r),
 		server.WithLimit(&limit.Option{MaxConnections: 1000000000, MaxQPS: 1000000000}),

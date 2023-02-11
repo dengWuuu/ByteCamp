@@ -15,6 +15,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	prometheus "github.com/kitex-contrib/monitor-prometheus"
 	"github.com/kitex-contrib/registry-nacos/registry"
 
 	kitexzap "github.com/kitex-contrib/obs-opentelemetry/logging/zap"
@@ -38,6 +39,7 @@ func main() {
 
 	svr := videosrv.NewServer(
 		new(VideoSrvImpl),
+		server.WithTracer(prometheus.NewServerTracer(":9095", "/metrics")),
 		server.WithServiceAddr(addr),
 		server.WithRegistry(registry.NewNacosRegistry(nacos.InitNacos())),
 		server.WithLimit(&limit.Option{MaxConnections: 1000000000, MaxQPS: 1000000000}),
