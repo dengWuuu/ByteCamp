@@ -51,3 +51,14 @@ func MessageChat(ctx context.Context, req *message.DouyinMessageChatRequest) (re
 	}
 	return resp, nil
 }
+
+func MessageAction(ctx context.Context, req *message.DouyinRelationActionRequest) (resp *message.DouyinRelationActionResponse, err error) {
+	resp, err = messageClient.MessageAction(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 0 {
+		return nil, errno.NewErrNo(int(resp.StatusCode), *resp.StatusMsg)
+	}
+	return resp, nil
+}

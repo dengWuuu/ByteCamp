@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"net/http"
 	"strconv"
 	"time"
@@ -30,6 +31,17 @@ func GetUserIdFromJwtToken(ctx context.Context, c *app.RequestContext) uint {
 		unauthorized(ctx, c, http.StatusUnauthorized, JwtMiddleware.HTTPStatusMessageFunc(err, ctx, c))
 		return 0
 	}
+	userMap := claims[jwt.IdentityKey].(map[string]interface{})
+	userId := uint(userMap["ID"].(float64))
+	return userId
+}
+
+func GetUserIdFromTokenString(tokenString string) uint {
+	token, err := JwtMiddleware.ParseTokenString(tokenString)
+	if err != nil {
+		klog.Fatal("从token string 获取 token失败")
+	}
+	claims := jwt.ExtractClaimsFromToken(token)
 	userMap := claims[jwt.IdentityKey].(map[string]interface{})
 	userId := uint(userMap["ID"].(float64))
 	return userId

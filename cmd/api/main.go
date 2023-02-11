@@ -189,6 +189,7 @@ func registerGroup(h *server.Hertz) {
 	message.Use(middleware.JwtMiddlewareFunc())
 	{
 		message.GET("/chat/", messageHandler.MessageChat)
+		message.POST("/action/", messageHandler.MessageAction)
 	}
 }
 

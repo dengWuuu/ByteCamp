@@ -106,3 +106,10 @@ type MessageChatParam struct {
 	ToUserId int64  `query:"to_user_id,omitempty"`
 	Token    string `query:"token,omitempty"` // 用户鉴权token
 }
+
+type MessageActionParam struct {
+	ToUserId   int64  `query:"to_user_id,omitempty"`
+	Token      string `query:"token,omitempty"` // 用户鉴权token
+	ActionType int32  `query:"action_type,omitempty"`
+	Content    string `query:"content,omitempty"`
+}
