@@ -32,6 +32,16 @@ func (s *MessageSrvImpl) MessageChat(ctx context.Context, req *message.DouyinMes
 
 // MessageAction implements the MessageSrvImpl interface.
 func (s *MessageSrvImpl) MessageAction(ctx context.Context, req *message.DouyinRelationActionRequest) (resp *message.DouyinRelationActionResponse, err error) {
-	// TODO: Your code here...
-	return
+	if req.ToUserId < 0 {
+		resp = pack.BuildMessageActionResp(errno.ErrBind)
+		return resp, nil
+	}
+
+	err = service.NewMessageActionService(ctx).MessageAction(req)
+	if err != nil {
+		klog.Fatal("rpc 服务端创建message失败")
+		return nil, err
+	}
+	resp = pack.BuildMessageActionResp(errno.Success)
+	return resp, nil
 }

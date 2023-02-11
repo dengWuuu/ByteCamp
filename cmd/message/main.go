@@ -2,6 +2,7 @@ package main
 
 import (
 	"douyin/pkg/jaeger"
+	"douyin/pkg/middleware"
 	"fmt"
 	"log"
 	"net"
@@ -22,6 +23,7 @@ import (
 // Init Relation RPC Server 端配置初始化
 func Init() {
 	dal.Init()
+	middleware.InitJwt()
 }
 
 func main() {

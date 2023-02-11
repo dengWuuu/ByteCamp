@@ -17,21 +17,11 @@ func User(ctx context.Context, u *db.User, fromId int64) (*user.User, error) {
 
 	followCount := int64(u.FollowingCount)
 	followerCount := int64(u.FollowerCount)
-
-	// true->fromID已关注u.ID，false-fromID未关注u.ID
-	// isFollow := false
 	isFollow, err := redis.IsFollowing(ctx, fromId, int64(u.ID))
 	if err != nil {
 		return nil, err
 	}
-	//relation, err := db.GetRelation(ctx, fromID, int64(u.ID))
-	//if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-	//	return nil, err
-	//}
-	//
-	//if relation != nil {
-	//	isFollow = true
-	//}
+
 	return &user.User{
 		Id:            int64(u.ID),
 		Name:          u.Name,

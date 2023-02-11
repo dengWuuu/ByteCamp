@@ -25,3 +25,23 @@ func getMessageChatResp(err errno.ErrNo) *message.DouyinMessageChatResponse {
 		StatusMsg:  &err.ErrMsg,
 	}
 }
+
+func BuildMessageActionResp(err error) *message.DouyinRelationActionResponse {
+	if err == nil {
+		return getMessageActionResp(errno.Success)
+	}
+	// 如果是定义的错误则打印
+	e := errno.ErrNo{}
+	if errors.As(err, &e) {
+		return getMessageActionResp(e)
+	}
+
+	s := errno.ErrUnknown.WithMessage(err.Error())
+	return getMessageActionResp(s)
+}
+func getMessageActionResp(err errno.ErrNo) *message.DouyinRelationActionResponse {
+	return &message.DouyinRelationActionResponse{
+		StatusCode: int32(err.ErrCode),
+		StatusMsg:  &err.ErrMsg,
+	}
+}
