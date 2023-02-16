@@ -13,8 +13,8 @@ type Message struct {
 	Version    optimisticlock.Version
 }
 
-func GetUserMessageChat(toUserId uint) (messages []*Message, err error) {
-	err = DB.Where("to_user_id = ? ", toUserId).Order("created_at").Find(&messages).Error
+func GetUserMessageChat(fromUserId uint, toUserId uint) (messages []*Message, err error) {
+	err = DB.Where("from_user_id = ? and to_user_id = ? ", fromUserId, toUserId).Order("created_at").Find(&messages).Error
 	if err != nil {
 		return nil, err
 	}

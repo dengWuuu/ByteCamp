@@ -5,6 +5,7 @@ import (
 	"douyin/cmd/message/pack"
 	"douyin/dal/db"
 	"douyin/kitex_gen/message"
+	"douyin/pkg/middleware"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
@@ -17,7 +18,8 @@ func NewMessageChatService(ctx context.Context) MessageChatService {
 }
 
 func (messageChatService MessageChatService) MessageChat(req *message.DouyinMessageChatRequest) ([]*message.Message, error) {
-	chats, err := db.GetUserMessageChat(uint(req.ToUserId))
+	fromId := middleware.GetUserIdFromTokenString(req.Token)
+	chats, err := db.GetUserMessageChat(fromId, uint(req.ToUserId))
 	if err != nil {
 		klog.Fatal("message chats service 获取用户聊天数据失败")
 		return nil, err
