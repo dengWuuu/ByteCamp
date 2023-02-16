@@ -14,7 +14,7 @@ type Message struct {
 }
 
 func GetUserMessageChat(fromUserId uint, toUserId uint) (messages []*Message, err error) {
-	err = DB.Where("from_user_id = ? and to_user_id = ? ", fromUserId, toUserId).Order("created_at").Find(&messages).Error
+	err = DB.Where("from_user_id = ? and to_user_id = ? ", toUserId, fromUserId).Order("created_at").Find(&messages).Error
 	if err != nil {
 		return nil, err
 	}

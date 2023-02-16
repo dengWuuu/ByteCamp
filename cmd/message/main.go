@@ -1,7 +1,6 @@
 package main
 
 import (
-	"douyin/pkg/jaeger"
 	"douyin/pkg/middleware"
 	"fmt"
 	"log"
@@ -33,15 +32,15 @@ func main() {
 	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", config.Address, config.Port))
 
 	// jaeger
-	tracerSuite, closer := jaeger.InitJaegerServer("message-server")
-	defer closer.Close()
+	//tracerSuite, closer := jaeger.InitJaegerServer("message-server")
+	//defer closer.Close()
 
 	svr := message.NewServer(new(MessageSrvImpl),
 		server.WithServiceAddr(addr),
 		server.WithRegistry(registry.NewNacosRegistry(nacos.InitNacos())),
 		server.WithLimit(&limit.Option{MaxConnections: 100000000, MaxQPS: 1000000000}),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.PSM}),
-		server.WithSuite(tracerSuite),
+		//server.WithSuite(tracerSuite),
 	)
 
 	err := svr.Run()
