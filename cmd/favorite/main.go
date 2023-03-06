@@ -8,7 +8,6 @@ import (
 	FavoriteMq "douyin/cmd/favorite/favoriteMq"
 	"douyin/dal"
 	"douyin/kitex_gen/favorite/favoritesrv"
-	"douyin/pkg/jaeger"
 	"douyin/pkg/nacos"
 	"douyin/pkg/rabbitmq"
 
@@ -43,8 +42,8 @@ func main() {
 	r := registry.NewNacosRegistry(nacos.InitNacos())
 
 	//jaeger
-	tracerSuite, closer := jaeger.InitJaegerServer("favorite-server")
-	defer closer.Close()
+	//tracerSuite, closer := jaeger.InitJaegerServer("favorite-server")
+	//defer closer.Close()
 
 	svr := favoritesrv.NewServer(new(FavoriteSrvImpl),
 		server.WithTracer(prometheus.NewServerTracer(":9092", "/metrics")),
@@ -52,7 +51,7 @@ func main() {
 		server.WithRegistry(r),
 		server.WithLimit(&limit.Option{MaxConnections: 10000000000, MaxQPS: 1000000000}),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: PSM}),
-		server.WithSuite(tracerSuite),
+		//server.WithSuite(tracerSuite),
 	)
 	err := svr.Run()
 	if err != nil {

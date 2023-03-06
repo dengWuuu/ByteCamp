@@ -18,7 +18,6 @@ import (
 	"douyin/cmd/relation/relationMq"
 	"douyin/dal"
 	relation "douyin/kitex_gen/relation/relationsrv"
-	"douyin/pkg/jaeger"
 	"douyin/pkg/nacos"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -50,8 +49,8 @@ func main() {
 	r := registry.NewNacosRegistry(nacos.InitNacos())
 
 	//jaeger
-	tracerSuite, closer := jaeger.InitJaegerServer("relation-server")
-	defer closer.Close()
+	//tracerSuite, closer := jaeger.InitJaegerServer("relation-server")
+	//defer closer.Close()
 	svr := relation.NewServer(
 		new(RelationSrvImpl),
 		server.WithTracer(prometheus.NewServerTracer(":9093", "/metrics")),
@@ -59,7 +58,7 @@ func main() {
 		server.WithRegistry(r),
 		server.WithLimit(&limit.Option{MaxConnections: 100000000000000, MaxQPS: 1000000000}),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: PSM}),
-		server.WithSuite(tracerSuite),
+		//server.WithSuite(tracerSuite),
 	)
 
 	err := svr.Run()

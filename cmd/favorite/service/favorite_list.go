@@ -18,35 +18,35 @@ type FavoriteListService struct {
 	ctx context.Context
 }
 
-// 创建一个获取点赞视频服务
+// NewFavoriteListService 创建一个获取点赞视频服务
 func NewFavoriteListService(ctx context.Context) *FavoriteListService {
 	return &FavoriteListService{ctx: ctx}
 }
 
-// 实现服务具体功能
+// FavoriteList 实现服务具体功能
 func (s *FavoriteListService) FavoriteList(req *favorite.DouyinFavoriteListRequest) ([]*video.Video, error) {
 	// 判断缓存里面是否有对象
-	user_id := req.UserId
-	user_string := strconv.Itoa(int(user_id))
-	user_cnt, err := db.FavoriteRedis.Exists(s.ctx, user_string).Result()
+	userId := req.UserId
+	userString := strconv.Itoa(int(userId))
+	userCnt, err := db.FavoriteRedis.Exists(s.ctx, userString).Result()
 	if err != nil {
 		klog.Fatalf("redis查找对象出错")
 		panic(err)
 	}
-	if user_cnt > 1 {
+	if userCnt > 1 {
 		klog.Fatalf("video对象不唯一")
 		panic(err)
 	}
-	if user_cnt == 1 {
+	if userCnt == 1 {
 		// 存在user对象
-		video_data, err := db.FavoriteRedis.HGetAll(s.ctx, user_string).Result()
+		videoData, err := db.FavoriteRedis.HGetAll(s.ctx, userString).Result()
 		if err != nil {
 			panic(err)
 		}
 		var videos = make([]*video.Video, 0)
-		for _, video_redis := range video_data {
+		for _, videoRedis := range videoData {
 			var vid = new(video.Video)
-			err := json.Unmarshal([]byte(video_redis), vid)
+			err := json.Unmarshal([]byte(videoRedis), vid)
 			if err != nil {
 				klog.Fatalf("redis 获取视频数据序列化失败")
 				panic(err)
@@ -57,7 +57,7 @@ func (s *FavoriteListService) FavoriteList(req *favorite.DouyinFavoriteListReque
 	}
 	// redis缓存没有对应的数据，需要从数据库读取
 	// ^ 分为两个步骤：获取video信息，再打包成rpc的数据结构信息
-	resp, err := db.GetFavoritesByUserId(user_id)
+	resp, err := db.GetFavoritesByUserId(userId)
 	if err != nil {
 		klog.Fatalf("mysql 获取用户喜欢视频列表失败")
 		panic(err)
@@ -67,61 +67,61 @@ func (s *FavoriteListService) FavoriteList(req *favorite.DouyinFavoriteListReque
 	for index, f := range resp {
 		vids[index] = int64(f.VideoId)
 	}
-	video_redis := Redis.GetVideoFromRedis(s.ctx, vids)
-	if video_redis == nil {
+	videoRedis := Redis.GetVideoFromRedis(s.ctx, vids)
+	if videoRedis == nil {
 		// redis里面没有对应的video信息
 		// 需要从数据库中调取
-		video_mysql, err := db.GetVideoByIds(vids)
+		videoMysql, err := db.GetVideoByIds(vids)
 		if err != nil {
 			klog.Fatalf("mysql 获取视频信息出错")
 			panic(err)
 		}
-		video_data, err := pack.Videos(s.ctx, user_id, video_mysql)
+		videoData, err := pack.Videos(s.ctx, userId, videoMysql)
 		if err != nil {
 			klog.Fatalf("将数据库打包成rpc数据格式出错")
 			panic(err)
 		}
 		// 把视频信息加入到video redis里面
-		for _, vid_data := range video_mysql {
-			Redis.PutVideoInRedis(s.ctx, vid_data)
+		for _, vidData := range videoMysql {
+			Redis.PutVideoInRedis(s.ctx, vidData)
 		}
 		// 把用户的结果放到favorite redis里面
-		err = AddVideoListInRedis(s.ctx, user_id, video_data)
+		err = AddVideoListInRedis(s.ctx, userId, videoData)
 		if err != nil {
 			panic(err)
 		}
-		return video_data, nil
+		return videoData, nil
 	}
 	// 查找其中的不存在的视频信息
-	var vids_nil = make([]int64, 0)
-	for index, v := range video_redis {
+	var vidsNil = make([]int64, 0)
+	for index, v := range videoRedis {
 		if v == nil {
-			vids_nil = append(vids_nil, vids[index])
+			vidsNil = append(vidsNil, vids[index])
 		}
 	}
 	// 从数据库中获取不存在的视频信息并且存储到video redis里面
-	if len(vids_nil) > 0 {
-		vid_mysql, err := db.GetVideoByIds(vids_nil)
+	if len(vidsNil) > 0 {
+		vidMysql, err := db.GetVideoByIds(vidsNil)
 		if err != nil {
 			klog.Fatalf("mysql 获取视频信息出错")
 			panic(err)
 		}
 		// 把视频信息加入到video redis里面
-		for _, vid_data := range vid_mysql {
-			Redis.PutVideoInRedis(s.ctx, vid_data)
+		for _, vidData := range vidMysql {
+			Redis.PutVideoInRedis(s.ctx, vidData)
 		}
 		// 重新查一遍
-		video_redis = Redis.GetVideoFromRedis(s.ctx, vids)
+		videoRedis = Redis.GetVideoFromRedis(s.ctx, vids)
 	}
-	video_data, err := pack.Videos(s.ctx, user_id, video_redis)
+	videoData, err := pack.Videos(s.ctx, userId, videoRedis)
 	if err != nil {
 		klog.Fatalf("将数据库打包成rpc数据格式出错")
 		panic(err)
 	}
 	// 把用户的结果放到favorite redis里面
-	err = AddVideoListInRedis(s.ctx, user_id, video_data)
+	err = AddVideoListInRedis(s.ctx, userId, videoData)
 	if err != nil {
 		panic(err)
 	}
-	return video_data, nil
+	return videoData, nil
 }

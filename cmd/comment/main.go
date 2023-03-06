@@ -8,7 +8,6 @@ import (
 	"douyin/cmd/comment/commentMq"
 	"douyin/dal"
 	comment "douyin/kitex_gen/comment/commentsrv"
-	"douyin/pkg/jaeger"
 	"douyin/pkg/nacos"
 	"douyin/pkg/rabbitmq"
 
@@ -33,10 +32,7 @@ func main() {
 	PSM := "bytecamp.douyin.comment"
 	Address := "127.0.0.1"
 	Port := 8083
-	//Port, err := nacos.GetFreePort()
-	//if err != nil{
-	//	panic(err)
-	//}
+
 	klog.SetLogger(kitexzap.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
 	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", Address, Port))
@@ -44,8 +40,8 @@ func main() {
 	r := registry.NewNacosRegistry(nacos.InitNacos())
 
 	//jaeger
-	tracerSuite, closer := jaeger.InitJaegerServer("comment-server")
-	defer closer.Close()
+	//tracerSuite, closer := jaeger.InitJaegerServer("comment-server")
+	//defer closer.Close()
 
 	svr := comment.NewServer(new(CommentSrvImpl),
 		server.WithTracer(prometheus.NewServerTracer(":9091", "/metrics")),
@@ -53,7 +49,7 @@ func main() {
 		server.WithRegistry(r),
 		server.WithLimit(&limit.Option{MaxConnections: 1000000000, MaxQPS: 1000000000}),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: PSM}),
-		server.WithSuite(tracerSuite),
+		//server.WithSuite(tracerSuite),
 	)
 	err := svr.Run()
 	if err != nil {
