@@ -27,41 +27,41 @@ type Favorite struct {
 	Cancel  bool
 }
 
-// 获取用户ID获取所有的点赞视频
-func GetFavoritesByUserId(user_id int64) (resp []*Favorite, err error) {
-	err = DB.Where("user_id = ? and cancel = ?", user_id, false).Find(&resp).Error
+// GetFavoritesByUserId 获取用户ID获取所有的点赞视频
+func GetFavoritesByUserId(userId int64) (resp []*Favorite, err error) {
+	err = DB.Where("user_id = ? and cancel = ?", userId, false).Find(&resp).Error
 	return resp, err
 }
 
-// 点赞操作，同时要将点赞的视频点赞数量加一
-func AddFavorite(ctx context.Context, user_id, video_id int64) error {
+// AddFavorite 点赞操作，同时要将点赞的视频点赞数量加一
+func AddFavorite(ctx context.Context, userId, videoId int64) error {
 	// 需要在事务里面进行操作
 	err := DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// 检查用户
-		if res := tx.WithContext(ctx).First(&User{}, user_id).Error; res != nil {
+		if res := tx.WithContext(ctx).First(&User{}, userId).Error; res != nil {
 			return res
 		}
 		// 检查视频
-		if res := tx.WithContext(ctx).First(&Video{}, video_id).Error; res != nil {
+		if res := tx.WithContext(ctx).First(&Video{}, videoId).Error; res != nil {
 			return res
 		}
 		// 检查是否存在
 		var temp Favorite
-		duplicate := tx.Where("user_id = ? and video_id = ?", user_id, video_id).First(&temp)
+		duplicate := tx.Where("user_id = ? and video_id = ?", userId, videoId).First(&temp)
 		if duplicate.RowsAffected > 0 {
 			return errors.New("点赞关系重复出现")
 		}
-		favorite_relation := &Favorite{
-			UserId:  int(user_id),
-			VideoId: int(video_id),
+		favoriteRelation := &Favorite{
+			UserId:  int(userId),
+			VideoId: int(videoId),
 			Cancel:  false,
 		}
 		// 创建新的联系
-		if res := tx.WithContext(ctx).Create(favorite_relation).Error; res != nil {
+		if res := tx.WithContext(ctx).Create(favoriteRelation).Error; res != nil {
 			return res
 		}
 		// 同时增加视频的点赞数量
-		result := tx.Model(&Video{}).Where("ID = ?", video_id).Update("favorite_count", gorm.Expr("favorite_count + ?", 1))
+		result := tx.Model(&Video{}).Where("ID = ?", videoId).Update("favorite_count", gorm.Expr("favorite_count + ?", 1))
 		if result.Error != nil {
 			return result.Error
 		}
@@ -74,21 +74,21 @@ func AddFavorite(ctx context.Context, user_id, video_id int64) error {
 	return err
 }
 
-// 取消点赞操作，同时需要将取消点赞的视频点赞数量减一
-func DeleteFavorite(ctx context.Context, user_id, video_id int64) error {
+// DeleteFavorite 取消点赞操作，同时需要将取消点赞的视频点赞数量减一
+func DeleteFavorite(ctx context.Context, userId, videoId int64) error {
 	// 需要在事务里面进行操作
 	err := DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// 检查用户
-		if res := tx.WithContext(ctx).First(&User{}, user_id).Error; res != nil {
+		if res := tx.WithContext(ctx).First(&User{}, userId).Error; res != nil {
 			return res
 		}
 		// 检查视频
-		if res := tx.WithContext(ctx).First(&Video{}, video_id).Error; res != nil {
+		if res := tx.WithContext(ctx).First(&Video{}, videoId).Error; res != nil {
 			return res
 		}
 		// 检查是否存在
 		var temp Favorite
-		duplicate := tx.Where("user_id = ? and video_id = ?", user_id, video_id).First(&temp)
+		duplicate := tx.Where("user_id = ? and video_id = ?", userId, videoId).First(&temp)
 		if duplicate.RowsAffected == 0 {
 			return errors.New("不存在点赞关系")
 		}
@@ -97,7 +97,7 @@ func DeleteFavorite(ctx context.Context, user_id, video_id int64) error {
 			return res
 		}
 		// 同时减少视频的点赞数量
-		result := tx.Model(&Video{}).Where("ID = ?", video_id).Update("favorite_count", gorm.Expr("favorite_count - ?", 1))
+		result := tx.Model(&Video{}).Where("ID = ?", videoId).Update("favorite_count", gorm.Expr("favorite_count - ?", 1))
 		if result.Error != nil {
 			return result.Error
 		}

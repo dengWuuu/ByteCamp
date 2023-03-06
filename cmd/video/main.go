@@ -8,7 +8,6 @@ import (
 	"douyin/cmd/video/config"
 	"douyin/cmd/video/dal"
 	"douyin/kitex_gen/video/videosrv"
-	"douyin/pkg/jaeger"
 	"douyin/pkg/nacos"
 
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -34,8 +33,8 @@ func main() {
 	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", config.Address, config.Port))
 
 	//jaeger
-	tracerSuite, closer := jaeger.InitJaegerServer("video-server")
-	defer closer.Close()
+	//tracerSuite, closer := jaeger.InitJaegerServer("video-server")
+	//defer closer.Close()
 
 	svr := videosrv.NewServer(
 		new(VideoSrvImpl),
@@ -44,7 +43,7 @@ func main() {
 		server.WithRegistry(registry.NewNacosRegistry(nacos.InitNacos())),
 		server.WithLimit(&limit.Option{MaxConnections: 1000000000, MaxQPS: 1000000000}),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.PSM}),
-		server.WithSuite(tracerSuite),
+		//server.WithSuite(tracerSuite),
 	)
 
 	err := svr.Run()
