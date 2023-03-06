@@ -93,7 +93,7 @@ func DeleteFavorite(ctx context.Context, userId, videoId int64) error {
 			return errors.New("不存在点赞关系")
 		}
 		// 删除联系
-		if res := tx.Model(&temp).Update("cancel", true).Error; res != nil {
+		if res := tx.Delete(&temp).Error; res != nil {
 			return res
 		}
 		// 同时减少视频的点赞数量
