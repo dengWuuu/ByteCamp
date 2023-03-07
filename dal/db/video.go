@@ -31,8 +31,8 @@ type Video struct {
 }
 
 // GetVideoByIds 根据视频ID获取视频信息
-func GetVideoByIds(vids []int64) (resp []*Video, err error) {
-	err = DB.Where("ID in ?", vids).Find(&resp).Error
+func GetVideoByIds(vIds []int64) (resp []*Video, err error) {
+	err = DB.Where("ID in ?", vIds).Find(&resp).Error
 	if err != nil {
 		return nil, err
 	}
