@@ -11,3 +11,4 @@ https://bytedancecampus1.feishu.cn/docx/ZrYxdIIYRonQe4xTD45caEvznXd
 3. mq 存入数据库防止消息丢失
 4. 启动ack机制
 5. 各种参数校验
+6. redis分片实现videoId为key存的userId set， 解决大key问题

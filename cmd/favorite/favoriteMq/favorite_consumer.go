@@ -39,14 +39,7 @@ func FavoriteConsumer() {
 		// 这里写你的处理逻辑
 		// 获取到的消息是amqp.Delivery对象，从中可以获取消息信息
 		FavoriteAction(string(msg.Body))
-		// 主动应答
 		// TODO 主动应答会出现问题
-		// err := msg.Ack(true)
-		// if err != nil {
-		// 	klog.Info("ack失败")
-		// 	return
-		// }
-
 	}
 }
 
@@ -55,21 +48,21 @@ func FavoriteAction(msg string) {
 	err := json.Unmarshal([]byte(msg), &req)
 	if err != nil {
 		klog.Error(err)
-		klog.Fatalf("favoriteMq序列化消费信息失败")
+		klog.Errorf("favoriteMq序列化消费信息失败")
 		return
 	}
 	// 点赞
 	if req.ActionType == 1 {
 		err = db.AddFavorite(context.Background(), req.UserId, req.VideoId)
 		if err != nil {
-			klog.Fatalf("favoriteMq添加点赞关系失败")
+			klog.Errorf("favoriteMq添加点赞关系失败")
 			return
 		}
 	}
 	if req.ActionType == 2 {
 		err = db.DeleteFavorite(context.Background(), req.UserId, req.VideoId)
 		if err != nil {
-			klog.Fatalf("favoriteMq取消点赞关系失败")
+			klog.Errorf("favoriteMq取消点赞关系失败")
 			return
 		}
 	}

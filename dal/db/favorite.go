@@ -37,20 +37,18 @@ func GetFavoritesByUserId(userId int64) (resp []*Favorite, err error) {
 func AddFavorite(ctx context.Context, userId, videoId int64) error {
 	// 需要在事务里面进行操作
 	err := DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// 检查用户
-		if res := tx.WithContext(ctx).First(&User{}, userId).Error; res != nil {
-			return res
-		}
-		// 检查视频
-		if res := tx.WithContext(ctx).First(&Video{}, videoId).Error; res != nil {
-			return res
-		}
 		// 检查是否存在
 		var temp Favorite
 		duplicate := tx.Where("user_id = ? and video_id = ?", userId, videoId).First(&temp)
+		//存在取消cancel
 		if duplicate.RowsAffected > 0 {
-			return errors.New("点赞关系重复出现")
+			err := tx.Model(&Favorite{}).Where("user_id = ? and video_id = ?", userId, videoId).Update("cancel", false).Error
+			if err != nil {
+				return err
+			}
+			return nil
 		}
+		//不存在则插入
 		favoriteRelation := &Favorite{
 			UserId:  int(userId),
 			VideoId: int(videoId),
@@ -92,7 +90,7 @@ func DeleteFavorite(ctx context.Context, userId, videoId int64) error {
 		if duplicate.RowsAffected == 0 {
 			return errors.New("不存在点赞关系")
 		}
-		// 删除联系
+		// 将点赞设置为cancel状态
 		if res := tx.Model(&temp).Update("cancel", true).Error; res != nil {
 			return res
 		}

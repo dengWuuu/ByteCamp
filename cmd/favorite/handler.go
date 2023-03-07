@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-
 	"douyin/cmd/favorite/pack"
 	"douyin/cmd/favorite/service"
 	favorite "douyin/kitex_gen/favorite"
@@ -14,7 +13,6 @@ type FavoriteSrvImpl struct{}
 
 // FavoriteAction implements the FavoriteSrvImpl interface.
 func (s *FavoriteSrvImpl) FavoriteAction(ctx context.Context, req *favorite.DouyinFavoriteActionRequest) (resp *favorite.DouyinFavoriteActionResponse, err error) {
-	// TODO: Your code here...
 	favoriteSrv := service.NewFavoriteActionService(ctx)
 	// 检查参数
 	if req.UserId <= 0 || req.VideoId <= 0 || (req.ActionType != 1 && req.ActionType != 2) {
@@ -26,7 +24,6 @@ func (s *FavoriteSrvImpl) FavoriteAction(ctx context.Context, req *favorite.Douy
 
 // FavoriteList implements the FavoriteSrvImpl interface.
 func (s *FavoriteSrvImpl) FavoriteList(ctx context.Context, req *favorite.DouyinFavoriteListRequest) (resp *favorite.DouyinFavoriteListResponse, err error) {
-	// TODO: Your code here...
 	favoriteSrv := service.NewFavoriteListService(ctx)
 	// 检查参数
 	if req.UserId <= 0 {
@@ -36,7 +33,7 @@ func (s *FavoriteSrvImpl) FavoriteList(ctx context.Context, req *favorite.Douyin
 	if err != nil {
 		return nil, err
 	}
-	pack_res := pack.BuildFavoriteListResp(err)
-	pack_res.VideoList = vids
-	return pack_res, err
+	packRes := pack.BuildFavoriteListResp(err)
+	packRes.VideoList = vids
+	return packRes, err
 }

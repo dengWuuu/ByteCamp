@@ -26,12 +26,12 @@ func Video(ctx context.Context, userId int64, m *db.Video) (*video.Video, error)
 		u = redisUser[0]
 	}
 	// 打包用户的数据
-	// * 重点在于检查是否关注
+	// 重点在于检查是否关注
 	author, err := User(ctx, userId, u)
 	if err != nil {
 		return nil, err
 	}
-	// * 检查是否已经点赞
+	// 检查是否已经点赞
 	isFavorite := Redis.IsFavorite(ctx, userId, int64(m.ID))
 
 	return &video.Video{
