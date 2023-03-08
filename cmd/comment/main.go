@@ -1,13 +1,19 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"net"
+	"os"
+	"strings"
 
 	"douyin/cmd/comment/commentMq"
+	"douyin/cmd/comment/service"
 	"douyin/dal"
 	comment "douyin/kitex_gen/comment/commentsrv"
+	dfa "douyin/pkg/dfa"
 	"douyin/pkg/nacos"
 	"douyin/pkg/rabbitmq"
 
@@ -39,6 +45,21 @@ func main() {
 	// nacos
 	r := registry.NewNacosRegistry(nacos.InitNacos())
 
+	// init sensitive words check
+	service.FDA = dfa.New()
+	sensitiveFile, err := os.Open("cmd/comment/config/sensitive.txt")
+	if err != nil {
+		panic("读取敏感词文件失败")
+	}
+	defer sensitiveFile.Close()
+	reader := bufio.NewReader(sensitiveFile)
+	fileContent, err := reader.ReadString('\n')
+	if err == io.EOF {
+		klog.Info("读取敏感词文件成功")
+	}
+	sensitiveWords := strings.Fields(fileContent)
+	service.FDA.AddBadWords(sensitiveWords)
+
 	//jaeger
 	//tracerSuite, closer := jaeger.InitJaegerServer("comment-server")
 	//defer closer.Close()
@@ -51,7 +72,7 @@ func main() {
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: PSM}),
 		//server.WithSuite(tracerSuite),
 	)
-	err := svr.Run()
+	err = svr.Run()
 	if err != nil {
 		log.Println(err.Error())
 	}

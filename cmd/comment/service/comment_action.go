@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"strconv"
 	"time"
 
@@ -10,10 +11,13 @@ import (
 	"douyin/cmd/comment/pack"
 	"douyin/dal/db"
 	"douyin/kitex_gen/comment"
+	dfa "douyin/pkg/dfa"
 	"douyin/pkg/errno"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 )
+
+var FDA *dfa.DFA
 
 type CommentActionService struct {
 	ctx context.Context
@@ -28,6 +32,12 @@ func NewCommentActionService(ctx context.Context) *CommentActionService {
 func (s *CommentActionService) CommentAction(req *comment.DouyinCommentActionRequest) (*comment.Comment, error) {
 	// 根据请求创建新的评论
 	if req.ActionType == 1 {
+		// TODO: 敏感词检查
+		foundResult, foundIndex, isSensitive := FDA.Check(*req.CommentText)
+		if isSensitive {
+			klog.Fatal(foundResult, foundIndex)
+			return nil, errors.New("评论存在敏感词")
+		}
 		commentModel := &db.Comment{
 			VideoId: int(req.VideoId),
 			UserId:  int(req.UserId),
